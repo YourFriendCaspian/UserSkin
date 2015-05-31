@@ -89,12 +89,12 @@ class UserSkinconsole(Screen):
             if self.container.execute(self.cmdlist[self.run]): #start of container application failed...
                 self.runFinished(-1) # so we must call runFinished manual
         else:
-            lastpage = self["text"].isAtLastPage()
+            #lastpage = self["text"].isAtLastPage()
             str = self["text"].getText()
             str += _("\nScript finished\nUse up/down arrows to scroll text. OK closes window");
             self["text"].setText(str)
-            if lastpage:
-                self["text"].lastPage()
+            #if lastpage:
+            self["text"].lastPage()
             if self.finishedCallback is not None:
                 self.finishedCallback()
             if not self.errorOcurred and self.closeOnSuccess:
@@ -107,10 +107,10 @@ class UserSkinconsole(Screen):
             self.container.dataAvail.remove(self.dataAvail)
 
     def dataAvail(self, str):
-        lastpage = self["text"].isAtLastPage()
+        #lastpage = self["text"].isAtLastPage()
         self["text"].setText(self["text"].getText() + __(str))
-        if lastpage:
-            self["text"].lastPage()
+        #if lastpage:
+        self["text"].lastPage()
 
 ############################################
 class Cover2(Pixmap):
