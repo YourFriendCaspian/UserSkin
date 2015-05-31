@@ -1,6 +1,7 @@
 #
-[ -e ./userskin.tar.gz ] && rm -rf ./userskin.tar.gz
-[ -e ./j00zek-UserSkin-* ] && rm -rf ./j00zek-UserSkin-*
+[ -e /tmp/userskin.tar.gz ] && rm -rf /tmp/userskin.tar.gz
+rm -rf /tmp/j00zek-UserSkin-* 2>/dev/null
+sudo rm -rf /tmp/j00zek-UserSkin-* 2>/dev/null
 curl --help 1>/dev/null 2>%1
 if [ $? -gt 0 ]; then
   echo "Required program 'curl' is not installed. Please install it first."
@@ -48,10 +49,11 @@ if [ -f /usr/lib/enigma2/python/Plugins/Extensions/UserSkin/$version ];then
 fi
 
 echo "_(Installing new version)..."
-if [ ! -e /DuckboxDisk ]; then #this is our github, we don't update dev
+if [ ! -e /DuckboxDisk ]; then
   touch ./$version/UserSkin/$version 2>/dev/null
   cp -a ./j00zek-UserSkin-*/UserSkin/* /usr/lib/enigma2/python/Plugins/Extensions/UserSkin/
 else
+  echo
   echo "github is always up-2-date"
 fi
 
@@ -62,4 +64,5 @@ else
   echo
   echo "_(Success: Restart system to use new plugin version)"
 fi
+
 exit 0
