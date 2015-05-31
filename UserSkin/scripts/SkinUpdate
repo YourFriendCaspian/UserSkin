@@ -13,8 +13,16 @@ echo "_(Updating) $description ..."
 
 curl --help 1>/dev/null 2>%1
 if [ $? -gt 0 ]; then
-  echo "_(Required program 'curl' is not installed. Please install it first.)"
-  exit 0
+  echo "_(Required program 'curl' is not installed. Trying to install it via OPKG.)"
+  echo
+  opkg install curl 
+
+  curl --help 1>/dev/null 2>%1
+  if [ $? -gt 0 ]; then
+    echo
+    echo "_(Required program 'curl' is not available. Please install it first manually.)"
+    exit 0
+  fi
 fi
 
 echo "_(Checking installation mode)..."
