@@ -101,3 +101,33 @@ msgstr "Aby mieć podgląd, zainstaluj paczkę:\nenigma2-skin-infinityhd-nbox-tu
 
 msgid "Install from OPKG"
 msgstr "Instalacja z OPKG"
+
+msgid "Skin personalization"
+msgstr "Personalizacja skorki"
+
+msgid "Download addons"
+msgstr "Pobierz dodatki"
+
+msgid "Delete addons"
+msgstr "Skasuj dodatki"
+
+msgid "Update main skin"
+msgstr "Aktualizacje glownej skorki"
+
+msgid "Update plugin"
+msgstr "Aktualizacja wtyczki"
+
+msgid "Do you want to update skin?"
+msgstr "Czy chcesz zaktualizowac skorke?"
+
+msgid "Updating skin"
+msgstr "Aktualizacja skorki"
+
+msgid "Updating plugin"
+msgstr "Aktualizacja wtyczki"
+
+msgid "Do you want to update plugin?"
+msgstr "Czy chcesz zaktualizowac wtyczke?"
+
+#msgid ""
+#msgstr ""

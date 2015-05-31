@@ -78,7 +78,7 @@ class UserSkin_Menu(Screen):
 
         def createsetup(self):
                 l = [
-                    (self.buildListEntry(_("Skin configuration"), "config.png",'config')),
+                    (self.buildListEntry(_("Skin personalization"), "config.png",'config')),
                     (self.buildListEntry(_("Download addons"), "download.png",'getaddons')),
                     (self.buildListEntry(_("Delete addons"), "remove.png",'delete_addons')),
                     (self.buildListEntry(_("Update main skin"), "download.png",'getskin')),
@@ -126,7 +126,7 @@ class UserSkin_Menu(Screen):
                 def goUpdate(ret):
                     if ret is True:
                         from translatedconsole import UserSkinconsole
-                        self.session.openWithCallback(self.refresh, UserSkinconsole, title = _("Updating skin"), cmdlist = [ '%sscripts/SkinUpdate' % PluginPath ])
+                        self.session.openWithCallback(self.refresh, UserSkinconsole, title = _("Updating skin"), cmdlist = [ '%sscripts/SkinUpdate %s' % (PluginPath,SkinPath) ])
                     return
                 self.session.openWithCallback(goUpdate, MessageBox,_("Do you want to update skin?"),  type = MessageBox.TYPE_YESNO, timeout = 10)
                 return
@@ -134,9 +134,9 @@ class UserSkin_Menu(Screen):
                 def goUpdate(ret):
                     if ret is True:
                         from translatedconsole import UserSkinconsole
-                        self.session.openWithCallback(self.refresh, UserSkinconsole, title = _("Updating skin"), cmdlist = [ '%sscripts/UserSkinUpdate' % PluginPath ])
+                        self.session.openWithCallback(self.refresh, UserSkinconsole, title = _("Updating plugin"), cmdlist = [ '%sscripts/UserSkinUpdate' % PluginPath ])
                     return
-                self.session.openWithCallback(goUpdate, MessageBox,_("Do you want to update skin?"),  type = MessageBox.TYPE_YESNO, timeout = 10)
+                self.session.openWithCallback(goUpdate, MessageBox,_("Do you want to update plugin?"),  type = MessageBox.TYPE_YESNO, timeout = 10)
                 return
 
         def quit(self):
