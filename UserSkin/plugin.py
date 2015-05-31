@@ -16,6 +16,7 @@
 
 from debug import printDEBUG
 from inits import *
+from translate import _
 
 from Components.ActionMap import ActionMap
 
@@ -32,30 +33,9 @@ from Tools import Notifications
 from os import listdir, remove, rename, system, path
 import shutil
 import re
-#Translations part
-from Components.Language import language
-currLang = language.getLanguage()[:2] #used for descriptions keep GUI language in 'pl|en' format
-print currLang
-try:
-    from Components.LanguageGOS import gosgettext as _
-    printDEBUG('LanguageGOS detected')
-except:
-    printDEBUG('LanguageGOS not detected, using local _')
-    import gettext
-    from translate import _
-
-#UserSkin permanent configs
-config.plugins.UserSkin = ConfigSubsection()
-config.plugins.UserSkin.refreshInterval = ConfigNumber(default=30) #in minutes
-config.plugins.UserSkin.woeid = ConfigNumber(default=523920) #Location Warsaw (visit weather.yahoo.com)
-config.plugins.UserSkin.tempUnit = ConfigSelection(default="Celsius", choices = [
-                ("Celsius", _("Celsius")),
-                ("Fahrenheit", _("Fahrenheit"))
-                ])
-config.plugins.UserSkin.PIG_active = ConfigYesNo(default=True)
         
 def Plugins(**kwargs):
-    return [PluginDescriptor(name=_("UserSkin Setup"), description=_("Personalize your Skin"), where = PluginDescriptor.WHERE_MENU, icon="plugin.png", fnc=menu)]
+    return [PluginDescriptor(name=_("UserSkin Setup"), description=_("Personalize your Skin"), where = PluginDescriptor.WHERE_MENU, fnc=menu)]
 
 def menu(menuid, **kwargs):
     if menuid == "vtimain" or menuid == "system":
@@ -101,8 +81,8 @@ class UserSkin_Menu(Screen):
                     (self.buildListEntry(_("Skin configuration"), "config.png",'config')),
                     (self.buildListEntry(_("Download addons"), "download.png",'getaddons')),
                     (self.buildListEntry(_("Delete addons"), "remove.png",'delete_addons')),
-                    (self.buildListEntry(_("Update/Refresh main skin"), "download.png",'getskin')),
-                    (self.buildListEntry(_("Update/Refresh plugin"), "download.png",'getplugin')),
+                    (self.buildListEntry(_("Update main skin"), "download.png",'getskin')),
+                    (self.buildListEntry(_("Update plugin"), "download.png",'getplugin')),
                     (self.buildListEntry(_("About"), "about.png",'about')),
                 ]
                 self["list"].list = l
@@ -133,6 +113,24 @@ class UserSkin_Menu(Screen):
             elif selected == 'config':
                 from skinconfig import UserSkin_Config
                 self.session.openWithCallback(self.quit,UserSkin_Config)
+                return
+            elif selected == 'getaddons':
+                from translatedconsole import myMenu
+                self.session.openWithCallback(self.refresh, myMenu, MenuFolder = '%sscripts' % PluginPath, MenuFile = '_Getaddons')
+                return
+            elif selected == 'delete_addons':
+                from translatedconsole import myMenu
+                self.session.openWithCallback(self.refresh, myMenu, MenuFolder = '%sscripts' % PluginPath, MenuFile = '_Deleteaddons')
+                return
+            elif selected == 'getskin':
+                def goUpdate(ret):
+                    if ret is True:
+                        from translatedconsole import UserSkinconsole
+                        self.session.openWithCallback(self.refresh, UserSkinconsole, title = _("Updating skin"), cmdlist = [ '%sscripts/UserSkinUpdate' % PluginPath ])
+                    return
+                self.session.openWithCallback(goUpdate, MessageBox,_("Do you want to update skin?"),  type = MessageBox.TYPE_YESNO, timeout = 10)
+                return
+            elif selected == 'getplugin':
                 return
 
         def quit(self):
