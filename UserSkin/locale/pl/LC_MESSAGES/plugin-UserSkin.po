@@ -129,5 +129,47 @@ msgstr "Aktualizacja wtyczki"
 msgid "Do you want to update plugin?"
 msgstr "Czy chcesz zaktualizowac wtyczke?"
 
+msgid "Required program 'curl' is not installed. Trying to install it via OPKG."
+msgstr "Wymagany program 'curl' jest niezainstalowany. Prubuje zainstalowac przez OPKG"
+
+msgid "Required program 'curl' is not available. Please install it first manually."
+msgstr "Wymagany program 'curl' jest niedostepny. Zainstaluj go najpierw recznie"
+
+msgid "Checking installation mode"
+msgstr "Sprawdzam tryb instalacji"
+
+msgid "UserSkin controlled by OPKG. Please use it for updates."
+msgstr "UserSkin kontrolowany przez OPKG. Aktualizacje tylko przez OPKG."
+
+msgid "Checking internet connection"
+msgstr "Sprawdzam polaczenie internetowe"
+
+msgid "github server unavailable, update impossible"
+msgstr "Serwer github niedostepny, altualizacja niedostepna"
+
+msgid "Downloading latest plugin version"
+msgstr "Pobieram ostatnia wersje wtyczki"
+
+msgid "Archive downloaded improperly"
+msgstr "Archiwum pobrane poprawnie"
+
+msgid "Unpacking new version"
+msgstr "Rozpakowuje nowa wersje"
+
+msgid "Archive unpacked improperly"
+msgstr "Archiwum rozpakowane poprawnie"
+
+msgid "Latest version already installed"
+msgstr "Anjnowsza wersja jest juz zainstalowana"
+
+msgid "Installing new version"
+msgstr "Instaluje nowa wersje"
+
+msgid "Installation incorrect"
+msgstr "Instalacje niepoprawna"
+
+msgid "Success: Restart system to use new plugin version"
+msgstr "Skuces: Zrestartuj system aby aktywowac nowa wersje wtyczki"
+
 #msgid ""
 #msgstr ""

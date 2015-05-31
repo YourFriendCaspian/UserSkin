@@ -38,7 +38,7 @@ fi
 
 echo "_(Unpacking new version)..."
 cd /tmp
-tar -zxvf ./userskin.tar.gz
+tar -zxf ./userskin.tar.gz
 if [ $? -gt 0 ]; then
   echo "_(Archive unpacked improperly)"
   exit 0
