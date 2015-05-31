@@ -24,26 +24,36 @@ if [ -z $1 ]; then
 else
   myPath=$1
 fi
-echo "MENU|System management">$myPath/_MenuItems
-#echo "ITEM|GUI restart|APPLET|applet_restartgui">>$myPath/_MenuItems
-echo "ITEM|Settings backup|CONSOLE|system.sh settingsbackup">>$myPath/_MenuItems
-#echo "ITEM|Close system|SILENT|system.sh shutdown &">>$myPath/_MenuItems
-#echo "ITEM|Restart system|SILENT|system.sh restart &">>$myPath/_MenuItems
-if [ -e /etc/sysconfig/autoupdateh ]; then
-	echo "ITEM|Disable automatic info about updates|CONSOLE|system.sh setautoupdate">>$myPath/_MenuItems
+
+if [ -z $2 ]; then
+  echo "MENU|Delete addons">$myPath/_Deleteaddons
+  echo "ITEM|No addons path configured|DONOTHING|">>$myPath/_Deleteaddons
+  echo "MENU|Download addons">$myPath/_Getaddons
+  echo "ITEM|No addons path configured|DONOTHING|">>$myPath/_Getaddons
+  exit 0
 else
-	echo "ITEM|Enable automatic info about updates|CONSOLE|system.sh setautoupdate">>$myPath/_MenuItems
+  skinPath=$2
 fi
-echo "ITEM|||">>$myPath/_MenuItems
-echo "ITEM|Channel list backup|YESNO|system.sh listbackup">>$myPath/_MenuItems
-echo "ITEM|Channel list restore|YESNO|system.sh listrestore">>$myPath/_MenuItems
-echo "ITEM|||">>$myPath/_MenuItems
-echo "ITEM|System cleanup|CONSOLE|$myPath/clean_system.sh">>$myPath/_MenuItems
-echo "ITEM|||">>$myPath/_MenuItems
-echo "ITEM|Network restart|CONSOLE|/etc/init.d/network restart">>$myPath/_MenuItems
-echo "ITEM|sshd/telnet restart|CONSOLE|/etc/init.d/sshd restart">>$myPath/_MenuItems
-if ls /dev/dvb/adapter0/demux* | grep -q disabled; then
-	echo "ITEM|Configure to work with sat|CONSOLE|$myPath/nosatconfig.sh">>$myPath/_MenuItems
-else
-	echo "ITEM|Configure to work without sat|CONSOLE|$myPath/nosatconfig.sh standalone">>$myPath/_MenuItems
+
+cd $skinPath
+
+skinParts=`find -path "*/all*/*.xml"|sort`
+skinPartsNo=`find -path "*/all*/*.xml"|grep -c ".xml"`
+cd $skinPath/allBars/
+skinBars=`find -type d 2>/dev/null|sort`
+skinBarsNo=`find -type d -name 'bar_*' |grep -c ".xml"`
+
+echo "MENU|Delete addons">$myPath/_Deleteaddons
+if [ $skinBarsNo -lt 1 ] && [ $skinPartsNo -lt 1 ];then
+  echo "ITEM|No addons installed|DONOTHING|">>$myPath/_Deleteaddons
 fi
+
+echo "MENU|Download addons">$myPath/_Getaddons
+if [ ! -f $skinPath/skin.config ];then
+  echo "ITEM|Skin does not have downloadable addons|DONOTHING|">>$myPath/_Getaddons
+fi
+. $skinPath/skin.config
+if [ -z $addons ];then
+  echo "ITEM|Skin does not have downloadable addons|DONOTHING|">>$myPath/_Getaddons
+fi
+#do tad sa tlumaczone

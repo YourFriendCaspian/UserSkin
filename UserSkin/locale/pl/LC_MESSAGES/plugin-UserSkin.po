@@ -160,7 +160,7 @@ msgid "Archive unpacked improperly"
 msgstr "Archiwum rozpakowane poprawnie"
 
 msgid "Latest version already installed"
-msgstr "Anjnowsza wersja jest juz zainstalowana"
+msgstr "Najnowsza wersja jest juz zainstalowana"
 
 msgid "Installing new version"
 msgstr "Instaluje nowa wersje"
@@ -169,7 +169,35 @@ msgid "Installation incorrect"
 msgstr "Instalacje niepoprawna"
 
 msgid "Success: Restart system to use new plugin version"
-msgstr "Skuces: Zrestartuj system aby aktywowac nowa wersje wtyczki"
+msgstr "Sukces: Zrestartuj system aby aktywowac nowa wersje wtyczki"
+
+msgid "No addons path configured"
+msgstr "Sciezka dla dodatkow nie skonfigurowana"
+
+msgid "No addons installed"
+msgstr "Brak zainstalowanych dodatkow"
+
+msgid "Skin does not have downloadable addons"
+msgstr "Skorka nie posiada dodatkow do pobrania"
+
+msgid "This skin is not configured for updates."
+msgstr "Ta skorka nie ma mozliwosci aktualizacji"
+
+msgid "Updating"
+msgstr "Aktualizuje"
+
+msgid "Downloading latest skin version"
+msgstr "Pobieranie nejnowszej wersji skorki"
+
+msgid "Checking archive consistency"
+msgstr "Sprawdzanie archiwum"
+
+
+msgid "Archive is broken"
+msgstr "Archiwum jest uszkodzone"
+
+msgid "VTI8.0.x detected, patching skin"
+msgstr "Wykryto VTI8.0.x, modyfikuje skorke"
 
 #msgid ""
 #msgstr ""

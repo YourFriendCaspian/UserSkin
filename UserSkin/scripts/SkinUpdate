@@ -5,7 +5,7 @@ if [ ! -f $skinpath/skin.config ]; then
   exit 0
 fi
 . $skinpath/skin.config
-if [ -z $addons ];then
+if [ -z $skinurl ];then
   echo "_(This skin is not configured for updates.)"
   exit 0
 fi
@@ -31,9 +31,33 @@ if `opkg list-installed 2>/dev/null | tr '[:upper:]' '[:lower:]'| grep -q 'black
   exit 0
 fi
 
-if [ -f /etc/opkg/vusolo2-feed.conf ]; then #only for VTI
+echo "_(Downloading latest skin version)..."
+tarName=`echo $skinurl|sed 's;^.*/;;'`
+curl -s --ftp-pasv $skinurl -o /tmp/$tarName
+if [ $? -gt 0 ]; then
+  echo "_(Archive downloaded improperly)"
+  exit 0
+fi
+
+echo "_(Checking archive consistency)..."
+tar -tzf /tmp/$tarName >/dev/null
+if [ $? -gt 0 ]; then
+  echo "_(Archive is broken)"
+  exit 0
+fi
+
+echo "_(Unpacking new version)..."
+cd /
+tar -zxf /tmp/$tarName 2>/dev/null
+if [ $? -gt 0 ]; then
+  echo "_(Archive unpacked improperly)"
+  exit 0
+fi
+
+#final for old VTI
+if [ -f /etc/opkg/vusolo2-feed.conf ]; then
   vtiOPKGversion=`grep vti/201 </etc/opkg/vusolo2-feed.conf | sed 's;^.*vti/\(201.\).*$;\1;'`
-  if [ $vtiOPKGversion -lt 2015 ]; then
+  if [ $vtiOPKGversion -lt 2015 ] && [ -f $skinpath/Make-4VTI-81.sh ]; then
     echo "_(VTI8.0.x detected, patching skin)..."
   fi
 fi

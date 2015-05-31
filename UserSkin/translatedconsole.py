@@ -7,6 +7,7 @@ from Components.ActionMap import ActionMap
 from Components.MenuList import MenuList
 from Components.ScrollLabel import ScrollLabel
 from translate import _
+from inits import *
 #
 from Components.Pixmap import Pixmap
 from enigma import ePicLoad, ePoint, getDesktop, eTimer, ePixmap
@@ -150,7 +151,7 @@ class myMenu(Screen,):
         picHeight = 0
         with open("/proc/sys/vm/drop_caches", "w") as f: f.write("1\n")
         if path.exists("%s/_MenuGenerator.sh" % self.myPath) is True:
-            self.system( "%s/_MenuGenerator.sh %s" % (self.myPath, self.myPath) )
+            self.system( "%s/_MenuGenerator.sh %s %s" % (self.myPath, self.myPath, SkinPath) )
         MyTitle = ""
         if path.exists("%s/%s" % (self.myPath,self.MenuFile) ) is True:
             with open ("%s/%s" % (self.myPath,self.MenuFile), "r") as myMenufile:
@@ -241,7 +242,7 @@ class myMenu(Screen,):
 
     def endrun(self, ret =0):
         #odświerzamy menu
-        self.system( "%s/_MenuGenerator.sh %s" % (self.myPath, self.myPath) )
+        self.system( "%s/_MenuGenerator.sh %s %s" % (self.myPath, self.myPath, SkinPath) )
         self.reloadLIST()
         self.onStart()
         return
