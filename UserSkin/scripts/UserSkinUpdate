@@ -38,7 +38,7 @@ fi
 
 echo "_(Unpacking new version)..."
 cd /tmp
-tar -xzf ./userskin.tar.gz
+tar -zxvf ./userskin.tar.gz
 if [ $? -gt 0 ]; then
   echo "_(Archive unpacked improperly)"
   exit 0
@@ -58,6 +58,7 @@ fi
 
 echo "_(Installing new version)..."
 if [ ! -e /DuckboxDisk ]; then
+  rm -rf /usr/lib/enigma2/python/Plugins/Extensions/UserSkin/j00zek-UserSkin-* 2>/dev/null
   touch ./$version/UserSkin/$version 2>/dev/null
   cp -a ./j00zek-UserSkin-*/UserSkin/* /usr/lib/enigma2/python/Plugins/Extensions/UserSkin/
 else
