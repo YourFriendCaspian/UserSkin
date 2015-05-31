@@ -1,10 +1,12 @@
 from inits import PluginLanguageDomain , PluginLanguagePath
 from Components.Language import language
-from Tools.Directories import resolveFilename, SCOPE_PLUGINS
 import gettext
+from os import environ
 
 def localeInit():
-        gettext.bindtextdomain(PluginLanguageDomain, resolveFilename(SCOPE_PLUGINS, PluginLanguagePath))
+        lang = language.getLanguage()[:2]
+        environ["LANGUAGE"] = lang
+        gettext.bindtextdomain(PluginLanguageDomain, PluginLanguagePath)
 
 def _(txt):
         t = gettext.dgettext(PluginLanguageDomain, txt)
