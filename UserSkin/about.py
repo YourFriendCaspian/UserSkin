@@ -25,8 +25,8 @@ class UserSkin_About(Screen):
             }, -2)
         self.setTitle(_("UserSkin %s") % UserSkinInfo)
         self['skininfo'] = Label("")
-        if path.exists(SkinPath):
-            with open(SkinPath, "r") as f:
+        if path.exists(SkinPath + 'skin.config'):
+            with open(SkinPath + 'skin.config', "r") as f:
                 for line in f:
                     if line.startswith('description='):
                         self['skininfo'].text = line.split('=')[1].replace('"','').replace("'","").strip()

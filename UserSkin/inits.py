@@ -9,7 +9,7 @@ PluginGroup = 'Extensions'
 from Tools.Directories import resolveFilename, SCOPE_CURRENT_SKIN, SCOPE_PLUGINS
 PluginFolder = PluginName
 PluginPath = resolveFilename(SCOPE_PLUGINS, '%s/%s/' %(PluginGroup,PluginFolder))
-SkinPath = resolveFilename(SCOPE_CURRENT_SKIN, 'skin.config')
+SkinPath = resolveFilename(SCOPE_CURRENT_SKIN, '')
 
 #translation
 PluginLanguageDomain = "plugin-" + PluginName
