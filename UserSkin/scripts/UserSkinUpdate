@@ -47,8 +47,12 @@ if [ -f /usr/lib/enigma2/python/Plugins/Extensions/UserSkin/$version ];then
 fi
 
 echo "_(Installing new version)..."
-touch ./$version/UserSkin/$version 2>/dev/null
-cp -a ./j00zek-UserSkin-*/UserSkin/* /usr/lib/enigma2/python/Plugins/Extensions/UserSkin/
+if [ ! -e /DuckBoxDisk ]; then #this is our github, we don't update dev
+  touch ./$version/UserSkin/$version 2>/dev/null
+  cp -a ./j00zek-UserSkin-*/UserSkin/* /usr/lib/enigma2/python/Plugins/Extensions/UserSkin/
+else
+  echo "github is always up-2-date"
+fi
 
 if [ $? -gt 0 ]; then
   echo

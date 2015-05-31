@@ -126,11 +126,17 @@ class UserSkin_Menu(Screen):
                 def goUpdate(ret):
                     if ret is True:
                         from translatedconsole import UserSkinconsole
-                        self.session.openWithCallback(self.refresh, UserSkinconsole, title = _("Updating skin"), cmdlist = [ '%sscripts/UserSkinUpdate' % PluginPath ])
+                        self.session.openWithCallback(self.refresh, UserSkinconsole, title = _("Updating skin"), cmdlist = [ '%sscripts/SkinUpdate' % PluginPath ])
                     return
                 self.session.openWithCallback(goUpdate, MessageBox,_("Do you want to update skin?"),  type = MessageBox.TYPE_YESNO, timeout = 10)
                 return
             elif selected == 'getplugin':
+                def goUpdate(ret):
+                    if ret is True:
+                        from translatedconsole import UserSkinconsole
+                        self.session.openWithCallback(self.refresh, UserSkinconsole, title = _("Updating skin"), cmdlist = [ '%sscripts/UserSkinUpdate' % PluginPath ])
+                    return
+                self.session.openWithCallback(goUpdate, MessageBox,_("Do you want to update skin?"),  type = MessageBox.TYPE_YESNO, timeout = 10)
                 return
 
         def quit(self):
