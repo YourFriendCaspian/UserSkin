@@ -140,7 +140,7 @@ class Cover2(Pixmap):
 ############################################
 
 class myMenu(Screen,):
-    def __init__(self, session, MenuFolder = "" , MenuFile = '_MenuItems'):
+    def __init__(self, session, MenuFolder = "" , MenuFile = '_MenuItems', MenuTitle = 'myMenu'):
         
         self.myList = []
         self.list = []
@@ -180,14 +180,9 @@ class myMenu(Screen,):
                         self.list.append( NazwaOpcji )
                 myMenufile.close()
 
-        ListWidth = 480
-        ListHeight = (len(self.list) + 1) * 22
-        if ListHeight + 30 + picHeight > 600:
-            ListHeight = 600 - 30 - picHeight
-        
-        skin  = """<screen name="myMenu" position="center,center" size="%d,%d" title=" " >\n""" % (ListWidth, ListHeight + 30 + picHeight )
-        skin += """<widget name="list" position="0,0" size="%d,%d" scrollbarMode="showOnDemand" />\n""" % (ListWidth, ListHeight + 30)
-        skin += """<widget name="cover" zPosition="4" position="0,%d" size="420,236" transparent="1" alphatest="blend" />""" % (ListHeight + 30)
+        skin  = """<screen name="myMenu" position="center,center" size="300,450" title=" " >\n"""
+        skin += """<widget name="list" position="0,0" size="300,400" scrollbarMode="showOnDemand" />\n"""
+        skin += """<widget name="cover" zPosition="4" position="0,340" size="420,236" transparent="1" alphatest="blend" />"""
         skin += """</screen>"""
 
         self["cover"] = Cover2()
@@ -202,6 +197,7 @@ class myMenu(Screen,):
 
         self.onLayoutFinish.append(self.onStart)
         self.visible = True
+        self.setTitle(MenuTitle)
 
     def onStart(self):
         self["cover"].hide()

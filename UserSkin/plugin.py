@@ -116,11 +116,11 @@ class UserSkin_Menu(Screen):
                 return
             elif selected == 'getaddons':
                 from translatedconsole import myMenu
-                self.session.openWithCallback(self.refresh, myMenu, MenuFolder = '%sscripts' % PluginPath, MenuFile = '_Getaddons')
+                self.session.openWithCallback(self.refresh, myMenu, MenuFolder = '%sscripts' % PluginPath, MenuFile = '_Getaddons', MenuTitle = _("Download addons"))
                 return
             elif selected == 'delete_addons':
                 from translatedconsole import myMenu
-                self.session.openWithCallback(self.refresh, myMenu, MenuFolder = '%sscripts' % PluginPath, MenuFile = '_Deleteaddons')
+                self.session.openWithCallback(self.refresh, myMenu, MenuFolder = '%sscripts' % PluginPath, MenuFile = '_Deleteaddons', MenuTitle = _("Delete addons"))
                 return
             elif selected == 'getskin':
                 def goUpdate(ret):

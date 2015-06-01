@@ -1,3 +1,4 @@
+#!/bin/sh 
 # @j00zek 2015 dla Graterlia
 #
 #Plik do generowania menu
@@ -31,17 +32,31 @@ fi
 
 cd $skinPath
 
-skinParts=`find -path "*/all*/*.xml"|sort`
+skinParts=`find -path "*/all*/*.xml"|sort|sed 's;^./;;'`
 skinPartsNo=`find -path "*/all*/*.xml"|grep -c ".xml"`
 cd $skinPath/allBars/
-skinBars=`find -type d 2>/dev/null|sort`
-skinBarsNo=`find -type d -name 'bar_*' |grep -c ".xml"`
+skinBars=`find -name "*bar_*.menu" -type d 2>/dev/null|sort|sed 's;^./;;'`
+skinBarsNo=`find -type d -name 'bar_*' |grep -c ".menu"`
 
 echo "MENU|Delete addons">/tmp/_Deleteaddons
 if [ $skinBarsNo -lt 1 ] && [ $skinPartsNo -lt 1 ];then
   echo "ITEM|No addons installed|DONOTHING|">>/tmp/_Deleteaddons
 fi
 
+for addon in $skinBars
+do
+  addonName=`echo $addon|sed 's/\..*$//'`
+  echo $addonName
+  echo "ITEM|$addonName|SILENT|/bin/rm -rf $skinPath/allBars/$addon">>/tmp/_Deleteaddons
+done
+for addon in $skinParts
+do
+  addonName=`echo $addon|sed 's/^.*\/\(.*\)\.xml/\1/'`
+  echo $addonName
+  echo "ITEM|$addonName|SILENT|/bin/rm -rf $skinPath/$addon">>/tmp/_Deleteaddons
+done
+
+##############################
 echo "MENU|Download addons">/tmp/_Getaddons
 if [ ! -f $skinPath/skin.config ];then
   echo "ITEM|Skin does not have downloadable addons|DONOTHING|">>/tmp/_Getaddons
@@ -51,7 +66,9 @@ if [ -z $addons ];then
   echo "ITEM|Skin does not have downloadable addons|DONOTHING|">>/tmp/_Getaddons
 fi
 
-[[ ! $addons =~ '/'$ ]] && addons="$addons/"
+#curl -s --ftp-pasv $addons 1>/dev/null 2>%1
+#[ $? -gt 0 ] && addons="$addons/"
+addons="$addons/"
 #echo $addons
 DownloadableAddons=`curl -s --ftp-pasv $addons -o -|awk '{print $9}'|sort`
 
