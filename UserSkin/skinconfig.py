@@ -34,7 +34,7 @@ from Tools.HardwareInfo import HardwareInfo
 from Tools.LoadPixmap import LoadPixmap
 from Tools import Notifications
 #system imports
-from os import listdir, remove, rename, system, path, symlink, chdir, rmdir
+from os import listdir, remove, rename, system, path, symlink, chdir, rmdir, mkdir
 import shutil
 import re
 #Translations part
