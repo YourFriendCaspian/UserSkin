@@ -61,5 +61,7 @@ if [ -f /etc/opkg/vusolo2-feed.conf ]; then
   vtiOPKGversion=`grep vti/201 </etc/opkg/vusolo2-feed.conf | sed 's;^.*vti/\(201.\).*$;\1;'`
   if [ $vtiOPKGversion -lt 2015 ] && [ -f $skinpath/Make-4VTI-81.sh ]; then
     echo "_(VTI8.0.x detected, patching skin)..."
+    chmod 755 $skinpath/Make-4VTI-81.sh
+    $skinpath/Make-4VTI-81.sh
   fi
 fi
