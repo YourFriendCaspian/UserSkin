@@ -18,18 +18,12 @@
 #SILENT uruchamia skrypt w tle
 #YESNO pyta sie czy uruchomic skrypt
 #
-#skrypt ma być w katalogu odpowiedniego Menu
-if [ -z $1 ]; then
-  myPath=`dirname $0`
-else
-  myPath=$1
-fi
 
 if [ -z $2 ]; then
-  echo "MENU|Delete addons">$myPath/_Deleteaddons
-  echo "ITEM|No addons path configured|DONOTHING|">>$myPath/_Deleteaddons
-  echo "MENU|Download addons">$myPath/_Getaddons
-  echo "ITEM|No addons path configured|DONOTHING|">>$myPath/_Getaddons
+  echo "MENU|Delete addons">/tmp/_Deleteaddons
+  echo "ITEM|No addons path configured|DONOTHING|">>/tmp/_Deleteaddons
+  echo "MENU|Download addons">/tmp/_Getaddons
+  echo "ITEM|No addons path configured|DONOTHING|">>/tmp/_Getaddons
   exit 0
 else
   skinPath=$2
@@ -43,17 +37,28 @@ cd $skinPath/allBars/
 skinBars=`find -type d 2>/dev/null|sort`
 skinBarsNo=`find -type d -name 'bar_*' |grep -c ".xml"`
 
-echo "MENU|Delete addons">$myPath/_Deleteaddons
+echo "MENU|Delete addons">/tmp/_Deleteaddons
 if [ $skinBarsNo -lt 1 ] && [ $skinPartsNo -lt 1 ];then
-  echo "ITEM|No addons installed|DONOTHING|">>$myPath/_Deleteaddons
+  echo "ITEM|No addons installed|DONOTHING|">>/tmp/_Deleteaddons
 fi
 
-echo "MENU|Download addons">$myPath/_Getaddons
+echo "MENU|Download addons">/tmp/_Getaddons
 if [ ! -f $skinPath/skin.config ];then
-  echo "ITEM|Skin does not have downloadable addons|DONOTHING|">>$myPath/_Getaddons
+  echo "ITEM|Skin does not have downloadable addons|DONOTHING|">>/tmp/_Getaddons
 fi
 . $skinPath/skin.config
 if [ -z $addons ];then
-  echo "ITEM|Skin does not have downloadable addons|DONOTHING|">>$myPath/_Getaddons
+  echo "ITEM|Skin does not have downloadable addons|DONOTHING|">>/tmp/_Getaddons
 fi
-#do tad sa tlumaczone
+
+[[ ! $addons =~ '/'$ ]] && addons="$addons/"
+#echo $addons
+DownloadableAddons=`curl -s --ftp-pasv $addons -o -|awk '{print $9}'|sort`
+
+for addon in $DownloadableAddons
+do
+  addonName=`echo $addon|sed 's/\..*$//'`
+  echo $addonName
+  echo "ITEM|$addonName|CONSOLE|InstallAddon.sh $addon $skinPath">>/tmp/_Getaddons
+done
+

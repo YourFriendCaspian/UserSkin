@@ -145,16 +145,18 @@ class myMenu(Screen,):
         self.myList = []
         self.list = []
         self.myPath = MenuFolder
-        self.MenuFile = MenuFile
+        self.MenuFile = "%s/%s" % (self.myPath,MenuFile)
         self.SkryptOpcji = ""
         self.PIC = ""
         picHeight = 0
         with open("/proc/sys/vm/drop_caches", "w") as f: f.write("1\n")
         if path.exists("%s/_MenuGenerator.sh" % self.myPath) is True:
             self.system( "%s/_MenuGenerator.sh %s %s" % (self.myPath, self.myPath, SkinPath) )
+            if not path.exists(self.MenuFile) and path.exists('/tmp/%s' % MenuFile):
+                self.MenuFile = '/tmp/%s' % MenuFile
         MyTitle = ""
-        if path.exists("%s/%s" % (self.myPath,self.MenuFile) ) is True:
-            with open ("%s/%s" % (self.myPath,self.MenuFile), "r") as myMenufile:
+        if path.exists(self.MenuFile) is True:
+            with open (self.MenuFile, "r") as myMenufile:
                 for MenuItem in myMenufile:
                     MenuItem = MenuItem.rstrip('\n') 
                     if not MenuItem or MenuItem[0] == '#': #omijamy komentarze
@@ -174,7 +176,7 @@ class myMenu(Screen,):
                         (NazwaOpcji, TypOpcji,  self.SkryptOpcji) = skladniki
                         if NazwaOpcji != "":
                             NazwaOpcji = _(NazwaOpcji)
-                        self.myList.append( (NazwaOpcji, TypOpcji,  self.SkryptOpcji) )
+                        self.myList.append( (NazwaOpcji, TypOpcji,  self.SkryptOpcjiWithFullPAth(self.SkryptOpcji)) )
                         self.list.append( NazwaOpcji )
                 myMenufile.close()
 
@@ -183,7 +185,7 @@ class myMenu(Screen,):
         if ListHeight + 30 + picHeight > 600:
             ListHeight = 600 - 30 - picHeight
         
-        skin  = """<screen name="myMenu" position="center,center" size="%d,%d" title="%s" >\n""" % (ListWidth, ListHeight + 30 + picHeight, _(MyTitle) )
+        skin  = """<screen name="myMenu" position="center,center" size="%d,%d" title=" " >\n""" % (ListWidth, ListHeight + 30 + picHeight )
         skin += """<widget name="list" position="0,0" size="%d,%d" scrollbarMode="showOnDemand" />\n""" % (ListWidth, ListHeight + 30)
         skin += """<widget name="cover" zPosition="4" position="0,%d" size="420,236" transparent="1" alphatest="blend" />""" % (ListHeight + 30)
         skin += """</screen>"""
@@ -246,15 +248,21 @@ class myMenu(Screen,):
         self.reloadLIST()
         self.onStart()
         return
-        
+    
+    def SkryptOpcjiWithFullPAth(self, txt):
+        if not txt.startswith('/'):
+            return ('%s/%s') %(self.myPath,txt)
+        else:
+            return txt
+            
     def reloadLIST(self):
         #czyścimy listę w ten dziwny sposób, aby GUI działało, bo nie zmienimy objektów ;)
         while len(self.list) > 0:
             del self.myList[-1]
             del self.list[-1]
-        if path.exists("%s/%s" % (self.myPath,self.MenuFile)  ) is True:
+        if path.exists(self.MenuFile) is True:
             self["list"].hide()
-            with open ("%s/%s" % (self.myPath,self.MenuFile), "r") as myMenufile:
+            with open (self.MenuFile, "r") as myMenufile:
                 for MenuItem in myMenufile:
                     MenuItem = MenuItem.rstrip('\n') 
                     if not MenuItem or MenuItem[0] == '#': #omijamy komentarze
@@ -268,7 +276,7 @@ class myMenu(Screen,):
                             (NazwaOpcji, TypOpcji, SkryptOpcji) = skladniki
                             if NazwaOpcji != "":
                                 NazwaOpcji = _(NazwaOpcji)
-                            self.myList.append( (NazwaOpcji, TypOpcji, SkryptOpcji) )
+                            self.myList.append( (NazwaOpcji, TypOpcji, self.SkryptOpcjiWithFullPAth(SkryptOpcji)) )
                             self.list.append( NazwaOpcji )
                 myMenufile.close()
             myIdx = self["list"].getSelectionIndex()

@@ -187,7 +187,7 @@ msgid "Updating"
 msgstr "Aktualizuję"
 
 msgid "Downloading latest skin version"
-msgstr "Pobieranie nejnowszej wersji skórki"
+msgstr "Pobieranie najnowszej wersji skórki"
 
 msgid "Checking archive consistency"
 msgstr "Sprawdzanie archiwum"
@@ -198,6 +198,15 @@ msgstr "Archiwum jest uszkodzone"
 
 msgid "VTI8.0.x detected, patching skin"
 msgstr "Wykryto VTI8.0.x, modyfikuję skórkę"
+
+msgid "Downloading "
+msgstr "Pobieranie "
+
+msgid "Unpacking "
+msgstr "Rozpakowywanie "
+
+msgid "\nScript finished\nUse up/down arrows to scroll text. OK closes window"
+msgstr "\nSkrypt zakończony\nUżyj strzałek góra/dół do przewinięcia tekstu. Klawisz OK zamyka okno."
 
 #msgid ""
 #msgstr ""

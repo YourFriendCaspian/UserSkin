@@ -83,7 +83,7 @@ class UserSkin_Config(Screen, ConfigListScreen):
     <eLabel position="843,302" size="240,55" zPosition="-10" backgroundColor="#202673ec" />
     <widget source="Title" render="Label" position="2,4" size="889,43" font="Regular;35" foregroundColor="#00ffffff" backgroundColor="#004e4e4e" transparent="1" />
     <widget name="config" position="6,55" size="657,226" scrollbarMode="showOnDemand" transparent="1" />
-    <widget name="Picture" position="676,56" size="400,225" alphatest="on" />
+    <widget name="Picture" position="676,56" size="400,225" alphatest="blend" />
     <widget name="key_red" position="18,316" size="210,25" zPosition="1" font="Regular;20" halign="left" foregroundColor="#00ffffff" backgroundColor="#20b81c46" transparent="1" />
     <widget name="key_green" position="299,317" size="210,25" zPosition="1" font="Regular;20" halign="left" foregroundColor="#00ffffff" backgroundColor="#20009f3c" transparent="1" />
     <widget name="key_yellow" position="578,317" size="210,25" zPosition="1" font="Regular;20" halign="left" foregroundColor="#00ffffff" backgroundColor="#209ca81b" transparent="1" />

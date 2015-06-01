@@ -89,7 +89,7 @@ class UserSkin_Menu(Screen):
 
         def buildListEntry(self, description, image, optionname):
                 try:
-                        pixmap = LoadPixmap(resolveFilename(SCOPE_ACTIVE_SKIN, "UserSkin/" + image))
+                        pixmap = LoadPixmap(SkinPath + "UserSkinpics/" + image)
                 except:
                         pixmap = None
                 if pixmap == None:
@@ -126,7 +126,7 @@ class UserSkin_Menu(Screen):
                 def goUpdate(ret):
                     if ret is True:
                         from translatedconsole import UserSkinconsole
-                        self.session.openWithCallback(self.refresh, UserSkinconsole, title = _("Updating skin"), cmdlist = [ '%sscripts/SkinUpdate %s' % (PluginPath,SkinPath) ])
+                        self.session.openWithCallback(self.refresh, UserSkinconsole, title = _("Updating skin"), cmdlist = [ '%sscripts/SkinUpdate.sh %s' % (PluginPath,SkinPath) ])
                     return
                 self.session.openWithCallback(goUpdate, MessageBox,_("Do you want to update skin?"),  type = MessageBox.TYPE_YESNO, timeout = 10)
                 return
@@ -134,7 +134,7 @@ class UserSkin_Menu(Screen):
                 def goUpdate(ret):
                     if ret is True:
                         from translatedconsole import UserSkinconsole
-                        self.session.openWithCallback(self.refresh, UserSkinconsole, title = _("Updating plugin"), cmdlist = [ '%sscripts/UserSkinUpdate' % PluginPath ])
+                        self.session.openWithCallback(self.refresh, UserSkinconsole, title = _("Updating plugin"), cmdlist = [ '%sscripts/UserSkinUpdate.sh' % PluginPath ])
                     return
                 self.session.openWithCallback(goUpdate, MessageBox,_("Do you want to update plugin?"),  type = MessageBox.TYPE_YESNO, timeout = 10)
                 return

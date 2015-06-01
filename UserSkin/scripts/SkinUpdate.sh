@@ -1,3 +1,4 @@
+# @j00zek 2015 dla Graterlia
 #
 skinpath=$1
 if [ ! -f $skinpath/skin.config ]; then
@@ -53,6 +54,7 @@ if [ $? -gt 0 ]; then
   echo "_(Archive unpacked improperly)"
   exit 0
 fi
+rm -rf /tmp/$tarName
 
 #final for old VTI
 if [ -f /etc/opkg/vusolo2-feed.conf ]; then
