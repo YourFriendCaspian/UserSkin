@@ -167,8 +167,6 @@ class UserSkin_Config(Screen, ConfigListScreen):
                 if not path.exists(self.skin_base_dir + "UserSkin_Selections"):
                     chdir(self.skin_base_dir)
                     rename("mySkin_off", "UserSkin_Selections")
-                else:
-                    remove(self.skin_base_dir + "mySkin_off")
 
         current_color = self.getCurrentColor()[0]
         current_font = self.getCurrentFont()[0]
