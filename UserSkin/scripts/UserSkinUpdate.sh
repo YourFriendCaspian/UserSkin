@@ -48,7 +48,7 @@ if [ ! -e ./j00zek-UserSkin-* ]; then
   echo "_(Archive downloaded improperly)"
   exit 0
 fi
-#rm -rf ./userskin.tar.gz
+rm -rf ./userskin.tar.gz
 
 version=`ls /tmp/ | grep j00zek-UserSkin-`
 if [ -f /usr/lib/enigma2/python/Plugins/Extensions/UserSkin/$version ];then
