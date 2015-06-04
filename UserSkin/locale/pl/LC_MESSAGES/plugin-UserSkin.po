@@ -30,8 +30,8 @@ msgstr "Anuluj"
 msgid "Celsius"
 msgstr "Celcjusz"
 
-msgid "Don't save settings?"
-msgstr "Nie zapisywać ustawień?"
+msgid "Save settings?"
+msgstr "Zapisać ustawienia?"
 
 msgid "Enable skin personalization:"
 msgstr "Aktywuj personalizację skórki:"

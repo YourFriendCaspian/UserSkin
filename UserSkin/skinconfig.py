@@ -255,7 +255,7 @@ class UserSkin_Config(Screen, ConfigListScreen):
 
     def cancel(self):
         if self["config"].isChanged():
-            self.session.openWithCallback(self.cancelConfirm, MessageBox, _("Don't save settings?"), MessageBox.TYPE_YESNO, default = False)
+            self.session.openWithCallback(self.cancelConfirm, MessageBox, _("Save settings?"), MessageBox.TYPE_YESNO, default = False)
         else:
             for x in self["config"].list:
                 x[1].cancel()
