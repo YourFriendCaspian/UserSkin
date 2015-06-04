@@ -208,5 +208,8 @@ msgstr "Rozpakowywanie "
 msgid "\nScript finished\nUse up/down arrows to scroll text. OK closes window"
 msgstr "\nSkrypt zakończony\nUżyj strzałek góra/dół do przewinięcia tekstu. Klawisz OK zamyka okno."
 
+msgid "Modyfing "
+msgstr "Modyfikuję "
+
 #msgid ""
 #msgstr ""
