@@ -3,7 +3,7 @@
 #$2 = sciezka do aktualnej skorki
 
 . $2/skin.config
-[[ ! $addons =~ '/'$ ]] && addons="$addons/"
+addons="$addons//"
 addon=$1
 
 echo "_(Downloading )$addon..."
