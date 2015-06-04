@@ -16,6 +16,7 @@ curl --help 1>/dev/null 2>%1
 if [ $? -gt 0 ]; then
   echo "_(Required program 'curl' is not installed. Trying to install it via OPKG.)"
   echo
+  opkg update  1>/dev/null 2>%1
   opkg install curl
   sync
   curl --help 1>/dev/null 2>%1
@@ -61,8 +62,12 @@ if [ -f /etc/opkg/vusolo2-feed.conf ]; then
   vtiOPKGversion=`grep vti/201 </etc/opkg/vusolo2-feed.conf | sed 's;^.*vti/\(201.\).*$;\1;'`
   if [ $vtiOPKGversion -lt 2015 ] && [ -f $skinpath/Make-4VTI-81.sh ]; then
     echo "_(VTI8.0.x detected, patching skin)..."
-    curl -s --ftp-pasv $skinurl.Make-4VTI-81.sh -o $skinpath/Make-4VTI-81.sh
-    chmod 755 $skinpath/Make-4VTI-81.sh
-    $skinpath/Make-4VTI-81.sh
+    curl -s --ftp-pasv $skinurl.Make-4VTI-81.sh -o /tmp/Make-4VTI-81.sh
+    if [ $? -eq 0 ]; then
+      chmod 755 /tmp/Make-4VTI-81.sh
+      /tmp/Make-4VTI-81.sh
+    else
+      $skinpath/Make-4VTI-81.sh
+    fi
   fi
 fi

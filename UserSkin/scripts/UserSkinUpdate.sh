@@ -17,7 +17,7 @@ if [ $? -gt 0 ]; then
 fi
 
 echo "_(Checking installation mode)..."
-if `opkg list-installed 2>/dev/null | tr '[:upper:]' '[:lower:]'| egrep -q 'userskin'`;then
+if `opkg list-installed 2>/dev/null | tr '[:upper:]' '[:lower:]'| grep -q 'userskin'`;then
   echo "_(UserSkin controlled by OPKG. Please use it for updates.)"
   exit 0
 fi
