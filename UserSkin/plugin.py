@@ -89,10 +89,12 @@ class UserSkin_Menu(Screen):
 
         def buildListEntry(self, description, image, optionname):
                 try:
-                        pixmap = LoadPixmap(SkinPath + "UserSkinpics/" + image)
+                        printDEBUG("Trying to load %sUserSkinpics/%s" % (SkinPath,image))
+                        pixmap = LoadPixmap("%sUserSkinpics/%s" % (SkinPath,image))
                 except:
                         pixmap = None
                 if pixmap == None:
+                        printDEBUG("%spic/%s" % (PluginPath, image))
                         pixmap = LoadPixmap(cached=True, path="%spic/%s" % (PluginPath, image));
                 return((pixmap, description, optionname))
 

@@ -640,7 +640,11 @@ class UserSkinScreens(Screen):
         #self.screen_dir = "allScreens"
         self.allScreens_dir = "allScreens"
         self.file_dir = "UserSkin_Selections"
-        self.enabled_pic = LoadPixmap(cached=True, path=resolveFilename(SCOPE_PLUGINS, "Extensions/UserSkin/pic/install.png"))
+        if path.exists("%sUserSkinpics/install.png" % SkinPath):
+            printDEBUG("SkinConfig is loading %sUserSkinpics/install.png" % SkinPath)
+            self.enabled_pic = LoadPixmap(cached=True, path="%sUserSkinpics/install.png" % SkinPath)
+        else:
+            self.enabled_pic = LoadPixmap(cached=True, path=resolveFilename(SCOPE_PLUGINS, "Extensions/UserSkin/pic/install.png"))
         #check if we have preview files
         isPreview=0
         for xpreview in listdir(self.skin_base_dir + "allPreviews/"):
@@ -650,10 +654,18 @@ class UserSkinScreens(Screen):
                 break
         if self.currentSkin == "infinityHD-nbox-tux-full" and isPreview < 2:
             printDEBUG("no preview files :(")
-            self.disabled_pic = LoadPixmap(cached=True, path=resolveFilename(SCOPE_PLUGINS, "Extensions/UserSkin/pic/opkg.png"))
+            if path.exists("%sUserSkinpics/install.png" % SkinPath):
+                printDEBUG("SkinConfig is loading %sUserSkinpics/opkg.png" % SkinPath)
+                self.disabled_pic = LoadPixmap(cached=True, path="%sUserSkinpics/opkg.png" % SkinPath)
+            else:
+                self.disabled_pic = LoadPixmap(cached=True, path=resolveFilename(SCOPE_PLUGINS, "Extensions/UserSkin/pic/opkg.png"))
             self['key_blue'].setText(_('Install from OPKG'))
         else:
-            self.disabled_pic = LoadPixmap(cached=True, path=resolveFilename(SCOPE_PLUGINS, "Extensions/UserSkin/pic/remove.png"))
+            if path.exists("%sUserSkinpics/install.png" % SkinPath):
+                printDEBUG("SkinConfig is loading %sUserSkinpics/remove.png" % SkinPath)
+                self.disabled_pic = LoadPixmap(cached=True, path="%sUserSkinpics/remove.png" % SkinPath)
+            else:
+                self.disabled_pic = LoadPixmap(cached=True, path=resolveFilename(SCOPE_PLUGINS, "Extensions/UserSkin/pic/remove.png"))
         
         if not self.selectionChanged in self["menu"].onSelectionChanged:
             self["menu"].onSelectionChanged.append(self.selectionChanged)
