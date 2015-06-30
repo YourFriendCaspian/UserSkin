@@ -48,7 +48,7 @@ def main(session, **kwargs):
 
 class UserSkin_Menu(Screen):
         skin = """
-<screen position="center,center" size="560,260">
+<screen position="center,center" size="560,280">
         <widget source="list" render="Listbox" position="0,0" size="560,360" scrollbarMode="showOnDemand">
                 <convert type="TemplatedMultiContent">
                         {"template": [
@@ -83,6 +83,7 @@ class UserSkin_Menu(Screen):
                     (self.buildListEntry(_("Delete addons"), "remove.png",'delete_addons')),
                     (self.buildListEntry(_("Update main skin"), "download.png",'getskin')),
                     (self.buildListEntry(_("Update plugin"), "download.png",'getplugin')),
+                    (self.buildListEntry(_("History of changes"), "history.png",'history')),
                     (self.buildListEntry(_("About"), "about.png",'about')),
                 ]
                 self["list"].list = l
@@ -139,6 +140,10 @@ class UserSkin_Menu(Screen):
                         self.session.openWithCallback(self.refresh, UserSkinconsole, title = _("Updating plugin"), cmdlist = [ '%sscripts/UserSkinUpdate.sh' % PluginPath ])
                     return
                 self.session.openWithCallback(goUpdate, MessageBox,_("Do you want to update plugin?"),  type = MessageBox.TYPE_YESNO, timeout = 10, default = False)
+                return
+            elif selected == 'history':
+                from translatedconsole import UserSkinconsole
+                self.session.openWithCallback(self.refresh, UserSkinconsole, title = _("History of changes"), cmdlist = [ '%sscripts/SkinHistory.sh %s' % (PluginPath,SkinPath) ])
                 return
 
         def quit(self):

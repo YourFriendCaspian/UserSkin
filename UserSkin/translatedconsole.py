@@ -92,7 +92,7 @@ class UserSkinconsole(Screen):
         else:
             #lastpage = self["text"].isAtLastPage()
             str = self["text"].getText()
-            str += _("\nScript finished\nUse up/down arrows to scroll text. OK closes window");
+            str += _("\nUse up/down arrows to scroll text. OK closes window");
             self["text"].setText(str)
             #if lastpage:
             self["text"].lastPage()

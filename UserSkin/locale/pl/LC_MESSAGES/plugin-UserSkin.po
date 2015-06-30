@@ -208,8 +208,20 @@ msgstr "Rozpakowywanie "
 msgid "\nScript finished\nUse up/down arrows to scroll text. OK closes window"
 msgstr "\nSkrypt zakończony\nUżyj strzałek góra/dół do przewinięcia tekstu. Klawisz OK zamyka okno."
 
+msgid "\nUse up/down arrows to scroll text. OK closes window"
+msgstr "\nUżyj strzałek góra/dół do przewinięcia tekstu. Klawisz OK zamyka okno."
+
 msgid "Modyfing "
 msgstr "Modyfikuję "
+
+msgid "This skin does not have the history of changes."
+msgstr "Ta skorka nie posiada historii zmian."
+
+msgid "Error downloading the history of changes"
+msgstr "Blad pobierania hiistorii zmian."
+
+msgid "History of changes"
+msgstr "Historia zmian"
 
 #msgid ""
 #msgstr ""
