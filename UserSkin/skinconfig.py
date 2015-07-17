@@ -120,6 +120,7 @@ class UserSkin_Config(Screen, ConfigListScreen):
         self.defaultOption = "default"
         self.defaults = (self.defaultOption, _("Default"))
         self.color_file = "skin_user_colors.xml"
+        self.windowstyle_file = "skin_user_windows.xml"
         self.user_font_file = "skin_user_header.xml"
         self.user_bar_link = 'skin_user_bar'
         
@@ -141,6 +142,15 @@ class UserSkin_Config(Screen, ConfigListScreen):
                 
             if not path.exists(self.skin_base_dir + "allColors/"):
                 mkdir(self.skin_base_dir + "allColors/")
+            #WINDOWS
+            if path.exists(self.skin_base_dir + self.color_file):
+                self.default_windowstyle_file = path.basename(path.realpath(self.skin_base_dir + self.windowstyle_file))
+                printDEBUG("self.default_windowstyle_file = " + self.default_windowstyle_file )
+            else:
+                self.default_windowstyle_file = self.defaultOption
+                
+            if not path.exists(self.skin_base_dir + "allWindows/"):
+                mkdir(self.skin_base_dir + "allWindows/")
             #PREVIEW
             if not path.exists(self.skin_base_dir + "allPreviews"):
                 mkdir(self.skin_base_dir + "allPreviews/")
@@ -169,6 +179,7 @@ class UserSkin_Config(Screen, ConfigListScreen):
                     rename("mySkin_off", "UserSkin_Selections")
 
         current_color = self.getCurrentColor()[0]
+        current_windowstyle = self.getCurrentWindowstyle()[0]
         current_font = self.getCurrentFont()[0]
         current_bar = self.getCurrentBar()[0]
         myUserSkin_active = self.getmySkinState()
@@ -176,6 +187,7 @@ class UserSkin_Config(Screen, ConfigListScreen):
         self.myTuner = HardwareInfo().get_device_name()
         self.myUserSkin_font = NoSave(ConfigSelection(default=current_font, choices = self.getPossibleFont()))
         self.myUserSkin_style = NoSave(ConfigSelection(default=current_color, choices = self.getPossibleColor()))
+        self.myUserSkin_windowstyle = NoSave(ConfigSelection(default=current_windowstyle, choices = self.getPossibleWindowstyle()))
         self.myUserSkin_bar = NoSave(ConfigSelection(default=current_bar, choices = self.getPossibleBars()))
         
         self.myUserSkin_fake_entry = NoSave(ConfigNothing())
@@ -208,12 +220,14 @@ class UserSkin_Config(Screen, ConfigListScreen):
         
     def createConfigList(self):
         self.set_bar = getConfigListEntry(_("Selector bar style:"), self.myUserSkin_bar)
-        self.set_color = getConfigListEntry(_("Style:"), self.myUserSkin_style)
+        self.set_color = getConfigListEntry(_("Colors:"), self.myUserSkin_style)
+        self.set_windowstyle = getConfigListEntry(_("Window style:"), self.myUserSkin_windowstyle)
         self.set_font = getConfigListEntry(_("Font:"), self.myUserSkin_font)
         self.set_myatile = getConfigListEntry(_("Enable skin personalization:"), self.myUserSkin_active)
         self.list = []
         self.list.append(self.set_myatile)
         self.list.append(self.set_color)
+        self.list.append(self.set_windowstyle)
         self.list.append(self.set_font)
         self.list.append(self.set_bar)
         if not self.currentSkin.endswith('BlackHarmony'):
@@ -233,6 +247,8 @@ class UserSkin_Config(Screen, ConfigListScreen):
         printDEBUG("[UserSkin:changedEntry]")
         if self["config"].getCurrent() == self.set_color:
             self.setPicture(self.myUserSkin_style.value)
+        elif self["config"].getCurrent() == self.set_windowstyle:
+            self.setPicture(self.myUserSkin_windowstyle.value)
         elif self["config"].getCurrent() == self.set_font:
             self.setPicture(self.myUserSkin_font.value)
         elif self["config"].getCurrent() == self.set_bar:
@@ -246,6 +262,8 @@ class UserSkin_Config(Screen, ConfigListScreen):
     def selectionChanged(self):
         if self["config"].getCurrent() == self.set_color:
             self.setPicture(self.myUserSkin_style.value)
+        elif self["config"].getCurrent() == self.set_windowstyle:
+            self.setPicture(self.myUserSkin_windowstyle.value)
         elif self["config"].getCurrent() == self.set_font:
             self.setPicture(self.myUserSkin_font.value)
         elif self["config"].getCurrent() == self.set_bar:
@@ -296,6 +314,29 @@ class UserSkin_Config(Screen, ConfigListScreen):
 
         return color_list
 
+    def getPossibleWindowstyle(self):
+        windowstyle_list = []
+        windowstyle_list.append(self.defaults)
+        
+        if not path.exists(self.skin_base_dir + "allWindows/"):
+            return windowstyle_list
+        
+        for f in sorted(listdir(self.skin_base_dir + "allWindows/"), key=str.lower):
+            if f.endswith('.xml') and f.startswith('windows_'):
+                friendly_name = f.replace("windows_atile_", "").replace("windows_", "")
+                friendly_name = friendly_name.replace(".xml", "")
+                friendly_name = friendly_name.replace("_", " ")
+                windowstyle_list.append((f, friendly_name))
+        
+        for f in sorted(listdir(self.skin_base_dir), key=str.lower):
+            if f.endswith('.xml') and f.startswith('windows_'):
+                friendly_name = f.replace("windows_atile_", "").replace("windows_", "")
+                friendly_name = friendly_name.replace(".xml", "")
+                friendly_name = friendly_name.replace("_", " ")
+                windowstyle_list.append((f, friendly_name))
+
+        return windowstyle_list		
+
     def getPossibleFont(self):
         font_list = []
         font_list.append(self.defaults)
@@ -343,6 +384,23 @@ class UserSkin_Config(Screen, ConfigListScreen):
         friendly_name = friendly_name.replace("_", " ")
         return (filename, friendly_name)
 
+    def getCurrentWindowstyle(self):
+        myfile = self.skin_base_dir + self.windowstyle_file
+        if not path.exists(myfile):
+            if path.exists(self.skin_base_dir + "allWindows/" + self.default_windowstyle_file):
+                if path.islink(myfile):
+                    remove(myfile)
+                chdir(self.skin_base_dir)
+                symlink("allWindows/" + self.default_windowstyle_file, self.windowstyle_file)
+            else:
+                return (self.default_windowstyle_file, self.default_windowstyle_file)
+        filename = path.realpath(myfile)
+        filename = path.basename(filename)
+        friendly_name = filename.replace("windows_atile_", "").replace("windows_", "")
+        friendly_name = friendly_name.replace(".xml", "")
+        friendly_name = friendly_name.replace("_", " ")
+        return (filename, friendly_name)
+		
     def getCurrentFont(self):
         myfile = self.skin_base_dir + self.user_font_file
         if not path.exists(myfile):
@@ -390,6 +448,7 @@ class UserSkin_Config(Screen, ConfigListScreen):
         if self["config"].isChanged() or self.updateEntries == True:
             printDEBUG("[UserSkin:keyOk] self.myUserSkin_font.value=" + self.myUserSkin_font.value)
             printDEBUG("[UserSkin:keyOk] self.myUserSkin_style.value=" + self.myUserSkin_style.value)
+            printDEBUG("[UserSkin:keyOk] self.myUserSkin_windowstyle.value=" + self.myUserSkin_windowstyle.value)
             printDEBUG("[UserSkin:keyOk] self.myUserSkin_bar.value=" + self.myUserSkin_bar.value)
             for x in self["config"].list:
                 x[1].save()
@@ -410,6 +469,13 @@ class UserSkin_Config(Screen, ConfigListScreen):
                 remove(self.color_file)
             if path.exists("allColors/" + self.myUserSkin_style.value):
                 symlink("allColors/" + self.myUserSkin_style.value, self.color_file)
+            #WINDOWS
+            if path.exists(self.windowstyle_file):
+                remove(self.windowstyle_file)
+            elif path.islink(self.windowstyle_file):
+                remove(self.windowstyle_file)
+            if path.exists("allWindows/" + self.myUserSkin_windowstyle.value):
+                symlink("allWindows/" + self.myUserSkin_windowstyle.value, self.windowstyle_file)
             #SELECTOR
             if path.exists(self.user_bar_link):
                 remove(self.user_bar_link)
@@ -483,6 +549,8 @@ class UserSkin_Config(Screen, ConfigListScreen):
                 user_skin = user_skin + self.readXMLfile(self.skin_base_dir + 'skin_user_header.xml' , 'fonts')
             if path.exists(self.skin_base_dir + 'skin_user_colors.xml'):
                 user_skin = user_skin + self.readXMLfile(self.skin_base_dir + 'skin_user_colors.xml' , 'ALLSECTIONS')
+            if path.exists(self.skin_base_dir + 'skin_user_windows.xml'):
+                user_skin = user_skin + self.readXMLfile(self.skin_base_dir + 'skin_user_windows.xml' , 'ALLSECTIONS')
             if path.exists(self.skin_base_dir + 'mySkin'):
                 for f in listdir(self.skin_base_dir + "mySkin/"):
                     user_skin = user_skin + self.readXMLfile(self.skin_base_dir + "mySkin/" + f, 'screen')
