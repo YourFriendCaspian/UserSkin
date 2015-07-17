@@ -120,7 +120,7 @@ class UserSkin_Config(Screen, ConfigListScreen):
         self.defaultOption = "default"
         self.defaults = (self.defaultOption, _("Default"))
         self.color_file = "skin_user_colors.xml"
-        self.windowstyle_file = "skin_user_windows.xml"
+        self.windowstyle_file = "skin_user_window.xml"
         self.user_font_file = "skin_user_header.xml"
         self.user_bar_link = 'skin_user_bar'
         
@@ -322,15 +322,15 @@ class UserSkin_Config(Screen, ConfigListScreen):
             return windowstyle_list
         
         for f in sorted(listdir(self.skin_base_dir + "allWindows/"), key=str.lower):
-            if f.endswith('.xml') and f.startswith('windows_'):
-                friendly_name = f.replace("windows_atile_", "").replace("windows_", "")
+            if f.endswith('.xml') and f.startswith('window_'):
+                friendly_name = f.replace("window_atile_", "").replace("window_", "")
                 friendly_name = friendly_name.replace(".xml", "")
                 friendly_name = friendly_name.replace("_", " ")
                 windowstyle_list.append((f, friendly_name))
         
         for f in sorted(listdir(self.skin_base_dir), key=str.lower):
-            if f.endswith('.xml') and f.startswith('windows_'):
-                friendly_name = f.replace("windows_atile_", "").replace("windows_", "")
+            if f.endswith('.xml') and f.startswith('window_'):
+                friendly_name = f.replace("window_atile_", "").replace("window_", "")
                 friendly_name = friendly_name.replace(".xml", "")
                 friendly_name = friendly_name.replace("_", " ")
                 windowstyle_list.append((f, friendly_name))
@@ -396,7 +396,7 @@ class UserSkin_Config(Screen, ConfigListScreen):
                 return (self.default_windowstyle_file, self.default_windowstyle_file)
         filename = path.realpath(myfile)
         filename = path.basename(filename)
-        friendly_name = filename.replace("windows_atile_", "").replace("windows_", "")
+        friendly_name = filename.replace("window_atile_", "").replace("window_", "")
         friendly_name = friendly_name.replace(".xml", "")
         friendly_name = friendly_name.replace("_", " ")
         return (filename, friendly_name)
@@ -549,8 +549,8 @@ class UserSkin_Config(Screen, ConfigListScreen):
                 user_skin = user_skin + self.readXMLfile(self.skin_base_dir + 'skin_user_header.xml' , 'fonts')
             if path.exists(self.skin_base_dir + 'skin_user_colors.xml'):
                 user_skin = user_skin + self.readXMLfile(self.skin_base_dir + 'skin_user_colors.xml' , 'ALLSECTIONS')
-            if path.exists(self.skin_base_dir + 'skin_user_windows.xml'):
-                user_skin = user_skin + self.readXMLfile(self.skin_base_dir + 'skin_user_windows.xml' , 'ALLSECTIONS')
+            if path.exists(self.skin_base_dir + 'skin_user_window.xml'):
+                user_skin = user_skin + self.readXMLfile(self.skin_base_dir + 'skin_user_window.xml' , 'ALLSECTIONS')
             if path.exists(self.skin_base_dir + 'mySkin'):
                 for f in listdir(self.skin_base_dir + "mySkin/"):
                     user_skin = user_skin + self.readXMLfile(self.skin_base_dir + "mySkin/" + f, 'screen')
