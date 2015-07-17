@@ -5,9 +5,13 @@ The schema of folders is:
 			type: subfolder with name schema: <optionname>.<folder where graphics have to be copied>
 			sobfolders contain png graphics in the same size and dimension skin author desinged.
 
-=>allColors: contains colors and windowstyle definitions (<colors>...</colors>)
+=>allColors: contains colors definitions (<colors>...</colors>)
 			type: xml, with same schema normal skin.xml file uses
 			name: colors_<skinName>_<anything without spaces>.xml
+
+=>allWindows: contains windowstyle definitions (<windowstyle...</windowstyle>)
+			type: xml, with same schema normal skin.xml file uses
+			name: windows_<skinName>_<anything without spaces>.xml
 			
 =>allFonts: contains fonts definition (<fonts>...</fonts>)
 			type: xml, with same schema normal skin.xml file uses
