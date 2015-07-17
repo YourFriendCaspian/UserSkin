@@ -11,7 +11,7 @@ The schema of folders is:
 
 =>allWindows: contains windowstyle definitions (<windowstyle...</windowstyle>)
 			type: xml, with same schema normal skin.xml file uses
-			name: windows_<skinName>_<anything without spaces>.xml
+			name: window_<skinName>_<anything without spaces>.xml
 			
 =>allFonts: contains fonts definition (<fonts>...</fonts>)
 			type: xml, with same schema normal skin.xml file uses
