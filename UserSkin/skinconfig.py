@@ -59,17 +59,17 @@ config.plugins.UserSkin.tempUnit = ConfigSelection(default="Celsius", choices = 
                 ])
 config.plugins.UserSkin.PIG_active = ConfigYesNo(default=True)
         
-def Plugins(**kwargs):
-    return [PluginDescriptor(name=_("UserSkin Setup"), description=_("Personalize your Skin"), where = PluginDescriptor.WHERE_MENU, icon="plugin.png", fnc=menu)]
+#def Plugins(**kwargs):
+#    return [PluginDescriptor(name=_("UserSkin Setup"), description=_("Personalize your Skin"), where = PluginDescriptor.WHERE_MENU, icon="plugin.png", fnc=menu)]
 
-def menu(menuid, **kwargs):
-    if menuid == "vtimain" or menuid == "system":
-        return [(_("Setup - UserSkin"), main, "UserSkin_setup", 40)]
-    return []
+#def menu(menuid, **kwargs):
+#    if menuid == "vtimain" or menuid == "system":
+#        return [(_("Setup - UserSkin"), main, "UserSkin_setup", 40)]
+#    return []
 
-def main(session, **kwargs):
-    printDEBUG("Opening config ...")
-    session.open(UserSkin_Config)
+#def main(session, **kwargs):
+#    printDEBUG("Opening config ...")
+#    session.open(UserSkin_Config)
 
 class UserSkin_Config(Screen, ConfigListScreen):
     skin = """
@@ -753,7 +753,7 @@ class UserSkinScreens(Screen):
         print "> self.selectionChanged"
         sel = self["menu"].getCurrent()
         self.setPicture(sel[0])
-        print sel
+        #print sel
         if sel[3] == self.enabled_pic:
             self["key_green"].setText(_("Edit"))
             self.EditScreen = True
@@ -843,6 +843,6 @@ class UserSkinScreens(Screen):
     def keyGreen(self):
         if self.EditScreen == True:
             from editscreens import EditScreens
-            self.session.openWithCallback(self.runMenuEntry,EditScreens)
+            self.session.openWithCallback(self.runMenuEntry,EditScreens, ScreenFile = self.skin_base_dir + self["menu"].getCurrent()[0])
         else:
             print "Nothing to Edit :("

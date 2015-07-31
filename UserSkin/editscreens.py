@@ -75,10 +75,14 @@ class EditScreens(Screen):
   </screen>
 """
 
-    def __init__(self, session):
+    def __init__(self, session, ScreenFile = ''):
         Screen.__init__(self, session)
         self.session = session
         self.EditScreen = False
+        self.ScreenFile = ScreenFile
+        if self.ScreenFile == '':
+            self.close()
+        print self.ScreenFile
         
         myTitle=_("UserSkin %s - EditScreens") %  UserSkinInfo
         self.setTitle(myTitle)
