@@ -252,8 +252,5 @@ class EditScreens(Screen):
         self.createWidgetsList()
 
     def keyGreen(self):
-        if self.EditScreen == True:
-            print "Init EditScreen :)"
-        else:
-            print "Nothing to Edit :("
-
+        #### here code to update screen
+        self.close()
