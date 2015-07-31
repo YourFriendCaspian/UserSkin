@@ -606,6 +606,7 @@ class UserSkinScreens(Screen):
     def __init__(self, session):
         Screen.__init__(self, session)
         self.session = session
+        self.EditScreen = False
         
         myTitle=_("UserSkin %s - additional screens") %  UserSkinInfo
         self.setTitle(myTitle)
@@ -615,7 +616,7 @@ class UserSkinScreens(Screen):
             pass
         
         self["key_red"] = StaticText(_("Exit"))
-        self["key_green"] = StaticText(_("on"))
+        self["key_green"] = StaticText("")
         self["key_blue"] = Label()
         self['key_blue'].setText('')
         
@@ -629,7 +630,7 @@ class UserSkinScreens(Screen):
             "ok": self.runMenuEntry,
             "cancel": self.keyCancel,
             "red": self.keyCancel,
-            "green": self.runMenuEntry,
+            "green": self.keyGreen,
             "blue": self.keyBlue,
         }, -2)
         
@@ -681,12 +682,16 @@ class UserSkinScreens(Screen):
         return
      
     def selectionChanged(self):
+        print "> self.selectionChanged"
         sel = self["menu"].getCurrent()
         self.setPicture(sel[0])
-        if sel[2] == self.enabled_pic:
-            self["key_green"].setText(_("off"))
-        elif sel[2] == self.disabled_pic:
-            self["key_green"].setText(_("on"))
+        print sel
+        if sel[3] == self.enabled_pic:
+            self["key_green"].setText(_("Edit"))
+            self.EditScreen = True
+        elif sel[3] == self.disabled_pic:
+            self["key_green"].setText("")
+            self.EditScreen = False
 
     def createMenuList(self):
         chdir(self.skin_base_dir)
@@ -718,8 +723,14 @@ class UserSkinScreens(Screen):
             f_list.append(("dummy", _("No User skins found"), '', self.disabled_pic))
         for entry in f_list:
             menu_list.append((entry[0], entry[1], entry[2], entry[3]))
-        print menu_list
-        self["menu"].updateList(menu_list)
+        #print menu_list
+        try:
+          self["menu"].UpdateList(menu_list)
+        except:
+          print "Update asser error :(" #workarround to have it working on openpliPC
+          myIndex=self["menu"].getIndex() #as an effect, index is cleared so we need to store it first
+          self["menu"].setList(menu_list)
+          self["menu"].setIndex(myIndex) #and restore
         self.selectionChanged()
         
     def getInfo(self, f):#currLang
@@ -759,3 +770,10 @@ class UserSkinScreens(Screen):
         elif sel[3] == self.disabled_pic:
             symlink(self.skin_base_dir + self.allScreens_dir + "/" + sel[0], self.skin_base_dir + self.file_dir + "/" + sel[0])
         self.createMenuList()
+
+    def keyGreen(self):
+        if self.EditScreen == True:
+            print "Init EditScreen :)"
+        else:
+            print "Nothing to Edit :("
+
