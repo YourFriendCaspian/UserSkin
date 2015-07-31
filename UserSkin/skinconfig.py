@@ -808,7 +808,8 @@ class UserSkinScreens(Screen):
         elif path.exists(self.skin_base_dir + "allInfos/info_en_" + info):
             myInfoFile=self.skin_base_dir + "allInfos/info_en_" + info
         else:
-            return 'No Info'
+            #return 'No Info'
+            return ''
         
         #with open("/proc/sys/vm/drop_caches", "w") as f: f.write("1\n")
         info = open(myInfoFile, 'r').read().strip()
@@ -841,7 +842,7 @@ class UserSkinScreens(Screen):
 
     def keyGreen(self):
         if self.EditScreen == True:
-            print "Init EditScreen :)"
+            from editscreens import EditScreens
+            self.session.openWithCallback(self.runMenuEntry,EditScreens)
         else:
             print "Nothing to Edit :("
-
