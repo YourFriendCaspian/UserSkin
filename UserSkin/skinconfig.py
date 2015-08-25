@@ -26,6 +26,7 @@ from Components.Sources.List import List
 from Components.Sources.StaticText import StaticText
 from enigma import ePicLoad
 from Plugins.Plugin import PluginDescriptor
+from Screens.ChoiceBox import ChoiceBox
 from Screens.MessageBox import MessageBox
 from Screens.Screen import Screen
 from Screens.Standby import TryQuitMainloop
@@ -667,7 +668,7 @@ class UserSkinScreens(Screen):
     <widget name="Picture" position="808,342" size="400,225" alphatest="on" />
     <widget source="key_red" render="Label" position="70,635" size="260,25" zPosition="1" font="Regular;20" halign="left" foregroundColor="#00ffffff" backgroundColor="#20b81c46" transparent="1" />
     <widget source="key_green" render="Label" position="365,635" size="260,25" zPosition="1" font="Regular;20" halign="left" foregroundColor="#00ffffff" backgroundColor="#20009f3c" transparent="1" />
-    <widget name="key_blue" position="950,635" zPosition="1" size="260,25" valign="center" halign="left" font="Regular;20" transparent="1" foregroundColor="#00ffffff" />
+    <widget source="key_blue" render="Label" position="950,635" size="260,25" zPosition="1" font="Regular;20" halign="left" foregroundColor="#00ffffff" transparent="1" />
   </screen>
 """
 
@@ -685,13 +686,18 @@ class UserSkinScreens(Screen):
         
         self["key_red"] = StaticText(_("Exit"))
         self["key_green"] = StaticText("")
-        self["key_blue"] = Label()
-        self['key_blue'].setText('')
+        self["key_blue"] = StaticText(_("Settings"))
         
         self["Picture"] = Pixmap()
         
         menu_list = []
         self["menu"] = List(menu_list)
+        
+        self.allScreensGroups = [(_("All skins"), "_"),
+        (_("ChannelList skins"), "channelselection"),
+        (_("Infobar skins"), "infobar"),
+        ]
+        self.allScreensGroup = self.allScreensGroups[0][1]
         
         self["shortcuts"] = ActionMap(["SetupActions", "ColorActions", "DirectionActions"],
         {
@@ -743,9 +749,17 @@ class UserSkinScreens(Screen):
 
     def keyBlue(self):
             #self.session.openWithCallback(self.endrun , MessageBox,_("To see previews install enigma2-skin-infinityhd-nbox-tux-full-preview package"), type = MessageBox.TYPE_INFO)
-            self.session.open(MessageBox,_("To see previews install package:\nenigma2-skin-infinityhd-nbox-tux-full-preview"), type = MessageBox.TYPE_INFO)
+            #self.session.open(MessageBox,_("To see previews install package:\nenigma2-skin-infinityhd-nbox-tux-full-preview"), type = MessageBox.TYPE_INFO)
+            self.session.openWithCallback(self.keyBlueEnd, ChoiceBox, title = _("Display..."), list = self.allScreensGroups)
             return
 
+    def keyBlueEnd(self, ret):
+        if ret:
+            self.allScreensGroup = ret[1]
+        else:
+            self.allScreensGroup = '_'
+        self.createMenuList()
+        
     def endrun(self):
         return
      
@@ -771,7 +785,7 @@ class UserSkinScreens(Screen):
                 if config.plugins.UserSkin.PIG_active.value == False:
                     if f.find('PIG') > 0 or f.find('PiG') > 0  or f.find('Pig') > 0 or f.lower().find('_pig') > 0:
                         continue
-                if f.endswith('.xml') and f.startswith('skin_'):
+                if f.endswith('.xml') and f.startswith('skin_') and f.lower().find(self.allScreensGroup) > 0:
                     friendly_name = f.replace("skin_", "")
                     friendly_name = friendly_name.replace(".xml", "")
                     friendly_name = friendly_name.replace("_", " ")
