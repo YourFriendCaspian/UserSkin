@@ -12,6 +12,7 @@ from Components.Sources.List import List
 from Components.Sources.StaticText import StaticText
 from enigma import ePicLoad
 from Plugins.Plugin import PluginDescriptor
+from Screens.ChoiceBox import ChoiceBox
 from Screens.MessageBox import MessageBox
 from Screens.Screen import Screen
 from Screens.Standby import TryQuitMainloop
@@ -23,6 +24,8 @@ from Tools import Notifications
 from os import listdir, remove, rename, system, path, symlink, chdir, rmdir, mkdir
 import shutil
 import re
+#import xml.etree.cElementTree as ET
+from xml.etree import ElementTree #for comments
 #Translations part
 from Components.Language import language
 currLang = language.getLanguage()[:2] #used for descriptions keep GUI language in 'pl|en' format
@@ -34,6 +37,16 @@ except:
     printDEBUG('LanguageGOS not detected, using local _')
     import gettext
     from translate import _
+
+class CommentedTreeBuilder ( ElementTree.XMLTreeBuilder ):
+    def __init__ ( self, html = 0, target = None ):
+        ElementTree.XMLTreeBuilder.__init__( self, html, target )
+        self._parser.CommentHandler = self.handle_comment
+    
+    def handle_comment ( self, data ):
+        self._target.start( ElementTree.Comment, {} )
+        self._target.data( data )
+        self._target.end( ElementTree.Comment )
 
 class EditScreens(Screen):
     skin = """
@@ -70,7 +83,7 @@ class EditScreens(Screen):
     <widget name="Picture" position="808,342" size="400,225" alphatest="on" />
     <widget source="key_red" render="Label" position="70,635" size="260,25" zPosition="1" font="Regular;20" halign="left" foregroundColor="#00ffffff" backgroundColor="#20b81c46" transparent="1" />
     <widget source="key_green" render="Label" position="365,635" size="260,25" zPosition="1" font="Regular;20" halign="left" foregroundColor="#00ffffff" backgroundColor="#20009f3c" transparent="1" />
-    <widget source="key_yellow" render="Label" position="625,635" size="260,25" zPosition="1" font="Regular;20" halign="left" foregroundColor="#00ffffff" backgroundColor="#20009f3c" transparent="1" />
+    <widget source="key_yellow" render="Label" position="655,635" size="260,25" zPosition="1" font="Regular;20" halign="left" foregroundColor="#00ffffff" backgroundColor="#20009f3c" transparent="1" />
     <widget source="key_blue" render="Label" position="950,635" zPosition="1" size="260,25" valign="center" halign="left" font="Regular;20" transparent="1" foregroundColor="#00ffffff" />
   </screen>
 """
@@ -80,7 +93,7 @@ class EditScreens(Screen):
         self.session = session
         self.EditScreen = False
         self.ScreenFile = ScreenFile
-        if self.ScreenFile == '':
+        if self.ScreenFile == '' or path.exists(self.ScreenFile) == False:
             self.close()
         print self.ScreenFile
         
@@ -92,9 +105,9 @@ class EditScreens(Screen):
             pass
         
         self["key_red"] = StaticText(_("Exit"))
-        self["key_green"] = StaticText("Save")
-        self["key_yellow"] = StaticText("Enable/Disable")
-        self['key_blue'] = StaticText('Add widget')
+        self["key_green"] = StaticText("")
+        self["key_yellow"] = StaticText("")
+        self['key_blue'] = StaticText(_('Actions'))
         
         self["Picture"] = Pixmap()
         
@@ -104,8 +117,8 @@ class EditScreens(Screen):
         self["shortcuts"] = ActionMap(["SetupActions", "ColorActions", "DirectionActions"],
         {
             "ok": self.runMenuEntry,
-            "cancel": self.keyCancel,
-            "red": self.keyCancel,
+            "cancel": self.keyExit,
+            "red": self.keyExit,
             "green": self.keyGreen,
             "blue": self.keyBlue,
         }, -2)
@@ -138,12 +151,23 @@ class EditScreens(Screen):
         if not self.selectionChanged in self["menu"].onSelectionChanged:
             self["menu"].onSelectionChanged.append(self.selectionChanged)
         
-        self.onLayoutFinish.append(self.createWidgetsList)
+        self.onLayoutFinish.append(self.LayoutFinished)
 
+    def LayoutFinished(self):
+        #self.parser = PCParser()
+        self.myCommentedScreen = ElementTree.parse(self.ScreenFile, parser = CommentedTreeBuilder())
+        ElementTree.dump( self.myCommentedScreen )
+        #for child in self.root:
+        #    print(child.tag, child.attrib)
+            
+        self.createWidgetsList()
+      
     def keyBlue(self):
-            #self.session.openWithCallback(self.endrun , MessageBox,_("To see previews install enigma2-skin-infinityhd-nbox-tux-full-preview package"), type = MessageBox.TYPE_INFO)
-            self.session.open(MessageBox,_("To see previews install package:\nenigma2-skin-infinityhd-nbox-tux-full-preview"), type = MessageBox.TYPE_INFO)
-            return
+            if path.exists("%sallWidgets/" % SkinPath):
+              self.session.openWithCallback(self.createWidgetsList(),MessageBox,_("Option not yet available ;)"), type = MessageBox.TYPE_INFO)
+            else:
+              self.session.openWithCallback(self.createWidgetsList(),MessageBox,_("No selectable widgets defined in the skin. :("), type = MessageBox.TYPE_INFO)
+              return
 
     def endrun(self):
         return
@@ -244,9 +268,27 @@ class EditScreens(Screen):
         else:
             self["Picture"].hide()
     
-    def keyCancel(self):
+    def keyExit(self):
+        self.session.openWithCallback(self.keyExitRet, ChoiceBox, title = _("Exit options"), list = [(_("Exit without saving"),"exit"),(_("Save as & Exit"),"saveas"),(_("Save & Exit"),"save"),])
         self.close()
 
+    def keyExitRet(self, ret):
+        if ret:
+            if ret[1] == 'exit':
+                self.close()
+            if ret[1] == 'saveas':
+                self.keyExitRetSave()
+            if ret[1] == 'save':
+                self.keyExitRetSaveAs()
+        else:
+            self.close()
+            
+    def keyExitRetSave(self):
+        pass
+      
+    def keyExitRetSaveAs(self):
+        pass
+        
     def runMenuEntry(self):
         sel = self["menu"].getCurrent()
         if sel[3] == self.enabled_pic:
@@ -257,4 +299,4 @@ class EditScreens(Screen):
 
     def keyGreen(self):
         #### here code to update screen
-        self.close()
+        pass
