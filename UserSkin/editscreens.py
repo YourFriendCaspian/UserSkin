@@ -38,7 +38,7 @@ except:
 
 class EditScreens(Screen):
     skin = """
-  <screen name="EditScreens" position="0,0" size="1280,720" title="UserSkin EditScreens" backgroundColor="transparent" flags="wfNoBorder">
+  <screen name="UserSkinEditScreens" position="0,0" size="1280,720" title="UserSkin EditScreens" backgroundColor="transparent" flags="wfNoBorder">
     <eLabel position="0,0" size="1280,720" zPosition="-15" backgroundColor="#20000000" />
     <eLabel position=" 55,100" size="725,515" zPosition="-10" backgroundColor="#20606060" />
     <eLabel position="785,295" size="445,320" zPosition="-10" backgroundColor="#20606060" />
@@ -77,7 +77,8 @@ class EditScreens(Screen):
 """
 
     #init some variables
-    EditScreen = False
+    EditedScreen = False
+    myScreenName = None
     
     def __init__(self, session, ScreenFile = ''):
         Screen.__init__(self, session)
@@ -91,10 +92,20 @@ class EditScreens(Screen):
             return
 
         self.ScreenFile = ScreenFile
-        self.root = ET.parse(self.ScreenFile).getroot()
-        print self.ScreenFile
+        try:
+            self.root = ET.parse(self.ScreenFile).getroot()
+            self.myScreenName = self.root.find('screen').attrib['name']
+        except:
+            printDEBUG("%s -Is NOT proper xml file - END!!!" % self.ScreenFile)
+            self.close()
+            return
+        printDEBUG("%s has been loaded successfully. :)" % self.ScreenFile)
         
-        myTitle=_("UserSkin %s - EditScreens") %  UserSkinInfo
+        if self.myScreenName == None:
+            myTitle=_("UserSkin %s - EditScreens") %  UserSkinInfo
+        else:
+            myTitle=_("UserSkin %s - Edit %s screen") %  (UserSkinInfo,self.myScreenName)
+            
         self.setTitle(myTitle)
         try:
             self["title"]=StaticText(myTitle)
@@ -123,12 +134,6 @@ class EditScreens(Screen):
         self.skin_base_dir = SkinPath
         #self.screen_dir = "allScreens"
         self.allScreens_dir = "allScreens"
-        self.file_dir = "UserSkin_Selections"
-        if path.exists("%sUserSkinpics/install.png" % SkinPath):
-            printDEBUG("SkinConfig is loading %sUserSkinpics/install.png" % SkinPath)
-            self.enabled_pic = LoadPixmap(cached=True, path="%sUserSkinpics/install.png" % SkinPath)
-        else:
-            self.enabled_pic = LoadPixmap(cached=True, path=resolveFilename(SCOPE_PLUGINS, "Extensions/UserSkin/pic/install.png"))
         #check if we have preview files
         isPreview=0
         for xpreview in listdir(SkinPath + "allPreviews/"):
@@ -148,20 +153,14 @@ class EditScreens(Screen):
         self.onLayoutFinish.append(self.LayoutFinished)
 
     def LayoutFinished(self):
-        self.myScreen = ET.parse(self.ScreenFile)
-            
         self.createWidgetsList()
       
-    def LoadXML(self):
-        if pathExists(config.usage.keymap.value) is True:
-            self.root = ET.parse(config.usage.keymap.value).getroot()
-            
     def keyBlue(self):
             if path.exists("%sallWidgets/" % SkinPath):
-              self.session.openWithCallback(self.createWidgetsList(),MessageBox,_("Option not yet available ;)"), type = MessageBox.TYPE_INFO)
+                self.session.openWithCallback(self.createWidgetsList(),MessageBox,_("Option not yet available ;)"), type = MessageBox.TYPE_INFO)
             else:
-              self.session.openWithCallback(self.createWidgetsList(),MessageBox,_("No selectable widgets defined in the skin. :("), type = MessageBox.TYPE_INFO)
-              return
+                self.session.openWithCallback(self.createWidgetsList(),MessageBox,_("No selectable widgets defined in the skin. :("), type = MessageBox.TYPE_INFO)
+            return
 
     def endrun(self):
         return
@@ -171,16 +170,25 @@ class EditScreens(Screen):
         sel = self["menu"].getCurrent()
         self.setPicture(sel[0])
         print sel
-        if sel[3] == self.enabled_pic:
-            self["key_green"].setText(_("Edit"))
-            self.EditScreen = True
-        elif sel[3] == self.disabled_pic:
-            self["key_green"].setText("")
-            self.EditScreen = False
 
     def createWidgetsList(self):
         menu_list = []
         f_list = []
+        for child in self.root.findall('screen/*'):
+            childTYPE = child.tag
+            childTitle = ''
+            childDescr = ''
+            if 'render' in child.attrib:
+                childTitle = child.attrib['render']
+            if 'name' in child.attrib:
+                childDescr += _(' Name: ') + child.attrib['name']
+            elif 'text' in child.attrib:
+                childDescr += _(' Text: ') + child.attrib['text']
+            if 'source' in child.attrib:
+                childDescr += _(' Source: ') + child.attrib['source']
+            if childDescr == '':
+                childDescr = ', '.join(child.attrib)
+            f_list.append((childTYPE, "%s %s" % (childTYPE, childTitle), childDescr, self.disabled_pic))
         if len(f_list) == 0:
             f_list.append(("dummy", _("No widgets found"), '', self.disabled_pic))
         for entry in f_list:
@@ -210,8 +218,10 @@ class EditScreens(Screen):
             self["Picture"].hide()
     
     def keyExit(self):
-        self.session.openWithCallback(self.keyExitRet, ChoiceBox, title = _("Exit options"), list = [(_("Exit without saving"),"exit"),(_("Save as & Exit"),"saveas"),(_("Save & Exit"),"save"),])
-        self.close()
+        if self.EditedScreen == True:
+            self.session.openWithCallback(self.keyExitRet, ChoiceBox, title = _("Exit options"), list = [(_("Exit without saving"),"exit"),(_("Save as & Exit"),"saveas"),(_("Save & Exit"),"save"),])
+        else:
+            self.close()
 
     def keyExitRet(self, ret):
         if ret:
