@@ -15,7 +15,6 @@ from Plugins.Plugin import PluginDescriptor
 from Screens.ChoiceBox import ChoiceBox
 from Screens.MessageBox import MessageBox
 from Screens.Screen import Screen
-from Screens.Standby import TryQuitMainloop
 from Tools.Directories import *
 from Tools.HardwareInfo import HardwareInfo 
 from Tools.LoadPixmap import LoadPixmap
@@ -24,8 +23,7 @@ from Tools import Notifications
 from os import listdir, remove, rename, system, path, symlink, chdir, rmdir, mkdir
 import shutil
 import re
-#import xml.etree.cElementTree as ET
-from xml.etree import ElementTree #for comments
+import xml.etree.cElementTree as ET
 #Translations part
 from Components.Language import language
 currLang = language.getLanguage()[:2] #used for descriptions keep GUI language in 'pl|en' format
@@ -37,16 +35,6 @@ except:
     printDEBUG('LanguageGOS not detected, using local _')
     import gettext
     from translate import _
-
-class CommentedTreeBuilder ( ElementTree.XMLTreeBuilder ):
-    def __init__ ( self, html = 0, target = None ):
-        ElementTree.XMLTreeBuilder.__init__( self, html, target )
-        self._parser.CommentHandler = self.handle_comment
-    
-    def handle_comment ( self, data ):
-        self._target.start( ElementTree.Comment, {} )
-        self._target.data( data )
-        self._target.end( ElementTree.Comment )
 
 class EditScreens(Screen):
     skin = """
@@ -88,13 +76,22 @@ class EditScreens(Screen):
   </screen>
 """
 
+    #init some variables
+    EditScreen = False
+    
     def __init__(self, session, ScreenFile = ''):
         Screen.__init__(self, session)
         self.session = session
-        self.EditScreen = False
-        self.ScreenFile = ScreenFile
-        if self.ScreenFile == '' or path.exists(self.ScreenFile) == False:
+        #valid ScreenFile is mandatory
+        if ScreenFile == '':
             self.close()
+            return
+        elif not path.exists(ScreenFile):
+            self.close()
+            return
+
+        self.ScreenFile = ScreenFile
+        self.root = ET.parse(self.ScreenFile).getroot()
         print self.ScreenFile
         
         myTitle=_("UserSkin %s - EditScreens") %  UserSkinInfo
@@ -116,17 +113,14 @@ class EditScreens(Screen):
         
         self["shortcuts"] = ActionMap(["SetupActions", "ColorActions", "DirectionActions"],
         {
-            "ok": self.runMenuEntry,
+            "ok": self.keyOK,
             "cancel": self.keyExit,
             "red": self.keyExit,
             "green": self.keyGreen,
             "blue": self.keyBlue,
         }, -2)
         
-        self.currentSkin = config.skin.primary_skin.value.replace('skin.xml', '').replace('/', '')
-        self.skin_base_dir = resolveFilename(SCOPE_SKIN, config.skin.primary_skin.value.replace('skin.xml', ''))
-        if not self.skin_base_dir.endswith('/'):
-            self.skin_base_dir = self.skin_base_dir + '/'
+        self.skin_base_dir = SkinPath
         #self.screen_dir = "allScreens"
         self.allScreens_dir = "allScreens"
         self.file_dir = "UserSkin_Selections"
@@ -137,7 +131,7 @@ class EditScreens(Screen):
             self.enabled_pic = LoadPixmap(cached=True, path=resolveFilename(SCOPE_PLUGINS, "Extensions/UserSkin/pic/install.png"))
         #check if we have preview files
         isPreview=0
-        for xpreview in listdir(self.skin_base_dir + "allPreviews/"):
+        for xpreview in listdir(SkinPath + "allPreviews/"):
             if len(xpreview) > 4 and  xpreview[-4:] == ".png":
                 isPreview += 1
             if isPreview >= 2:
@@ -154,14 +148,14 @@ class EditScreens(Screen):
         self.onLayoutFinish.append(self.LayoutFinished)
 
     def LayoutFinished(self):
-        #self.parser = PCParser()
-        self.myCommentedScreen = ElementTree.parse(self.ScreenFile, parser = CommentedTreeBuilder())
-        ElementTree.dump( self.myCommentedScreen )
-        #for child in self.root:
-        #    print(child.tag, child.attrib)
+        self.myScreen = ET.parse(self.ScreenFile)
             
         self.createWidgetsList()
       
+    def LoadXML(self):
+        if pathExists(config.usage.keymap.value) is True:
+            self.root = ET.parse(config.usage.keymap.value).getroot()
+            
     def keyBlue(self):
             if path.exists("%sallWidgets/" % SkinPath):
               self.session.openWithCallback(self.createWidgetsList(),MessageBox,_("Option not yet available ;)"), type = MessageBox.TYPE_INFO)
@@ -201,59 +195,6 @@ class EditScreens(Screen):
           self["menu"].setIndex(myIndex) #and restore
         self.selectionChanged()
       
-    def createMenuList(self):
-        chdir(self.skin_base_dir)
-        f_list = []
-        #printDEBUG('createMenuList> listing ' + self.skin_base_dir + self.allScreens_dir)
-        if path.exists(self.skin_base_dir + self.allScreens_dir):
-            list_dir = sorted(listdir(self.skin_base_dir + self.allScreens_dir), key=str.lower)
-            for f in list_dir:
-                if config.plugins.UserSkin.PIG_active.value == False:
-                    if f.find('PIG') > 0 or f.find('PiG') > 0  or f.find('Pig') > 0 or f.lower().find('_pig') > 0:
-                        continue
-                if f.endswith('.xml') and f.startswith('skin_'):
-                    friendly_name = f.replace("skin_", "")
-                    friendly_name = friendly_name.replace(".xml", "")
-                    friendly_name = friendly_name.replace("_", " ")
-                    linked_file = self.skin_base_dir + self.file_dir + "/" + f
-                    if path.exists(linked_file):
-                        if path.islink(linked_file):
-                            pic = self.enabled_pic
-                        else:
-                            remove(linked_file)
-                            symlink(self.skin_base_dir + self.allScreens_dir + "/" + f, self.skin_base_dir + self.file_dir + "/" + f)
-                            pic = self.enabled_pic
-                    else:
-                        pic = self.disabled_pic
-                    f_list.append((f, friendly_name, self.getInfo(f) , pic))
-        menu_list = []
-        if len(f_list) == 0:
-            f_list.append(("dummy", _("No User skins found"), '', self.disabled_pic))
-        for entry in f_list:
-            menu_list.append((entry[0], entry[1], entry[2], entry[3]))
-        #print menu_list
-        try:
-          self["menu"].UpdateList(menu_list)
-        except:
-          print "Update asser error :(" #workarround to have it working on openpliPC
-          myIndex=self["menu"].getIndex() #as an effect, index is cleared so we need to store it first
-          self["menu"].setList(menu_list)
-          self["menu"].setIndex(myIndex) #and restore
-        self.selectionChanged()
-        
-    def getInfo(self, f):#currLang
-        info = f.replace(".xml", ".txt")
-        if path.exists(self.skin_base_dir + "allInfos/info_" + currLang + "_" + info):
-            myInfoFile=self.skin_base_dir + "allInfos/info_" + currLang + "_" + info
-        elif path.exists(self.skin_base_dir + "allInfos/info_en_" + info):
-            myInfoFile=self.skin_base_dir + "allInfos/info_en_" + info
-        else:
-            return 'No Info'
-        
-        #with open("/proc/sys/vm/drop_caches", "w") as f: f.write("1\n")
-        info = open(myInfoFile, 'r').read().strip()
-        return info
-            
     def setPicture(self, f):
         pic = f.replace(".xml", ".png")
         #preview = self.skin_base_dir + "allPreviews/preview_" + pic
@@ -289,13 +230,8 @@ class EditScreens(Screen):
     def keyExitRetSaveAs(self):
         pass
         
-    def runMenuEntry(self):
-        sel = self["menu"].getCurrent()
-        if sel[3] == self.enabled_pic:
-            remove(self.skin_base_dir + self.file_dir + "/" + sel[0])
-        elif sel[3] == self.disabled_pic:
-            symlink(self.skin_base_dir + self.allScreens_dir + "/" + sel[0], self.skin_base_dir + self.file_dir + "/" + sel[0])
-        self.createWidgetsList()
+    def keyOK(self):
+        pass
 
     def keyGreen(self):
         #### here code to update screen

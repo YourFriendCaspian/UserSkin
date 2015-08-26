@@ -92,10 +92,11 @@ class UserSkin_Config(Screen, ConfigListScreen):
   </screen>
 """
 
+    skin_lines = []
+    changed_screens = False
+        
     def __init__(self, session, args = 0):
         self.session = session
-        self.skin_lines = []
-        self.changed_screens = False
         Screen.__init__(self, session)
         
         myTitle=_("UserSkin Setup %s") % UserSkinInfo
@@ -105,10 +106,8 @@ class UserSkin_Config(Screen, ConfigListScreen):
         except:
             pass
             
-        self.skin_base_dir = resolveFilename(SCOPE_SKIN, config.skin.primary_skin.value.replace('skin.xml', ''))
-        if not self.skin_base_dir.endswith('/'):
-            self.skin_base_dir = self.skin_base_dir + '/'
-        self.currentSkin = config.skin.primary_skin.value.replace('skin.xml', '').replace('/', '')
+        self.skin_base_dir = SkinPath
+        self.currentSkin = CurrentSkinName
         printDEBUG("self.skin_base_dir=%s, skin=%s, currentSkin=%s" % (self.skin_base_dir, config.skin.primary_skin.value, self.currentSkin))
         if self.currentSkin != '':
                 self.currentSkin = '_' + self.currentSkin # default_skin = '', others '_skinname', used later
@@ -668,14 +667,22 @@ class UserSkinScreens(Screen):
     <widget name="Picture" position="808,342" size="400,225" alphatest="on" />
     <widget source="key_red" render="Label" position="70,635" size="260,25" zPosition="1" font="Regular;20" halign="left" foregroundColor="#00ffffff" backgroundColor="#20b81c46" transparent="1" />
     <widget source="key_green" render="Label" position="365,635" size="260,25" zPosition="1" font="Regular;20" halign="left" foregroundColor="#00ffffff" backgroundColor="#20009f3c" transparent="1" />
+    <widget source="key_yellow" render="Label" position="650,635" size="260,25" zPosition="1" font="Regular;20" halign="left" foregroundColor="#00ffffff" transparent="1" />
     <widget source="key_blue" render="Label" position="950,635" size="260,25" zPosition="1" font="Regular;20" halign="left" foregroundColor="#00ffffff" transparent="1" />
   </screen>
 """
 
+    EditScreen = False
+    DeleteScreen = False
+    
+    allScreensGroups = [(_("All skins"), "_"),
+    (_("ChannelList skins"), "channelselection"),
+    (_("Infobar skins"), "infobar"),
+    ]
+
     def __init__(self, session):
         Screen.__init__(self, session)
         self.session = session
-        self.EditScreen = False
         
         myTitle=_("UserSkin %s - additional screens") %  UserSkinInfo
         self.setTitle(myTitle)
@@ -686,6 +693,7 @@ class UserSkinScreens(Screen):
         
         self["key_red"] = StaticText(_("Exit"))
         self["key_green"] = StaticText("")
+        self["key_yellow"] = StaticText("")
         self["key_blue"] = StaticText(_("Settings"))
         
         self["Picture"] = Pixmap()
@@ -693,10 +701,6 @@ class UserSkinScreens(Screen):
         menu_list = []
         self["menu"] = List(menu_list)
         
-        self.allScreensGroups = [(_("All skins"), "_"),
-        (_("ChannelList skins"), "channelselection"),
-        (_("Infobar skins"), "infobar"),
-        ]
         self.allScreensGroup = self.allScreensGroups[0][1]
         
         self["shortcuts"] = ActionMap(["SetupActions", "ColorActions", "DirectionActions"],
@@ -706,12 +710,11 @@ class UserSkinScreens(Screen):
             "red": self.keyCancel,
             "green": self.keyGreen,
             "blue": self.keyBlue,
+            "yellow": self.keyYellow,
         }, -2)
         
-        self.currentSkin = config.skin.primary_skin.value.replace('skin.xml', '').replace('/', '')
-        self.skin_base_dir = resolveFilename(SCOPE_SKIN, config.skin.primary_skin.value.replace('skin.xml', ''))
-        if not self.skin_base_dir.endswith('/'):
-            self.skin_base_dir = self.skin_base_dir + '/'
+        self.currentSkin = CurrentSkinName
+        self.skin_base_dir = SkinPath
         #self.screen_dir = "allScreens"
         self.allScreens_dir = "allScreens"
         self.file_dir = "UserSkin_Selections"
@@ -769,11 +772,15 @@ class UserSkinScreens(Screen):
         self.setPicture(sel[0])
         #print sel
         if sel[3] == self.enabled_pic:
-            self["key_green"].setText(_("Edit"))
-            self.EditScreen = True
-        elif sel[3] == self.disabled_pic:
             self["key_green"].setText("")
             self.EditScreen = False
+            self["key_yellow"].setText("")
+            self.DeleteScreen = False
+        elif sel[3] == self.disabled_pic:
+            self["key_green"].setText(_("Edit"))
+            self.EditScreen = True
+            self["key_yellow"].setText(_("Delete"))
+            self.DeleteScreen = True
 
     def createMenuList(self):
         chdir(self.skin_base_dir)
@@ -857,6 +864,17 @@ class UserSkinScreens(Screen):
     def keyGreen(self):
         if self.EditScreen == True:
             from editscreens import EditScreens
-            self.session.openWithCallback(self.createMenuList,EditScreens, ScreenFile = self.skin_base_dir + self.file_dir + "/" + self["menu"].getCurrent()[0])
+            self.session.openWithCallback(self.createMenuList,EditScreens, ScreenFile = self.skin_base_dir + self.allScreens_dir + "/" + self["menu"].getCurrent()[0])
         else:
             print "Nothing to Edit :("
+            
+    def keyYellow(self):
+        if self.DeleteScreen == True:
+            sel = self["menu"].getCurrent()
+            remove((self.skin_base_dir + self.allScreens_dir + "/" + sel[0]))
+            pic = sel[0].replace(".xml", ".png")
+            if path.exists(self.skin_base_dir + "allPreviews/preview_" + pic):
+                remove(self.skin_base_dir + "allPreviews/preview_" + pic)
+            self.createMenuList()
+        else:
+            print "Nothing to Delete ;)"

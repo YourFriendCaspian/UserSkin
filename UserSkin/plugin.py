@@ -38,7 +38,7 @@ def Plugins(**kwargs):
 
 def menu(menuid, **kwargs):
     if menuid == "vtimain" or menuid == "system":
-        return [(_("Setup - UserSkin") + " " + config.skin.primary_skin.value.replace('skin.xml', '').replace('/', ''), main, "UserSkin_Menu", 40)]
+        return [(_("Setup - UserSkin") + " " + CurrentSkinName, main, "UserSkin_Menu", 40)]
     return []
 
 def main(session, **kwargs):

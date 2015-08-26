@@ -5,11 +5,17 @@ UserSkinInfo='@j00zek 26/08/2015'
 PluginName = 'UserSkin'
 PluginGroup = 'Extensions'
 
-#Paths
+#Plugin Paths
 from Tools.Directories import resolveFilename, SCOPE_CURRENT_SKIN, SCOPE_PLUGINS
 PluginFolder = PluginName
 PluginPath = resolveFilename(SCOPE_PLUGINS, '%s/%s/' %(PluginGroup,PluginFolder))
+
+#Current skin
+from Components.config import *
 SkinPath = resolveFilename(SCOPE_CURRENT_SKIN, '')
+if not SkinPath.endswith('/'):
+    SkinPath = SkinPath + '/'
+CurrentSkinName=config.skin.primary_skin.value.replace('skin.xml', '').replace('/', '')
 
 #translation
 PluginLanguageDomain = "plugin-" + PluginName
