@@ -52,8 +52,7 @@ class EditScreens(Screen):
     <eLabel position="350,675" size="290, 5" zPosition="-10" backgroundColor="#20009f3c" />
     <eLabel position="645,675" size="290, 5" zPosition="-10" backgroundColor="#209ca81b" />
     <eLabel position="940,675" size="290, 5" zPosition="-10" backgroundColor="#202673ec" />
-    <!--widget source="session.VideoPicture" render="Pig" position="935,115" zPosition="3" size="284,160" backgroundColor="#ff000000">
-    </widget-->
+    <widget name="SkinPicture" position="935,115" size="284,160" backgroundColor="#004e4e4e" />
     <widget source="Title" render="Label" position="70,47" size="950,43" font="Regular;35" foregroundColor="#00ffffff" backgroundColor="#004e4e4e" transparent="1" />
     <widget source="menu" render="Listbox" position="70,115" size="700,480" scrollbarMode="showOnDemand" transparent="1">
       <convert type="TemplatedMultiContent">
@@ -118,6 +117,7 @@ class EditScreens(Screen):
         self['key_blue'] = StaticText(_('Actions'))
         
         self["Picture"] = Pixmap()
+        self["SkinPicture"] = Pixmap()
         
         menu_list = []
         self["menu"] = List(menu_list)
@@ -153,6 +153,14 @@ class EditScreens(Screen):
         self.onLayoutFinish.append(self.LayoutFinished)
 
     def LayoutFinished(self):
+        fileName = self.ScreenFile.replace('allScreens/','allPreviews/preview_').replace('.xml','.png')
+        print self.ScreenFile
+        print fileName
+        if path.exists(fileName):
+            self["SkinPicture"].instance.setScale(1)
+            self["SkinPicture"].instance.setPixmapFromFile(fileName)
+            self["SkinPicture"].show()
+        
         self.createWidgetsList()
       
     def keyBlue(self):
@@ -179,6 +187,9 @@ class EditScreens(Screen):
             childTYPE = child.tag
             childTitle = ''
             childDescr = ''
+            childAttributes = ''
+            for key, value in child.items():
+                childAttributes += key + '=' + value + '\n'
             if 'render' in child.attrib:
                 childTitle = child.attrib['render']
             if 'name' in child.attrib:
@@ -188,8 +199,12 @@ class EditScreens(Screen):
             if 'source' in child.attrib:
                 childDescr += _(' Source: ') + child.attrib['source']
             if childDescr == '':
-                childDescr = ', '.join(child.attrib)
-            f_list.append((child, "%s %s" % (childTYPE, childTitle), childDescr, self.disabled_pic))
+                for key, value in child.items():
+                    if childDescr == '':
+                        childDescr += key + '=' + value
+                    else:
+                        childDescr += ' ' + key + '=' + value
+            f_list.append((child, "%s %s" % (childTYPE, childTitle), childDescr, self.disabled_pic, childAttributes))
             printDEBUG(self.root[0][len(f_list)-1].tag + ' ' + ', '.join(self.root[0][len(f_list)-1].attrib))
         if len(f_list) == 0:
             f_list.append(("dummy", _("No widgets found"), '', self.disabled_pic))
