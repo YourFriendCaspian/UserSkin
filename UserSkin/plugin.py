@@ -2,7 +2,7 @@
 
 # UserSkin, based on AtileHD concept
 #
-# maintainer: <schomi@vuplus-support.org> / <plnick@vuplus-support.org>
+# maintainer: j00zek
 #
 # extension for openpli, all skins, descriptions, bar selections and other @j00zek 2014/2015
 # Uszanuj czyj¹œ pracê i NIE przyw³aszczaj sobie autorstwa!
@@ -27,19 +27,18 @@ from Components.Sources.List import List
 from Plugins.Plugin import PluginDescriptor
 from Screens.MessageBox import MessageBox
 from Screens.Screen import Screen
-from Tools.Directories import *
+from Tools.Directories import resolveFilename, pathExists
 from Tools.LoadPixmap import LoadPixmap
-from Tools import Notifications
-from os import listdir, remove, rename, system, path
-import shutil
-import re
+#from Tools import Notifications
+#import shutil
+#import re
         
 def Plugins(**kwargs):
     return [PluginDescriptor(name=_("UserSkin Setup"), description=_("Personalize your Skin"), where = PluginDescriptor.WHERE_MENU, fnc=menu)]
 
 def menu(menuid, **kwargs):
     if menuid == "vtimain" or menuid == "system":
-        return [(_("Setup - UserSkin"), main, "UserSkin_Menu", 40)]
+        return [(_("Setup - UserSkin") + " " + config.skin.primary_skin.value.replace('skin.xml', '').replace('/', ''), main, "UserSkin_Menu", 40)]
     return []
 
 def main(session, **kwargs):
@@ -77,15 +76,28 @@ class UserSkin_Menu(Screen):
                 self.createsetup()
 
         def createsetup(self):
-                l = [
-                    (self.buildListEntry(_("Skin personalization"), "config.png",'config')),
-                    (self.buildListEntry(_("Download addons"), "download.png",'getaddons')),
-                    (self.buildListEntry(_("Delete addons"), "remove.png",'delete_addons')),
-                    (self.buildListEntry(_("Update main skin"), "download.png",'getskin')),
-                    (self.buildListEntry(_("Update plugin"), "download.png",'getplugin')),
-                    (self.buildListEntry(_("History of changes"), "history.png",'history')),
-                    (self.buildListEntry(_("About"), "about.png",'about')),
-                ]
+                skinHistory = None
+                skinUpdate = None
+                skinAddOns = None
+                if pathExists("%s%s" % (SkinPath,'skin.config')):
+                    with open("%s%s" % (SkinPath,'skin.config'), 'r') as cf:
+                        cfg=cf.read()
+                    if cfg.find("history=") > 0:
+                        skinHistory = True
+                    if cfg.find("skinurl=") > 0:
+                        skinUpdate = True
+                    if cfg.find("addons=") > 0:
+                        skinAddOns = True
+                l = [(self.buildListEntry(_("Skin personalization"), "config.png",'config'))]
+                if skinAddOns:
+                    l.append(self.buildListEntry(_("Download addons"), "download.png",'getaddons'))
+                (self.buildListEntry(_("Delete addons"), "remove.png",'delete_addons')),
+                if skinUpdate:
+                    l.append(self.buildListEntry(_("Update main skin"), "download.png",'getskin')),
+                l.append(self.buildListEntry(_("Update plugin"), "download.png",'getplugin')),
+                if skinHistory:
+                    l.append(self.buildListEntry(_("History of changes"), "history.png",'history')),
+                l.append(self.buildListEntry(_("About"), "about.png",'about')),
                 self["list"].list = l
 
         def buildListEntry(self, description, image, optionname):
