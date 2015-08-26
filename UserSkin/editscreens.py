@@ -60,10 +60,10 @@ class EditScreens(Screen):
                                 {"template":
                                         [
                                                 MultiContentEntryPixmapAlphaTest(pos = (2, 2), size = (54, 54), png = 3),
-                                                MultiContentEntryText(pos = (60, 2), size = (500, 22), font=0, flags = RT_HALIGN_LEFT|RT_VALIGN_CENTER, text = 1), # name
-                                                MultiContentEntryText(pos = (55, 24),size = (500, 32), font=1, flags = RT_HALIGN_LEFT|RT_VALIGN_CENTER, text = 2), # info
+                                                MultiContentEntryText(pos = (60, 2), size = (650, 24), font=0, flags = RT_HALIGN_LEFT|RT_VALIGN_CENTER, text = 1), # name
+                                                MultiContentEntryText(pos = (55, 26),size = (650, 30), font=1, flags = RT_HALIGN_LEFT|RT_VALIGN_CENTER, text = 2), # info
                                         ],
-                                        "fonts": [gFont("Regular", 22),gFont("Regular", 16)],
+                                        "fonts": [gFont("Regular", 22),gFont("Regular", 14)],
                                         "itemHeight": 60
                                 }
                         </convert>
@@ -174,6 +174,7 @@ class EditScreens(Screen):
     def createWidgetsList(self):
         menu_list = []
         f_list = []
+        
         for child in self.root.findall('screen/*'):
             childTYPE = child.tag
             childTitle = ''
@@ -188,7 +189,8 @@ class EditScreens(Screen):
                 childDescr += _(' Source: ') + child.attrib['source']
             if childDescr == '':
                 childDescr = ', '.join(child.attrib)
-            f_list.append((childTYPE, "%s %s" % (childTYPE, childTitle), childDescr, self.disabled_pic))
+            f_list.append((child, "%s %s" % (childTYPE, childTitle), childDescr, self.disabled_pic))
+            printDEBUG(self.root[0][len(f_list)-1].tag + ' ' + ', '.join(self.root[0][len(f_list)-1].attrib))
         if len(f_list) == 0:
             f_list.append(("dummy", _("No widgets found"), '', self.disabled_pic))
         for entry in f_list:
@@ -204,6 +206,7 @@ class EditScreens(Screen):
         self.selectionChanged()
       
     def setPicture(self, f):
+        return
         pic = f.replace(".xml", ".png")
         #preview = self.skin_base_dir + "allPreviews/preview_" + pic
         if path.exists(self.skin_base_dir + "allPreviews/preview_" + pic):
