@@ -36,7 +36,7 @@ except:
     import gettext
     from translate import _
 
-class EditScreens(Screen):
+class UserSkinEditScreens(Screen):
     skin = """
   <screen name="UserSkinEditScreens" position="0,0" size="1280,720" title="UserSkin EditScreens" backgroundColor="transparent" flags="wfNoBorder">
     <eLabel position="0,0" size="1280,720" zPosition="-15" backgroundColor="#20000000" />
@@ -163,13 +163,6 @@ class EditScreens(Screen):
         
         self.createWidgetsList()
       
-    def keyBlue(self):
-            if path.exists("%sallWidgets/" % SkinPath):
-                self.session.openWithCallback(self.createWidgetsList(),MessageBox,_("Option not yet available ;)"), type = MessageBox.TYPE_INFO)
-            else:
-                self.session.openWithCallback(self.createWidgetsList(),MessageBox,_("No selectable widgets defined in the skin. :("), type = MessageBox.TYPE_INFO)
-            return
-
     def endrun(self):
         return
      
@@ -234,8 +227,10 @@ class EditScreens(Screen):
             self["Picture"].show()
         else:
             self["Picture"].hide()
-    
-    def keyExit(self):
+
+#### KEYS ####
+# RED, CANCEL
+    def keyExit(self): 
         if self.EditedScreen == True:
             self.session.openWithCallback(self.keyExitRet, ChoiceBox, title = _("Exit options"), list = [(_("Exit without saving"),"exit"),(_("Save as & Exit"),"saveas"),(_("Save & Exit"),"save"),])
         else:
@@ -245,22 +240,37 @@ class EditScreens(Screen):
         if ret:
             if ret[1] == 'exit':
                 self.close()
-            if ret[1] == 'saveas':
-                self.keyExitRetSave()
             if ret[1] == 'save':
+                self.keyExitRetSave()
+            if ret[1] == 'saveas':
                 self.keyExitRetSaveAs()
         else:
             self.close()
             
     def keyExitRetSave(self):
-        pass
+        with open(self.ScreenFile, "w") as f:
+            f.write(ET.tostring(self.root, encoding='utf-8'))
+        self.close()
       
     def keyExitRetSaveAs(self):
         pass
         
+# OK
     def keyOK(self):
         pass
 
+# Green
     def keyGreen(self):
         #### here code to update screen
         pass
+
+# Blue
+    def keyBlue(self):
+        self.EditedScreen = True
+        return
+        if path.exists("%sallWidgets/" % SkinPath):
+            self.session.openWithCallback(self.createWidgetsList(),MessageBox,_("Option not yet available ;)"), type = MessageBox.TYPE_INFO)
+        else:
+            self.session.openWithCallback(self.createWidgetsList(),MessageBox,_("No selectable widgets defined in the skin. :("), type = MessageBox.TYPE_INFO)
+        return
+

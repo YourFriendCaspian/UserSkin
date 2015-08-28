@@ -863,8 +863,8 @@ class UserSkinScreens(Screen):
 
     def keyGreen(self):
         if self.EditScreen == True:
-            from editscreens import EditScreens
-            self.session.openWithCallback(self.createMenuList,EditScreens, ScreenFile = self.skin_base_dir + self.allScreens_dir + "/" + self["menu"].getCurrent()[0])
+            from editscreens import UserSkinEditScreens
+            self.session.openWithCallback(self.createMenuList,UserSkinEditScreens, ScreenFile = self.skin_base_dir + self.allScreens_dir + "/" + self["menu"].getCurrent()[0])
         else:
             print "Nothing to Edit :("
             
