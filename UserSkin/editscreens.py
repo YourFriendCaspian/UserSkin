@@ -79,6 +79,8 @@ class UserSkinEditScreens(Screen):
     EditedScreen = False
     myScreenName = None
     
+    blockActions = False
+    
     doNothing = 0
     doDelete = 1
     doExport = 2
@@ -160,8 +162,8 @@ class UserSkinEditScreens(Screen):
 
     def LayoutFinished(self):
         fileName = self.ScreenFile.replace('allScreens/','allPreviews/preview_').replace('.xml','.png')
-        print self.ScreenFile
-        print fileName
+        #print self.ScreenFile
+        #print fileName
         if path.exists(fileName):
             self["SkinPicture"].instance.setScale(1)
             self["SkinPicture"].instance.setPixmapFromFile(fileName)
@@ -181,32 +183,39 @@ class UserSkinEditScreens(Screen):
     def createWidgetsList(self):
         menu_list = []
         f_list = []
-        
-        for child in self.root.findall('screen/*'):
-            childTYPE = child.tag
-            childTitle = ''
-            childDescr = ''
-            childAttributes = ''
-            for key, value in child.items():
-                childAttributes += key + '=' + value + '\n'
-            if 'render' in child.attrib:
-                childTitle = child.attrib['render']
-            if 'name' in child.attrib:
-                childDescr += _(' Name: ') + child.attrib['name']
-            elif 'text' in child.attrib:
-                childDescr += _(' Text: ') + child.attrib['text']
-            if 'source' in child.attrib:
-                childDescr += _(' Source: ') + child.attrib['source']
-            if childDescr == '':
+        NumberOfScreens = len(self.root.findall('screen'))
+        if NumberOfScreens == 1:
+            for child in self.root.findall('screen/*'):
+                childTYPE = child.tag
+                childTitle = ''
+                childDescr = ''
+                childAttributes = ''
                 for key, value in child.items():
-                    if childDescr == '':
-                        childDescr += key + '=' + value
-                    else:
-                        childDescr += ' ' + key + '=' + value
-            f_list.append((child, "%s %s" % (childTYPE, childTitle), childDescr, self.disabled_pic, childAttributes))
-            printDEBUG(self.root[0][len(f_list)-1].tag + ' ' + ', '.join(self.root[0][len(f_list)-1].attrib))
+                    childAttributes += key + '=' + value + '\n'
+                if 'render' in child.attrib:
+                    childTitle = child.attrib['render']
+                if 'name' in child.attrib:
+                    childDescr += _(' Name: ') + child.attrib['name']
+                elif 'text' in child.attrib:
+                    childDescr += _(' Text: ') + child.attrib['text']
+                if 'source' in child.attrib:
+                    childDescr += _(' Source: ') + child.attrib['source']
+                if childDescr == '':
+                    for key, value in child.items():
+                        if childDescr == '':
+                            childDescr += key + '=' + value
+                        else:
+                            childDescr += ' ' + key + '=' + value
+                f_list.append((child, "%s %s" % (childTYPE, childTitle), childDescr, self.disabled_pic, childAttributes))
+                printDEBUG(childTYPE + ' ' + childAttributes)
+        elif NumberOfScreens >= 1:
+            f_list.append(('dummy', _("No support for multiple screen definitions in one file :("), '', self.disabled_pic))
+            self.blockActions=True
         if len(f_list) == 0:
             f_list.append(("dummy", _("No widgets found"), '', self.disabled_pic))
+            self.blockActions=True
+        if self.blockActions == True:
+            self['key_blue'].setText('')
         for entry in f_list:
             menu_list.append((entry[0], entry[1], entry[2], entry[3]))
         #print menu_list
@@ -271,24 +280,16 @@ class UserSkinEditScreens(Screen):
         with open(self.ScreenFile, "w") as f:
             f.write(ET.tostring(self.root, encoding='utf-8'))
         self.close()
-      
-# OK
-    def keyOK(self):
-        pass
-
-# Green
-    def keyGreen(self):
-        #### here code to update screen
-        pass
 
 # Blue
     def keyBlue(self):
-        keyBlueActionsList=[
-            (_("No action"), self.doNothing),
-            (_("Delete"), self.doDelete),
-            (_("Export"), self.doExport),
-        ]
-        self.session.openWithCallback(self.keyBlueEnd, ChoiceBox, title = _("Select Action:"), list = keyBlueActionsList)
+        if self.blockActions == False:
+            keyBlueActionsList=[
+                (_("No action"), self.doNothing),
+                (_("Delete"), self.doDelete),
+                (_("Export"), self.doExport),
+            ]
+            self.session.openWithCallback(self.keyBlueEnd, ChoiceBox, title = _("Select Action:"), list = keyBlueActionsList)
         return
 
     def keyBlueEnd(self, ret):
@@ -298,10 +299,31 @@ class UserSkinEditScreens(Screen):
             self.currAction = self.doNothing
             
         if self.currAction == self.doNothing:
-            self['key_blue'].setText(_('Actions'))
+            self['key_green'].setText('')
         elif self.currAction == self.doDelete:
-            self['key_blue'].setText(_('Action: ') + _('Delete'))
+            self['key_green'].setText(_('Delete'))
         elif self.currAction == self.doExport:
-            self['key_blue'].setText(_('Action: ') + _('Export'))
+            self['key_green'].setText(_('Export'))
         return
 
+      
+# OK
+    def keyOK(self):
+        pass
+
+# Green
+    def keyGreen(self):
+        
+        if self.currAction == self.doNothing:
+            return
+        elif self.currAction == self.doDelete:
+            self.doDeleteAction()
+        elif self.currAction == self.doExport:
+            self.doExportAction()
+            
+    def doDeleteAction(self, what):
+        printDEBUG('doDeleteAction')
+        
+    def doExportAction(self, what):
+        printDEBUG('doExportAction')
+            
