@@ -40,21 +40,11 @@ class UserSkinEditScreens(Screen):
     skin = """
   <screen name="UserSkinEditScreens" position="0,0" size="1280,720" title="UserSkin EditScreens" backgroundColor="transparent" flags="wfNoBorder">
     <eLabel position="0,0" size="1280,720" zPosition="-15" backgroundColor="#20000000" />
-    <eLabel position=" 55,100" size="725,515" zPosition="-10" backgroundColor="#20606060" />
-    <eLabel position="785,295" size="445,320" zPosition="-10" backgroundColor="#20606060" />
     <eLabel position="785,100" size="135,190" zPosition="-10" backgroundColor="#20606060" />
-    <eLabel position="925,100" size="305,190" zPosition="-10" backgroundColor="#20606060" />
-    <eLabel position=" 55,620" size="290,55" zPosition="-10" backgroundColor="#20b81c46" />
-    <eLabel position="350,620" size="290,55" zPosition="-10" backgroundColor="#20009f3c" />
-    <eLabel position="645,620" size="290,55" zPosition="-10" backgroundColor="#209ca81b" />
-    <eLabel position="940,620" size="290,55" zPosition="-10" backgroundColor="#202673ec" />
-    <eLabel position=" 55,675" size="290, 5" zPosition="-10" backgroundColor="#20b81c46" />
-    <eLabel position="350,675" size="290, 5" zPosition="-10" backgroundColor="#20009f3c" />
-    <eLabel position="645,675" size="290, 5" zPosition="-10" backgroundColor="#209ca81b" />
-    <eLabel position="940,675" size="290, 5" zPosition="-10" backgroundColor="#202673ec" />
-    <widget name="SkinPicture" position="935,115" size="284,160" backgroundColor="#004e4e4e" />
     <widget source="Title" render="Label" position="70,47" size="950,43" font="Regular;35" foregroundColor="#00ffffff" backgroundColor="#004e4e4e" transparent="1" />
-    <widget source="menu" render="Listbox" position="70,115" size="700,480" scrollbarMode="showOnDemand" transparent="1">
+    <!-- List -->
+    <eLabel position=" 55,100" size="725,455" zPosition="-10" backgroundColor="#20606060" />
+    <widget source="menu" render="Listbox" position="70,115" size="700,420" scrollbarMode="showOnDemand" transparent="1">
       <convert type="TemplatedMultiContent">
                                 {"template":
                                         [
@@ -67,11 +57,27 @@ class UserSkinEditScreens(Screen):
                                 }
                         </convert>
     </widget>
-    <widget name="Picture" position="808,342" size="400,225" alphatest="on" />
-    <widget source="key_red" render="Label" position="70,635" size="260,25" zPosition="1" font="Regular;20" halign="left" foregroundColor="#00ffffff" backgroundColor="#20b81c46" transparent="1" />
-    <widget source="key_green" render="Label" position="365,635" size="260,25" zPosition="1" font="Regular;20" halign="left" foregroundColor="#00ffffff" backgroundColor="#20009f3c" transparent="1" />
-    <widget source="key_yellow" render="Label" position="655,635" size="260,25" zPosition="1" font="Regular;20" halign="left" foregroundColor="#00ffffff" backgroundColor="#20009f3c" transparent="1" />
-    <widget source="key_blue" render="Label" position="950,635" zPosition="1" size="260,25" valign="center" halign="left" font="Regular;20" transparent="1" foregroundColor="#00ffffff" />
+    <!-- Preview -->
+    <eLabel position="925,100" size="305,190" zPosition="-10" backgroundColor="#20606060" />
+    <widget name="SkinPicture" position="935,115" size="284,160" backgroundColor="#004e4e4e" />
+    <!-- Widget Details -->
+    <eLabel position="55,560" size="725,60" zPosition="-10" backgroundColor="#20606060" />
+    <!--tutaj label wielkosci 50-->
+    <!-- Preview text -->
+    <eLabel position="785,560" size="445,60" zPosition="-10" backgroundColor="#20606060" />
+    <!-- Preview pixmap -->
+    <eLabel position="785,295" size="445,260" zPosition="-10" backgroundColor="#20606060" />
+    <eLabel position="800,310" size="415,233" zPosition="-10" backgroundColor="#20909090" />
+    <widget name="PixMapPicture" position="808,314" size="400,225" alphatest="on" />
+    <!-- BUTTONS -->
+    <eLabel position=" 55,625" size="290,55" zPosition="-10" backgroundColor="#20b81c46" />
+    <eLabel position="350,625" size="290,55" zPosition="-10" backgroundColor="#20009f3c" />
+    <eLabel position="645,625" size="290,55" zPosition="-10" backgroundColor="#209ca81b" />
+    <eLabel position="940,625" size="290,55" zPosition="-10" backgroundColor="#202673ec" />
+    <widget source="key_red" render="Label" position="70,640" size="260,25" zPosition="1" font="Regular;20" halign="left" foregroundColor="#00ffffff" backgroundColor="#20b81c46" transparent="1" />
+    <widget source="key_green" render="Label" position="365,640" size="260,25" zPosition="1" font="Regular;20" halign="left" foregroundColor="#00ffffff" backgroundColor="#20009f3c" transparent="1" />
+    <widget source="key_yellow" render="Label" position="655,640" size="260,25" zPosition="1" font="Regular;20" halign="left" foregroundColor="#00ffffff" backgroundColor="#20009f3c" transparent="1" />
+    <widget source="key_blue" render="Label" position="950,640" zPosition="1" size="260,25" valign="center" halign="left" font="Regular;20" transparent="1" foregroundColor="#00ffffff" />
   </screen>
 """
 
@@ -342,7 +348,7 @@ class UserSkinEditScreens(Screen):
                     mkdir(WidgetPathName)
                 printDEBUG("Writing %s/%s" % (WidgetPathName,WidgetFile))
                 with open("%s/%s" % (WidgetPathName, WidgetFile), "w") as f:
-                    f.write(ET.tostring(self.root[0][self["menu"].getIndex()], method='xml'))
+                    f.write(ET.tostring(self.root[0][self["menu"].getIndex()]))
 
         myText=self.root[0][what].tag
         if 'name' in self.root[0][what].attrib:
