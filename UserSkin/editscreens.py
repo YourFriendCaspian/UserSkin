@@ -191,7 +191,7 @@ class UserSkinEditScreens(Screen):
                 childDescr = ''
                 childAttributes = ''
                 for key, value in child.items():
-                    childAttributes += key + '=' + value + '\n'
+                    childAttributes += key + '=' + value + ' '
                 if 'render' in child.attrib:
                     childTitle = child.attrib['render']
                 if 'name' in child.attrib:
@@ -206,8 +206,8 @@ class UserSkinEditScreens(Screen):
                             childDescr += key + '=' + value
                         else:
                             childDescr += ' ' + key + '=' + value
-                f_list.append((child, "%s %s" % (childTYPE, childTitle), childDescr, self.disabled_pic, childAttributes))
-                printDEBUG(childTYPE + ' ' + childAttributes)
+                f_list.append((child, "%s %s" % (childTYPE, childTitle), childDescr, self.disabled_pic))
+                printDEBUG('found <' + childTYPE + ' ' + childAttributes + '>')
         elif NumberOfScreens >= 1:
             f_list.append(('dummy', _("No support for multiple screen definitions in one file :("), '', self.disabled_pic))
             self.blockActions=True
@@ -313,16 +313,21 @@ class UserSkinEditScreens(Screen):
 
 # Green
     def keyGreen(self):
-        
+        myIndex=self["menu"].getIndex()
         if self.currAction == self.doNothing:
             return
         elif self.currAction == self.doDelete:
-            self.doDeleteAction()
+            self.doDeleteAction(myIndex)
         elif self.currAction == self.doExport:
-            self.doExportAction()
+            self.doExportAction(myIndex)
             
     def doDeleteAction(self, what):
-        printDEBUG('doDeleteAction')
+        childAttributes=''
+        for key, value in self.root[0][what].items():
+            childAttributes += key + '=' + value + ' '
+        printDEBUG('doDeleteAction <%s %s>\n' % (self.root[0][what].tag,childAttributes))
+            
+        #self.createWidgetsList()
         
     def doExportAction(self, what):
         printDEBUG('doExportAction')
