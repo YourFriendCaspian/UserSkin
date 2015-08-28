@@ -265,7 +265,6 @@ class UserSkinEditScreens(Screen):
     def keyExitRetSaveAs(self):
         from Screens.VirtualKeyBoard import VirtualKeyBoard
         self.session.openWithCallback(self.keyExitRetSaveAsHasName, VirtualKeyBoard, title=(_("Enter filename")), text = path.basename(self.ScreenFile.replace('.xml','_new.xml')))
-        pass
         
     def keyExitRetSaveAsHasName(self, callback = None):
         if callback is not None:
@@ -320,15 +319,40 @@ class UserSkinEditScreens(Screen):
             self.doDeleteAction(myIndex)
         elif self.currAction == self.doExport:
             self.doExportAction(myIndex)
+        self.EditedScreen = True
             
     def doDeleteAction(self, what):
         childAttributes=''
         for key, value in self.root[0][what].items():
             childAttributes += key + '=' + value + ' '
         printDEBUG('doDeleteAction <%s %s>\n' % (self.root[0][what].tag,childAttributes))
+        self.root[0].remove(self.root[0][what])
             
-        #self.createWidgetsList()
+        self.createWidgetsList()
         
     def doExportAction(self, what):
         printDEBUG('doExportAction')
-            
+        
+        def SaveWidget(WidgetFile = None):
+            if WidgetFile is not None:
+                if not WidgetFile.endswith('.xml'):
+                    WidgetFile += '.xml'
+                WidgetPathName = path.dirname(self.ScreenFile).replace('allScreens','allWidgets')
+                if not path.exists(WidgetPathName):
+                    mkdir(WidgetPathName)
+                printDEBUG("Writing %s/%s" % (WidgetPathName,WidgetFile))
+                with open("%s/%s" % (WidgetPathName, WidgetFile), "w") as f:
+                    f.write(ET.tostring(self.root[0][self["menu"].getIndex()], method='xml'))
+
+        myText=self.root[0][what].tag
+        if 'name' in self.root[0][what].attrib:
+            myText += '_' + self.root[0][what].attrib['name']
+        if 'text' in self.root[0][what].attrib:
+            myText += '_' + self.root[0][what].attrib['text']
+        if 'render' in self.root[0][what].attrib:
+            myText += '_' + self.root[0][what].attrib['render']
+        if 'source' in self.root[0][what].attrib:
+            myText += '_' + self.root[0][what].attrib['source']
+
+        from Screens.VirtualKeyBoard import VirtualKeyBoard
+        self.session.openWithCallback(SaveWidget, VirtualKeyBoard, title=(_("Enter filename")), text = myText.replace('.','-'))
