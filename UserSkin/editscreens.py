@@ -79,6 +79,12 @@ class UserSkinEditScreens(Screen):
     EditedScreen = False
     myScreenName = None
     
+    doNothing = 0
+    doDelete = 1
+    doExport = 2
+    
+    currAction = doNothing
+    
     def __init__(self, session, ScreenFile = ''):
         Screen.__init__(self, session)
         self.session = session
@@ -247,14 +253,25 @@ class UserSkinEditScreens(Screen):
         else:
             self.close()
             
+    def keyExitRetSaveAs(self):
+        from Screens.VirtualKeyBoard import VirtualKeyBoard
+        self.session.openWithCallback(self.keyExitRetSaveAsHasName, VirtualKeyBoard, title=(_("Enter filename")), text = path.basename(self.ScreenFile.replace('.xml','_new.xml')))
+        pass
+        
+    def keyExitRetSaveAsHasName(self, callback = None):
+        if callback is not None:
+            self.ScreenFile = self.ScreenFile.replace(path.basename(self.ScreenFile), callback)
+            if not self.ScreenFile.endswith('.xml'):
+                self.ScreenFile += '.xml'
+            self.keyExitRetSave()
+        self.close()
+        
     def keyExitRetSave(self):
+        printDEBUG("Writing %s" % self.ScreenFile)
         with open(self.ScreenFile, "w") as f:
             f.write(ET.tostring(self.root, encoding='utf-8'))
         self.close()
       
-    def keyExitRetSaveAs(self):
-        pass
-        
 # OK
     def keyOK(self):
         pass
@@ -266,11 +283,25 @@ class UserSkinEditScreens(Screen):
 
 # Blue
     def keyBlue(self):
-        self.EditedScreen = True
+        keyBlueActionsList=[
+            (_("No action"), self.doNothing),
+            (_("Delete"), self.doDelete),
+            (_("Export"), self.doExport),
+        ]
+        self.session.openWithCallback(self.keyBlueEnd, ChoiceBox, title = _("Select Action:"), list = keyBlueActionsList)
         return
-        if path.exists("%sallWidgets/" % SkinPath):
-            self.session.openWithCallback(self.createWidgetsList(),MessageBox,_("Option not yet available ;)"), type = MessageBox.TYPE_INFO)
+
+    def keyBlueEnd(self, ret):
+        if ret:
+            self.currAction = ret[1]
         else:
-            self.session.openWithCallback(self.createWidgetsList(),MessageBox,_("No selectable widgets defined in the skin. :("), type = MessageBox.TYPE_INFO)
+            self.currAction = self.doNothing
+            
+        if self.currAction == self.doNothing:
+            self['key_blue'].setText(_('Actions'))
+        elif self.currAction == self.doDelete:
+            self['key_blue'].setText(_('Action: ') + _('Delete'))
+        elif self.currAction == self.doExport:
+            self['key_blue'].setText(_('Action: ') + _('Export'))
         return
 
