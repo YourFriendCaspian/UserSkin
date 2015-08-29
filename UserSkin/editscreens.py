@@ -40,35 +40,41 @@ class UserSkinEditScreens(Screen):
     skin = """
   <screen name="UserSkinEditScreens" position="0,0" size="1280,720" title="UserSkin EditScreens" backgroundColor="transparent" flags="wfNoBorder">
     <eLabel position="0,0" size="1280,720" zPosition="-15" backgroundColor="#20000000" />
-    <eLabel position="785,100" size="135,190" zPosition="-10" backgroundColor="#20606060" />
-    <widget source="Title" render="Label" position="70,47" size="950,43" font="Regular;35" foregroundColor="#00ffffff" backgroundColor="#004e4e4e" transparent="1" />
+    <widget source="Title" render="Label" position="70,47" size="1100,43" font="Regular;35" foregroundColor="#00ffffff" backgroundColor="#004e4e4e" transparent="1" />
     <!-- List -->
-    <eLabel position=" 55,100" size="725,455" zPosition="-10" backgroundColor="#20606060" />
-    <widget source="menu" render="Listbox" position="70,115" size="700,420" scrollbarMode="showOnDemand" transparent="1">
+    <eLabel position=" 55,100" size="725,425" zPosition="-10" backgroundColor="#20606060" />
+    <widget source="menu" render="Listbox" position="70,115" size="700,390" scrollbarMode="showOnDemand" transparent="1">
       <convert type="TemplatedMultiContent">
                                 {"template":
                                         [
                                                 MultiContentEntryPixmapAlphaTest(pos = (2, 2), size = (54, 54), png = 3),
                                                 MultiContentEntryText(pos = (60, 2), size = (650, 24), font=0, flags = RT_HALIGN_LEFT|RT_VALIGN_CENTER, text = 1), # name
-                                                MultiContentEntryText(pos = (55, 26),size = (650, 30), font=1, flags = RT_HALIGN_LEFT|RT_VALIGN_CENTER, text = 2), # info
+                                                MultiContentEntryText(pos = (100, 26),size = (600, 30), font=1, flags = RT_HALIGN_LEFT|RT_VALIGN_CENTER, text = 2), # info
                                         ],
                                         "fonts": [gFont("Regular", 22),gFont("Regular", 14)],
-                                        "itemHeight": 60
+                                        "itemHeight": 56
                                 }
                         </convert>
     </widget>
     <!-- Preview -->
-    <eLabel position="925,100" size="305,190" zPosition="-10" backgroundColor="#20606060" />
-    <widget name="SkinPicture" position="935,115" size="284,160" backgroundColor="#004e4e4e" />
+    <eLabel position="925,100" size="305,160" zPosition="-10" backgroundColor="#20606060" />
+    <widget name="SkinPicture" position="930,105" size="295,150" backgroundColor="#004e4e4e" />
+    
     <!-- Widget Details -->
-    <eLabel position="55,560" size="725,60" zPosition="-10" backgroundColor="#20606060" />
-    <!--tutaj label wielkosci 50-->
+    <eLabel position="55,530" size="725,90" zPosition="-10" backgroundColor="#20606060" />
+    <widget name="widgetDetailsTXT" position="70,535" size="710,80" font="Regular;15" transparent="1"/>
+    
     <!-- Preview text -->
-    <eLabel position="785,560" size="445,60" zPosition="-10" backgroundColor="#20606060" />
+    <eLabel position="785,530" size="445,90" zPosition="-10" backgroundColor="#20606060" />
+    
     <!-- Preview pixmap -->
-    <eLabel position="785,295" size="445,260" zPosition="-10" backgroundColor="#20606060" />
-    <eLabel position="800,310" size="415,233" zPosition="-10" backgroundColor="#20909090" />
-    <widget name="PixMapPicture" position="808,314" size="400,225" alphatest="on" />
+    <eLabel position="785,100" size="135,160" zPosition="-10" backgroundColor="#20606060" />
+    <widget name="PixMapPreview" position="795,105" size="115,120" alphatest="on" />
+    
+    <!-- Preview on Screen -->
+    <eLabel position="785,265" size="445,260" zPosition="-10" backgroundColor="#20606060" />
+    <eLabel position="800,280" size="415,233" zPosition="-10" backgroundColor="#20909090" />
+    <widget name="PixMapPictureInScale" position="808,284" size="400,225" alphatest="on" />
     <!-- BUTTONS -->
     <eLabel position=" 55,625" size="290,55" zPosition="-10" backgroundColor="#20b81c46" />
     <eLabel position="350,625" size="290,55" zPosition="-10" backgroundColor="#20009f3c" />
@@ -84,12 +90,16 @@ class UserSkinEditScreens(Screen):
     #init some variables
     EditedScreen = False
     myScreenName = None
+    currentScreenID = 0
+    NumberOfScreens = 1
     
     blockActions = False
     
     doNothing = 0
     doDelete = 1
     doExport = 2
+    doSave = 3
+    doSaveAs = 4
     
     currAction = doNothing
     
@@ -108,6 +118,7 @@ class UserSkinEditScreens(Screen):
         try:
             self.root = ET.parse(self.ScreenFile).getroot()
             self.myScreenName = self.root.find('screen').attrib['name']
+            self.NumberOfScreens = len(self.root.findall('screen'))
         except:
             printDEBUG("%s -Is NOT proper xml file - END!!!" % self.ScreenFile)
             self.close()
@@ -117,20 +128,27 @@ class UserSkinEditScreens(Screen):
         if self.myScreenName == None:
             myTitle=_("UserSkin %s - EditScreens") %  UserSkinInfo
         else:
-            myTitle=_("UserSkin %s - Edit %s screen") %  (UserSkinInfo,self.myScreenName)
+            if self.NumberOfScreens == 1:
+                myTitle=_("UserSkin %s - Edit %s screen") %  (UserSkinInfo,self.myScreenName)
+            else:
+                myTitle=_("UserSkin %s - Edit %s screen (1/%d)") %  (UserSkinInfo,self.myScreenName,self.NumberOfScreens)
             
         self.setTitle(myTitle)
-        try:
-            self["title"]=StaticText(myTitle)
-        except:
-            pass
+        #try:
+        #    self["Title"]=StaticText(myTitle)
+        #except:
+        #    pass
         
         self["key_red"] = StaticText(_("Exit"))
         self["key_green"] = StaticText("")
-        self["key_yellow"] = StaticText("")
+        if self.NumberOfScreens == 1:
+            self["key_yellow"] = StaticText("")
+        else:
+            self["key_yellow"] = StaticText(_("Switch screen"))
         self['key_blue'] = StaticText(_('Actions'))
+        self["widgetDetailsTXT"] = Label()
         
-        self["Picture"] = Pixmap()
+        self["PixMapPreview"] = Pixmap()
         self["SkinPicture"] = Pixmap()
         
         menu_list = []
@@ -142,6 +160,7 @@ class UserSkinEditScreens(Screen):
             "cancel": self.keyExit,
             "red": self.keyExit,
             "green": self.keyGreen,
+            "yellow": self.keyYellow,
             "blue": self.keyBlue,
         }, -2)
         
@@ -174,49 +193,38 @@ class UserSkinEditScreens(Screen):
             self["SkinPicture"].instance.setScale(1)
             self["SkinPicture"].instance.setPixmapFromFile(fileName)
             self["SkinPicture"].show()
+        #clear fields
+        self["widgetDetailsTXT"].setText('')
+        self["PixMapPreview"].hide()
         
         self.createWidgetsList()
       
-    def endrun(self):
-        return
-     
-    def selectionChanged(self):
-        print "> self.selectionChanged"
-        sel = self["menu"].getCurrent()
-        self.setPicture(sel[0])
-        print sel
-
     def createWidgetsList(self):
         menu_list = []
         f_list = []
-        NumberOfScreens = len(self.root.findall('screen'))
-        if NumberOfScreens == 1:
-            for child in self.root.findall('screen/*'):
-                childTYPE = child.tag
-                childTitle = ''
-                childDescr = ''
-                childAttributes = ''
+        for child in self.root[self.currentScreenID].findall('*'):
+            childTYPE = child.tag
+            childTitle = ''
+            childDescr = ''
+            childAttributes = ''
+            for key, value in child.items():
+                childAttributes += key + '=' + value + ' '
+            if 'render' in child.attrib:
+                childTitle = child.attrib['render']
+            if 'name' in child.attrib:
+                childDescr += _(' Name: ') + child.attrib['name']
+            elif 'text' in child.attrib:
+                childDescr += _(' Text: ') + child.attrib['text']
+            if 'source' in child.attrib:
+                childDescr += _(' Source: ') + child.attrib['source']
+            if childDescr == '':
                 for key, value in child.items():
-                    childAttributes += key + '=' + value + ' '
-                if 'render' in child.attrib:
-                    childTitle = child.attrib['render']
-                if 'name' in child.attrib:
-                    childDescr += _(' Name: ') + child.attrib['name']
-                elif 'text' in child.attrib:
-                    childDescr += _(' Text: ') + child.attrib['text']
-                if 'source' in child.attrib:
-                    childDescr += _(' Source: ') + child.attrib['source']
-                if childDescr == '':
-                    for key, value in child.items():
-                        if childDescr == '':
-                            childDescr += key + '=' + value
-                        else:
-                            childDescr += ' ' + key + '=' + value
-                f_list.append((child, "%s %s" % (childTYPE, childTitle), childDescr, self.disabled_pic))
-                printDEBUG('found <' + childTYPE + ' ' + childAttributes + '>')
-        elif NumberOfScreens >= 1:
-            f_list.append(('dummy', _("No support for multiple screen definitions in one file :("), '', self.disabled_pic))
-            self.blockActions=True
+                    if childDescr == '':
+                        childDescr += key + '=' + value
+                    else:
+                        childDescr += ' ' + key + '=' + value
+            f_list.append((child, "%s %s" % (childTYPE, childTitle), childDescr, self.disabled_pic))
+            #printDEBUG('found <' + childTYPE + ' ' + childAttributes + '>')
         if len(f_list) == 0:
             f_list.append(("dummy", _("No widgets found"), '', self.disabled_pic))
             self.blockActions=True
@@ -234,22 +242,57 @@ class UserSkinEditScreens(Screen):
           self["menu"].setIndex(myIndex) #and restore
         self.selectionChanged()
       
-    def setPicture(self, f):
+    def selectionChanged(self):
+        print "> self.selectionChanged"
+        myIndex=self["menu"].getIndex()
+        # widget details
+        self["widgetDetailsTXT"].setText( ET.tostring(self.root[0][myIndex]) )
+        sel = self["menu"].getCurrent()
+        
+        #PreviewPixmap
+        self.setPixmap(myIndex)
+        #self.setWidgetInfo(sel[0])
+        print sel
+
+    def setPixmap(self, myIndex):
+        if not 'Pixmap' in self.root[0][myIndex].attrib:
+            self["PixMapPreview"].hide()
         return
         pic = f.replace(".xml", ".png")
         #preview = self.skin_base_dir + "allPreviews/preview_" + pic
         if path.exists(self.skin_base_dir + "allPreviews/preview_" + pic):
-            self["Picture"].instance.setScale(1)
-            self["Picture"].instance.setPixmapFromFile(self.skin_base_dir + "allPreviews/preview_" + pic)
-            self["Picture"].show()
+            self["PixMapPreview"].instance.setScale(1)
+            self["PixMapPreview"].instance.setPixmapFromFile(self.skin_base_dir + "allPreviews/preview_" + pic)
+            self["PixMapPreview"].show()
         elif path.exists(self.skin_base_dir + "allPreviews/" + pic):
-            self["Picture"].instance.setScale(1)
-            self["Picture"].instance.setPixmapFromFile(self.skin_base_dir + "allPreviews/" + pic)
-            self["Picture"].show()
+            self["PixMapPreview"].instance.setScale(1)
+            self["PixMapPreview"].instance.setPixmapFromFile(self.skin_base_dir + "allPreviews/" + pic)
+            self["PixMapPreview"].show()
         else:
-            self["Picture"].hide()
+            self["PixMapPreview"].hide()
 
 #### KEYS ####
+# Yellow
+    def keyYellow(self):
+        if self.NumberOfScreens >= 1:
+            self.currentScreenID += 1
+            if self.currentScreenID >= self.NumberOfScreens:
+                self.currentScreenID = 0
+
+            try:
+                self.myScreenName = self.root[self.currentScreenID].attrib['name']
+            except:
+                self.myScreenName = _('UnknownName')
+            myTitle=_("UserSkin %s - Edit %s screen (1/%d)") %  (UserSkinInfo,self.myScreenName,self.NumberOfScreens)
+            print myTitle
+            
+            self.setTitle(myTitle)
+        #try:
+            #self["Title"]=StaticText(myTitle)
+        #except:
+        #    pass
+            self.createWidgetsList()
+
 # RED, CANCEL
     def keyExit(self): 
         if self.EditedScreen == True:
@@ -293,6 +336,8 @@ class UserSkinEditScreens(Screen):
                 (_("No action"), self.doNothing),
                 (_("Delete"), self.doDelete),
                 (_("Export"), self.doExport),
+                (_("Save"), self.doSave),
+                (_("Save as"), self.doSaveAs),
             ]
             self.session.openWithCallback(self.keyBlueEnd, ChoiceBox, title = _("Select Action:"), list = keyBlueActionsList)
         return
@@ -305,6 +350,14 @@ class UserSkinEditScreens(Screen):
             
         if self.currAction == self.doNothing:
             self['key_green'].setText('')
+        #saving
+        elif self.currAction == self.doSaveAs:
+            self.keyExitRetSaveAs()
+            return
+        elif self.currAction == self.doSave:
+            self.keyExitRetSave()
+            return
+        #manipulationf
         elif self.currAction == self.doDelete:
             self['key_green'].setText(_('Delete'))
         elif self.currAction == self.doExport:
