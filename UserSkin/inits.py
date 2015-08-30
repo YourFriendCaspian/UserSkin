@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-UserSkinInfo='@j00zek 28/08/2015'
+UserSkinInfo='@j00zek 30/08/2015'
 
 #stale
 PluginName = 'UserSkin'

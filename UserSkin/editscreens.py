@@ -66,6 +66,7 @@ class UserSkinEditScreens(Screen):
     
     <!-- Preview text -->
     <eLabel position="785,530" size="445,90" zPosition="-10" backgroundColor="#20606060" />
+    <widget source="PreviewFont" render="Label" position="790,540" size="435,70" valign="center" font="Regular;20" transparent="1" foregroundColor="#00ffffff" />
     
     <!-- Preview pixmap -->
     <eLabel position="785,100" size="135,160" zPosition="-10" backgroundColor="#20606060" />
@@ -134,10 +135,6 @@ class UserSkinEditScreens(Screen):
                 myTitle=_("UserSkin %s - Edit %s screen (1/%d)") %  (UserSkinInfo,self.myScreenName,self.NumberOfScreens)
             
         self.setTitle(myTitle)
-        #try:
-        #    self["Title"]=StaticText(myTitle)
-        #except:
-        #    pass
         
         self["key_red"] = StaticText(_("Exit"))
         self["key_green"] = StaticText("")
@@ -146,6 +143,7 @@ class UserSkinEditScreens(Screen):
         else:
             self["key_yellow"] = StaticText(_("Switch screen"))
         self['key_blue'] = StaticText(_('Actions'))
+        self["PreviewFont"] = StaticText("")
         self["widgetDetailsTXT"] = Label()
         
         self["PixMapPreview"] = Pixmap()
@@ -195,6 +193,7 @@ class UserSkinEditScreens(Screen):
             self["SkinPicture"].show()
         #clear fields
         self["widgetDetailsTXT"].setText('')
+        self["PreviewFont"].setText('')
         self["PixMapPreview"].hide()
         
         self.createWidgetsList()
@@ -234,42 +233,49 @@ class UserSkinEditScreens(Screen):
             menu_list.append((entry[0], entry[1], entry[2], entry[3]))
         #print menu_list
         try:
-          self["menu"].UpdateList(menu_list)
+            self["menu"].UpdateList(menu_list)
         except:
-          print "Update asser error :(" #workarround to have it working on openpliPC
-          myIndex=self["menu"].getIndex() #as an effect, index is cleared so we need to store it first
-          self["menu"].setList(menu_list)
-          self["menu"].setIndex(myIndex) #and restore
+            print "Update asser error :(" #workarround to have it working on openpliPC
+            myIndex=self["menu"].getIndex() #as an effect, index is cleared so we need to store it first
+            self["menu"].setList(menu_list)
+            self["menu"].setIndex(myIndex) #and restore
         self.selectionChanged()
-      
+
+#### Selection changed - display widgets
+
     def selectionChanged(self):
         print "> self.selectionChanged"
         myIndex=self["menu"].getIndex()
         # widget details
-        self["widgetDetailsTXT"].setText( ET.tostring(self.root[0][myIndex]) )
-        sel = self["menu"].getCurrent()
-        
-        #PreviewPixmap
-        self.setPixmap(myIndex)
-        #self.setWidgetInfo(sel[0])
-        print sel
+        self["widgetDetailsTXT"].setText( ET.tostring(self.root[self.currentScreenID][myIndex]) )
+        self.setPixMapPreview(myIndex)
+        self.setPreviewFont(myIndex)
 
-    def setPixmap(self, myIndex):
-        if not 'Pixmap' in self.root[0][myIndex].attrib:
+    def setPixMapPreview(self, myIndex):
+        if not 'pixmap' in self.root[self.currentScreenID][myIndex].attrib:
             self["PixMapPreview"].hide()
-        return
-        pic = f.replace(".xml", ".png")
-        #preview = self.skin_base_dir + "allPreviews/preview_" + pic
-        if path.exists(self.skin_base_dir + "allPreviews/preview_" + pic):
+            return
+        pic = self.root[0][myIndex].attrib['pixmap']
+        if path.exists(resolveFilename(SCOPE_SKIN, pic)):
             self["PixMapPreview"].instance.setScale(1)
-            self["PixMapPreview"].instance.setPixmapFromFile(self.skin_base_dir + "allPreviews/preview_" + pic)
-            self["PixMapPreview"].show()
-        elif path.exists(self.skin_base_dir + "allPreviews/" + pic):
-            self["PixMapPreview"].instance.setScale(1)
-            self["PixMapPreview"].instance.setPixmapFromFile(self.skin_base_dir + "allPreviews/" + pic)
+            self["PixMapPreview"].instance.setPixmapFromFile(resolveFilename(SCOPE_SKIN, pic))
             self["PixMapPreview"].show()
         else:
             self["PixMapPreview"].hide()
+            
+    def setPreviewFont(self, myIndex):
+        if not 'font' in self.root[self.currentScreenID][myIndex].attrib:
+            self["PreviewFont"].setText('')
+            return
+        else:
+          print self.root[0][myIndex].attrib['font']
+          ##### The Q, how to change the font of the label? below gives GS
+          #self["PreviewFont"].setFont(self.root[0][myIndex].attrib['font'])
+        if 'text' in self.root[self.currentScreenID][myIndex].attrib:
+            self["PreviewFont"].setText('%s' % self.root[0][myIndex].attrib['text'])
+        else:
+            self["PreviewFont"].setText('Sample Text')
+            
 
 #### KEYS ####
 # Yellow
@@ -369,7 +375,7 @@ class UserSkinEditScreens(Screen):
     def keyOK(self):
         pass
 
-# Green
+#### Green
     def keyGreen(self):
         myIndex=self["menu"].getIndex()
         if self.currAction == self.doNothing:
@@ -379,7 +385,9 @@ class UserSkinEditScreens(Screen):
         elif self.currAction == self.doExport:
             self.doExportAction(myIndex)
         self.EditedScreen = True
-            
+
+#### Green subprocedures
+
     def doDeleteAction(self, what):
         childAttributes=''
         for key, value in self.root[0][what].items():

@@ -870,11 +870,16 @@ class UserSkinScreens(Screen):
             
     def keyYellow(self):
         if self.DeleteScreen == True:
+            self.session.openWithCallback(self.keyYellowRet, MessageBox, _("Are you sure you want delete the skin?"), MessageBox.TYPE_YESNO, default = False)
+        else:
+            print "Nothing to Delete ;)"
+    def keyYellowRet(self, result):
+        if result is None or result is False:
+            printDEBUG("Deletion cancelled.")
+        else:
             sel = self["menu"].getCurrent()
             remove((self.skin_base_dir + self.allScreens_dir + "/" + sel[0]))
             pic = sel[0].replace(".xml", ".png")
             if path.exists(self.skin_base_dir + "allPreviews/preview_" + pic):
                 remove(self.skin_base_dir + "allPreviews/preview_" + pic)
             self.createMenuList()
-        else:
-            print "Nothing to Delete ;)"
