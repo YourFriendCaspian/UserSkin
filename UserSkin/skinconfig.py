@@ -772,8 +772,10 @@ class UserSkinScreens(Screen):
         self.setPicture(sel[0])
         #print sel
         if sel[3] == self.enabled_pic:
-            self["key_green"].setText("")
-            self.EditScreen = False
+            #self["key_green"].setText("")
+            #self.EditScreen = False
+            self["key_green"].setText(_("Edit"))
+            self.EditScreen = True
             self["key_yellow"].setText("")
             self.DeleteScreen = False
         elif sel[3] == self.disabled_pic:
@@ -870,7 +872,7 @@ class UserSkinScreens(Screen):
             
     def keyYellow(self):
         if self.DeleteScreen == True:
-            self.session.openWithCallback(self.keyYellowRet, MessageBox, _("Are you sure you want delete the skin?"), MessageBox.TYPE_YESNO, default = False)
+            self.session.openWithCallback(self.keyYellowRet, MessageBox, _("Are you sure you want delete the screen?"), MessageBox.TYPE_YESNO, default = False)
         else:
             print "Nothing to Delete ;)"
     def keyYellowRet(self, result):
