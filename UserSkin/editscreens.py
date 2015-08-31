@@ -268,13 +268,13 @@ class UserSkinEditScreens(Screen):
             self["PreviewFont"].setText('')
             return
         else:
-          print self.root[0][myIndex].attrib['font']
-          ##### The Q, how to change the font of the label? below gives GS
-          #self["PreviewFont"].setFont(self.root[0][myIndex].attrib['font'])
+            pass
+            ##### The Q, how to change the font of the label? below gives GS
+            #self["PreviewFont"].setFont(self.root[0][myIndex].attrib['font'])
         if 'text' in self.root[self.currentScreenID][myIndex].attrib:
-            self["PreviewFont"].setText('%s' % self.root[0][myIndex].attrib['text'])
+            self["PreviewFont"].setText('%s' % self.root[self.currentScreenID][myIndex].attrib['text'])
         else:
-            self["PreviewFont"].setText('Sample Text')
+            self["PreviewFont"].setText(_('Sample Text'))
             
 
 #### KEYS ####
@@ -293,6 +293,7 @@ class UserSkinEditScreens(Screen):
             print myTitle
             
             self.setTitle(myTitle)
+            self["menu"].setIndex(0)
         #try:
             #self["Title"]=StaticText(myTitle)
         #except:
