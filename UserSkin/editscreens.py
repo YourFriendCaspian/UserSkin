@@ -10,11 +10,12 @@ from Components.Label import Label
 from Components.Pixmap import Pixmap
 from Components.Sources.List import List
 from Components.Sources.StaticText import StaticText
-from enigma import ePicLoad
+from enigma import ePicLoad,eLabel,gFont
 from Plugins.Plugin import PluginDescriptor
 from Screens.ChoiceBox import ChoiceBox
 from Screens.MessageBox import MessageBox
 from Screens.Screen import Screen
+from skin import parseColor,parseFont
 from Tools.Directories import *
 from Tools.HardwareInfo import HardwareInfo 
 from Tools.LoadPixmap import LoadPixmap
@@ -66,7 +67,7 @@ class UserSkinEditScreens(Screen):
     
     <!-- Preview text -->
     <eLabel position="785,530" size="445,90" zPosition="-10" backgroundColor="#20606060" />
-    <widget source="PreviewFont" render="Label" position="790,540" size="435,70" valign="center" font="Regular;20" transparent="1" foregroundColor="#00ffffff" />
+    <widget name="PreviewFont" position="790,540" size="435,70" valign="center" font="Regular;20" transparent="1" foregroundColor="#00ffffff" />
     
     <!-- Preview pixmap -->
     <eLabel position="785,100" size="135,160" zPosition="-10" backgroundColor="#20606060" />
@@ -143,7 +144,7 @@ class UserSkinEditScreens(Screen):
         else:
             self["key_yellow"] = StaticText(_("Switch screen"))
         self['key_blue'] = StaticText(_('Actions'))
-        self["PreviewFont"] = StaticText("")
+        self["PreviewFont"] = Label()
         self["widgetDetailsTXT"] = Label()
         
         self["PixMapPreview"] = Pixmap()
@@ -267,15 +268,20 @@ class UserSkinEditScreens(Screen):
         if not 'font' in self.root[self.currentScreenID][myIndex].attrib:
             self["PreviewFont"].setText('')
             return
-        else:
-            pass
-            ##### The Q, how to change the font of the label? below gives GS
-            #self["PreviewFont"].setFont(self.root[0][myIndex].attrib['font'])
+        #### Now we know we have font, so we can preview it :)
+        myfont = self.root[self.currentScreenID][myIndex].attrib['font']
+        print myfont
+        self["PreviewFont"].instance.setFont(gFont(myfont.split(';')[0], int(myfont.split(';')[1])))
         if 'text' in self.root[self.currentScreenID][myIndex].attrib:
             self["PreviewFont"].setText('%s' % self.root[self.currentScreenID][myIndex].attrib['text'])
         else:
             self["PreviewFont"].setText(_('Sample Text'))
-            
+        if 'foregroundColor' in self.root[self.currentScreenID][myIndex].attrib:
+            self["PreviewFont"].instance.setForegroundColor(parseColor(self.root[self.currentScreenID][myIndex].attrib['foregroundColor']))            
+        else:
+            self["PreviewFont"].instance.setForegroundColor(parseColor("#00ffffff"))            
+        if 'backgroundColor' in self.root[self.currentScreenID][myIndex].attrib:
+            self["PreviewFont"].instance.setBackgroundColor(parseColor(self.root[self.currentScreenID][myIndex].attrib['backgroundColor']))            
 
 #### KEYS ####
 # Yellow
