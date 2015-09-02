@@ -76,7 +76,7 @@ class UserSkinEditScreens(Screen):
     <!-- Preview on Screen -->
     <eLabel position="785,265" size="445,260" zPosition="-10" backgroundColor="#20606060" />
     <eLabel position="800,280" size="415,233" zPosition="-10" backgroundColor="#20909090" />
-    <widget name="PixMapPictureInScale" position="808,284" size="400,225" alphatest="on" />
+    <!--widget name="PixMapPictureInScale" position="808,284" size="400,225" alphatest="on" /-->
     <!-- BUTTONS -->
     <eLabel position=" 55,625" size="290,55" zPosition="-10" backgroundColor="#20b81c46" />
     <eLabel position="350,625" size="290,55" zPosition="-10" backgroundColor="#20009f3c" />
@@ -102,6 +102,11 @@ class UserSkinEditScreens(Screen):
     doExport = 2
     doSave = 3
     doSaveAs = 4
+    doImport = 5
+    moveRightLeft = 6
+    moveUpDOWN = 7
+    resizeHorizontally = 8
+    resizeVertically = 9
     
     currAction = doNothing
     
@@ -349,6 +354,7 @@ class UserSkinEditScreens(Screen):
                 (_("No action"), self.doNothing),
                 (_("Delete"), self.doDelete),
                 (_("Export"), self.doExport),
+                (_("Import"), self.doImport),
                 (_("Save"), self.doSave),
                 (_("Save as"), self.doSaveAs),
             ]
@@ -375,9 +381,10 @@ class UserSkinEditScreens(Screen):
             self['key_green'].setText(_('Delete'))
         elif self.currAction == self.doExport:
             self['key_green'].setText(_('Export'))
+        elif self.currAction == self.doImport:
+            self['key_green'].setText(_('Import'))
         return
 
-      
 # OK
     def keyOK(self):
         pass
@@ -391,6 +398,8 @@ class UserSkinEditScreens(Screen):
             self.doDeleteAction(myIndex)
         elif self.currAction == self.doExport:
             self.doExportAction(myIndex)
+        elif self.currAction == self.doImport:
+            self.doImportFunc()
         self.EditedScreen = True
 
 #### Green subprocedures
@@ -405,6 +414,7 @@ class UserSkinEditScreens(Screen):
         self.createWidgetsList()
         
     def doExportAction(self, what):
+      
         printDEBUG('doExportAction')
         
         def SaveWidget(WidgetFile = None):
@@ -430,3 +440,21 @@ class UserSkinEditScreens(Screen):
 
         from Screens.VirtualKeyBoard import VirtualKeyBoard
         self.session.openWithCallback(SaveWidget, VirtualKeyBoard, title=(_("Enter filename")), text = myText.replace('.','-'))
+        
+    def doImportFunc(self):
+        widgetlist = []
+        for f in sorted(listdir(self.skin_base_dir + "allWidgets/"), key=str.lower):
+            if f.endswith('.xml') and f.startswith('widget_'):
+                friendly_name = f.replace("widget_", "")
+                friendly_name = friendly_name.replace(".xml", "")
+                friendly_name = friendly_name.replace("_", " ")
+                widgetlist.append((friendly_name, f))
+        if len(widgetlist) > 0:
+            self.session.openWithCallback(self.doImportFuncRet, ChoiceBox, title = _("Select Widget:"), list = widgetlist)
+            
+    def doImportFuncRet(self, ret):
+        if ret:
+            if path.exists(self.skin_base_dir + "allWidgets/"+ret[1]):
+                widgetRoot = ET.parse(self.skin_base_dir + "allWidgets/"+ret[1]).getroot()
+                self.root[self.currentScreenID].insert(self["menu"].getIndex(),widgetRoot)
+            self.createWidgetsList()
