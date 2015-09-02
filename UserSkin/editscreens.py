@@ -103,10 +103,11 @@ class UserSkinEditScreens(Screen):
     doSave = 3
     doSaveAs = 4
     doImport = 5
-    moveRightLeft = 6
-    moveUpDOWN = 7
-    resizeHorizontally = 8
-    resizeVertically = 9
+    resizeFont = 6
+    moveHorizontally = 7
+    moveVertically = 8
+    resizeHorizontally = 9
+    resizeVertically = 10
     
     currAction = doNothing
     
@@ -158,7 +159,7 @@ class UserSkinEditScreens(Screen):
         menu_list = []
         self["menu"] = List(menu_list)
         
-        self["shortcuts"] = ActionMap(["SetupActions", "ColorActions", "DirectionActions"],
+        self["shortcuts"] = ActionMap(["UserSkinActions"], #"SetupActions", "ColorActions", "DirectionActions"],
         {
             "ok": self.keyOK,
             "cancel": self.keyExit,
@@ -166,6 +167,8 @@ class UserSkinEditScreens(Screen):
             "green": self.keyGreen,
             "yellow": self.keyYellow,
             "blue": self.keyBlue,
+            "channelup": self.channelup,
+            "channeldown": self.channeldown,
         }, -2)
         
         self.skin_base_dir = SkinPath
@@ -250,7 +253,7 @@ class UserSkinEditScreens(Screen):
 #### Selection changed - display widgets
 
     def selectionChanged(self):
-        print "> self.selectionChanged"
+        #print "> self.selectionChanged"
         myIndex=self["menu"].getIndex()
         # widget details
         self["widgetDetailsTXT"].setText( ET.tostring(self.root[self.currentScreenID][myIndex]) )
@@ -275,7 +278,7 @@ class UserSkinEditScreens(Screen):
             return
         #### Now we know we have font, so we can preview it :)
         myfont = self.root[self.currentScreenID][myIndex].attrib['font']
-        print myfont
+        #print myfont
         self["PreviewFont"].instance.setFont(gFont(myfont.split(';')[0], int(myfont.split(';')[1])))
         if 'text' in self.root[self.currentScreenID][myIndex].attrib:
             self["PreviewFont"].setText('%s' % self.root[self.currentScreenID][myIndex].attrib['text'])
@@ -289,6 +292,28 @@ class UserSkinEditScreens(Screen):
             self["PreviewFont"].instance.setBackgroundColor(parseColor(self.root[self.currentScreenID][myIndex].attrib['backgroundColor']))            
 
 #### KEYS ####
+#CHANNEL UP
+    def channelup(self):
+        myIndex=self["menu"].getIndex()
+        if self.currAction == self.resizeFont and 'font' in self.root[self.currentScreenID][myIndex].attrib:
+            myfont = self.root[self.currentScreenID][myIndex].attrib['font']
+            mySize = int(myfont.split(';')[1]) + 1
+            if mySize > 80:
+                mySize = 80
+            self.root[self.currentScreenID][myIndex].set('font',myfont.split(';')[0] + ';%d' % mySize)
+        self.selectionChanged()
+        
+#CHANNEL DOWN
+    def channeldown(self):
+        myIndex=self["menu"].getIndex()
+        if self.currAction == self.resizeFont and 'font' in self.root[self.currentScreenID][myIndex].attrib:
+            myfont = self.root[self.currentScreenID][myIndex].attrib['font']
+            mySize = int(myfont.split(';')[1]) - 1
+            if mySize < 8:
+                mySize = 8
+            self.root[self.currentScreenID][myIndex].set('font',myfont.split(';')[0] + ';%d' % mySize)
+        self.selectionChanged()
+        
 # Yellow
     def keyYellow(self):
         if self.NumberOfScreens >= 1:
@@ -352,6 +377,7 @@ class UserSkinEditScreens(Screen):
         if self.blockActions == False:
             keyBlueActionsList=[
                 (_("No action"), self.doNothing),
+                (_("Change font size"), self.resizeFont),
                 (_("Delete"), self.doDelete),
                 (_("Export"), self.doExport),
                 (_("Import"), self.doImport),
@@ -383,6 +409,8 @@ class UserSkinEditScreens(Screen):
             self['key_green'].setText(_('Export'))
         elif self.currAction == self.doImport:
             self['key_green'].setText(_('Import'))
+        elif self.currAction == self.resizeFont:
+            self['key_green'].setText(_('Change font size'))
         return
 
 # OK
