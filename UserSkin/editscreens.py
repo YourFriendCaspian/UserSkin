@@ -159,7 +159,7 @@ class UserSkinEditScreens(Screen):
         menu_list = []
         self["menu"] = List(menu_list)
         
-        self["shortcuts"] = ActionMap(["UserSkinActions"], #"SetupActions", "ColorActions", "DirectionActions"],
+        self["shortcuts"] = ActionMap(["UserSkinActions"],
         {
             "ok": self.keyOK,
             "cancel": self.keyExit,
@@ -292,8 +292,10 @@ class UserSkinEditScreens(Screen):
             self["PreviewFont"].instance.setBackgroundColor(parseColor(self.root[self.currentScreenID][myIndex].attrib['backgroundColor']))            
 
 #### KEYS ####
+
 #CHANNEL UP
     def channelup(self):
+        self.EditedScreen = True
         myIndex=self["menu"].getIndex()
         if self.currAction == self.resizeFont and 'font' in self.root[self.currentScreenID][myIndex].attrib:
             myfont = self.root[self.currentScreenID][myIndex].attrib['font']
@@ -301,17 +303,76 @@ class UserSkinEditScreens(Screen):
             if mySize > 80:
                 mySize = 80
             self.root[self.currentScreenID][myIndex].set('font',myfont.split(';')[0] + ';%d' % mySize)
+        elif self.currAction == self.moveHorizontally and 'position' in self.root[self.currentScreenID][myIndex].attrib:
+            myAttrib = self.root[self.currentScreenID][myIndex].attrib['position']
+            myX= int(myAttrib.split(',')[0]) + 1
+            myY= int(myAttrib.split(',')[1])
+            if myX > 1920:
+                myX = 1920
+            self.root[self.currentScreenID][myIndex].set('position','%d,%d' % (myX,myY))
+        elif self.currAction == self.moveVertically and 'position' in self.root[self.currentScreenID][myIndex].attrib:
+            myAttrib = self.root[self.currentScreenID][myIndex].attrib['position']
+            myX=int(myAttrib.split(',')[0])
+            myY=int(myAttrib.split(',')[1]) + 1
+            if myY > 720:
+                myY = 720
+            self.root[self.currentScreenID][myIndex].set('position','%d,%d' % (myX,myY))
+        elif self.currAction == self.resizeVertically and 'size' in self.root[self.currentScreenID][myIndex].attrib:
+            myAttrib = self.root[self.currentScreenID][myIndex].attrib['size']
+            myX=int(myAttrib.split(',')[0])
+            myY=int(myAttrib.split(',')[1]) + 1
+            if myY > 720:
+                myY = 720
+            self.root[self.currentScreenID][myIndex].set('size','%d,%d' % (myX,myY))
+        elif self.currAction == self.resizeHorizontally and 'size' in self.root[self.currentScreenID][myIndex].attrib:
+            myAttrib = self.root[self.currentScreenID][myIndex].attrib['size']
+            myX=int(myAttrib.split(',')[0]) + 1
+            myY=int(myAttrib.split(',')[1])
+            if myX > 1920:
+                myX = 1920
+            self.root[self.currentScreenID][myIndex].set('size','%d,%d' % (myX,myY))
+          
         self.selectionChanged()
         
 #CHANNEL DOWN
     def channeldown(self):
         myIndex=self["menu"].getIndex()
+        self.EditedScreen = True
         if self.currAction == self.resizeFont and 'font' in self.root[self.currentScreenID][myIndex].attrib:
             myfont = self.root[self.currentScreenID][myIndex].attrib['font']
             mySize = int(myfont.split(';')[1]) - 1
             if mySize < 8:
                 mySize = 8
             self.root[self.currentScreenID][myIndex].set('font',myfont.split(';')[0] + ';%d' % mySize)
+        elif self.currAction == self.moveHorizontally and 'position' in self.root[self.currentScreenID][myIndex].attrib:
+            myAttrib = self.root[self.currentScreenID][myIndex].attrib['position']
+            myX= int(myAttrib.split(',')[0]) - 1
+            myY= int(myAttrib.split(',')[1])
+            if myX < 0:
+                myX = 0
+            self.root[self.currentScreenID][myIndex].set('position','%d,%d' % (myX,myY))
+        elif self.currAction == self.moveVertically and 'position' in self.root[self.currentScreenID][myIndex].attrib:
+            myAttrib = self.root[self.currentScreenID][myIndex].attrib['position']
+            myX=int(myAttrib.split(',')[0])
+            myY=int(myAttrib.split(',')[1]) - 1
+            if myY < 0:
+                myY = 0
+            self.root[self.currentScreenID][myIndex].set('position','%d,%d' % (myX,myY))
+        elif self.currAction == self.resizeVertically and 'size' in self.root[self.currentScreenID][myIndex].attrib:
+            myAttrib = self.root[self.currentScreenID][myIndex].attrib['size']
+            myX=int(myAttrib.split(',')[0])
+            myY=int(myAttrib.split(',')[1]) - 1
+            if myY < 0:
+                myY = 0
+            self.root[self.currentScreenID][myIndex].set('size','%d,%d' % (myX,myY))
+        elif self.currAction == self.resizeHorizontally and 'size' in self.root[self.currentScreenID][myIndex].attrib:
+            myAttrib = self.root[self.currentScreenID][myIndex].attrib['size']
+            myX=int(myAttrib.split(',')[0]) - 1
+            myY=int(myAttrib.split(',')[1])
+            if myX < 0:
+                myX = 0
+            self.root[self.currentScreenID][myIndex].set('size','%d,%d' % (myX,myY))
+
         self.selectionChanged()
         
 # Yellow
@@ -377,6 +438,10 @@ class UserSkinEditScreens(Screen):
         if self.blockActions == False:
             keyBlueActionsList=[
                 (_("No action"), self.doNothing),
+                (_("Move left/right"), self.moveHorizontally),
+                (_("Move Up/Down"), self.moveVertically),
+                (_("Resize left/right"), self.resizeHorizontally),
+                (_("Resize Up/Down"), self.resizeVertically),
                 (_("Change font size"), self.resizeFont),
                 (_("Delete"), self.doDelete),
                 (_("Export"), self.doExport),
@@ -411,6 +476,14 @@ class UserSkinEditScreens(Screen):
             self['key_green'].setText(_('Import'))
         elif self.currAction == self.resizeFont:
             self['key_green'].setText(_('Change font size'))
+        elif self.currAction == self.moveHorizontally:
+            self['key_green'].setText(_('Move left/right'))
+        elif self.currAction == self.moveVertically:
+            self['key_green'].setText(_('Move Up/Down'))
+        elif self.currAction == self.resizeHorizontally:
+            self['key_green'].setText(_('Resize left/right'))
+        elif self.currAction == self.resizeVertically:
+            self['key_green'].setText(_('Resize Up/Down'))
         return
 
 # OK
