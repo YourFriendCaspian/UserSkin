@@ -6,7 +6,7 @@ from inits import *
 from Components.ActionMap import ActionMap
 from Components.config import *
 from Components.ConfigList import ConfigListScreen
-from Components.Label import Label
+from Components.Label import Label, MultiColorLabel
 from Components.Pixmap import Pixmap
 from Components.Sources.List import List
 from Components.Sources.StaticText import StaticText
@@ -75,8 +75,11 @@ class UserSkinEditScreens(Screen):
     
     <!-- Preview on Screen -->
     <eLabel position="785,265" size="445,260" zPosition="-10" backgroundColor="#20606060" />
+    <!-- Below graphs TV area, size has to be 16/8 -->
     <eLabel position="800,280" size="415,233" zPosition="-10" backgroundColor="#20909090" />
-    <!--widget name="PixMapPictureInScale" position="808,284" size="400,225" alphatest="on" /-->
+    <!--  -->
+    <widget name="ScreenPixMapPictureInScale" position="800,280" zPosition="-5" size="415,233" alphatest="on" />
+    <widget name="WigetPixMapPictureInScale" position="800,280" zPosition="1" size="415,233" alphatest="on" />
     <!-- BUTTONS -->
     <eLabel position=" 55,625" size="290,55" zPosition="-10" backgroundColor="#20b81c46" />
     <eLabel position="350,625" size="290,55" zPosition="-10" backgroundColor="#20009f3c" />
@@ -155,6 +158,8 @@ class UserSkinEditScreens(Screen):
         
         self["PixMapPreview"] = Pixmap()
         self["SkinPicture"] = Pixmap()
+        self["ScreenPixMapPictureInScale"] = Pixmap()
+        self["WigetPixMapPictureInScale"] = Pixmap()
         
         menu_list = []
         self["menu"] = List(menu_list)
@@ -181,11 +186,31 @@ class UserSkinEditScreens(Screen):
                 isPreview += 1
             if isPreview >= 2:
                 break
-        if path.exists("%sUserSkinpics/install.png" % SkinPath):
-            printDEBUG("SkinConfig is loading %sUserSkinpics/remove.png" % SkinPath)
-            self.disabled_pic = LoadPixmap(cached=True, path="%sUserSkinpics/remove.png" % SkinPath)
+        if path.exists("%sUserSkinpics/elabel.png" % SkinPath):
+            printDEBUG("SkinConfig is loading %sUserSkinpics/elabel.png" % SkinPath)
+            self.elabel_png = LoadPixmap(cached=True, path="%sUserSkinpics/elabel.png" % SkinPath)
         else:
-            self.disabled_pic = LoadPixmap(cached=True, path=resolveFilename(SCOPE_PLUGINS, "Extensions/UserSkin/pic/remove.png"))
+            self.elabel_png = LoadPixmap(cached=True, path=resolveFilename(SCOPE_PLUGINS, "Extensions/UserSkin/pic/edit/elabel.png"))
+        if path.exists("%sUserSkinpics/epixmap.png" % SkinPath):
+            printDEBUG("SkinConfig is loading %sUserSkinpics/epixmap.png" % SkinPath)
+            self.epixmap_png = LoadPixmap(cached=True, path="%sUserSkinpics/epixmap.png" % SkinPath)
+        else:
+            self.epixmap_png = LoadPixmap(cached=True, path=resolveFilename(SCOPE_PLUGINS, "Extensions/UserSkin/pic/edit/epixmap.png"))
+        if path.exists("%sUserSkinpics/label.png" % SkinPath):
+            printDEBUG("SkinConfig is loading %sUserSkinpics/label.png" % SkinPath)
+            self.label_png = LoadPixmap(cached=True, path="%sUserSkinpics/label.png" % SkinPath)
+        else:
+            self.label_png = LoadPixmap(cached=True, path=resolveFilename(SCOPE_PLUGINS, "Extensions/UserSkin/pic/edit/label.png"))
+        if path.exists("%sUserSkinpics/pixmap.png" % SkinPath):
+            printDEBUG("SkinConfig is loading %sUserSkinpics/pixmap.png" % SkinPath)
+            self.pixmap_png = LoadPixmap(cached=True, path="%sUserSkinpics/pixmap.png" % SkinPath)
+        else:
+            self.pixmap_png = LoadPixmap(cached=True, path=resolveFilename(SCOPE_PLUGINS, "Extensions/UserSkin/pic/edit/pixmap.png"))
+        if path.exists("%sUserSkinpics/widget.png" % SkinPath):
+            printDEBUG("SkinConfig is loading %sUserSkinpics/widget.png" % SkinPath)
+            self.widget_png = LoadPixmap(cached=True, path="%sUserSkinpics/widget.png" % SkinPath)
+        else:
+            self.widget_png = LoadPixmap(cached=True, path=resolveFilename(SCOPE_PLUGINS, "Extensions/UserSkin/pic/edit/widget.png"))
         
         if not self.selectionChanged in self["menu"].onSelectionChanged:
             self["menu"].onSelectionChanged.append(self.selectionChanged)
@@ -193,6 +218,15 @@ class UserSkinEditScreens(Screen):
         self.onLayoutFinish.append(self.LayoutFinished)
 
     def LayoutFinished(self):
+        # first we initiate the TV preview screen
+        if path.exists(PluginPath + 'pic/edit/tvpreview.png'):
+            self["ScreenPixMapPictureInScale"].instance.setScale(1)
+            self["ScreenPixMapPictureInScale"].instance.setPixmapFromFile(PluginPath + 'pic/edit/tvpreview.png')
+            self["ScreenPixMapPictureInScale"].show()
+        else:
+            print "no preview file"
+        print self["ScreenPixMapPictureInScale"].instance.size().width()
+
         fileName = self.ScreenFile.replace('allScreens/','allPreviews/preview_').replace('.xml','.png')
         #print self.ScreenFile
         #print fileName
@@ -212,6 +246,18 @@ class UserSkinEditScreens(Screen):
         f_list = []
         for child in self.root[self.currentScreenID].findall('*'):
             childTYPE = child.tag
+            if childTYPE.lower() == 'widget':
+                pic = self.widget_png
+            elif childTYPE.lower() == 'elabel':
+                pic = self.elabel_png
+            elif childTYPE.lower() == 'label':
+                pic = self.label_png
+            elif childTYPE.lower() == 'pixmap':
+                pic = self.pixmap_png
+            elif childTYPE.lower() == 'epixmap':
+                pic = self.epixmap_png
+            else:
+                pic = None
             childTitle = ''
             childDescr = ''
             childAttributes = ''
@@ -231,10 +277,10 @@ class UserSkinEditScreens(Screen):
                         childDescr += key + '=' + value
                     else:
                         childDescr += ' ' + key + '=' + value
-            f_list.append((child, "%s %s" % (childTYPE, childTitle), childDescr, self.disabled_pic))
+            f_list.append((child, "%s %s" % (childTYPE, childTitle), childDescr, pic))
             #printDEBUG('found <' + childTYPE + ' ' + childAttributes + '>')
         if len(f_list) == 0:
-            f_list.append(("dummy", _("No widgets found"), '', self.disabled_pic))
+            f_list.append(("dummy", _("No widgets found"), '', None))
             self.blockActions=True
         if self.blockActions == True:
             self['key_blue'].setText('')
