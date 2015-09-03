@@ -2,8 +2,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: UserSkin v0.1\n"
 "POT-Creation-Date: 2013-08-16 18:44+0100\n"
-"PO-Revision-Date: 2015-07-17 10:03+0100\n"
-"Last-Translator: plnick\n"
+"PO-Revision-Date: 2015-09-03 10:03+0100\n"
+"Last-Translator: j00zek\n"
 "Language-Team: j00zek\n"
 "Language: de\n"
 "MIME-Version: 1.0\n"
@@ -229,10 +229,10 @@ msgid "Modyfing "
 msgstr "Modyfikuję "
 
 msgid "This skin does not have the history of changes."
-msgstr "Ta skorka nie posiada historii zmian."
+msgstr "Ta skórka nie posiada historii zmian."
 
 msgid "Error downloading the history of changes"
-msgstr "Blad pobierania hiistorii zmian."
+msgstr "Błąd pobierania historii zmian."
 
 msgid "History of changes"
 msgstr "Historia zmian"
@@ -244,7 +244,7 @@ msgid "Window style:"
 msgstr "Styl okien:"
 
 msgid "UserSkin %s - additional screens"
-msgstr "UserSkin %s - dodatkowe skorki"
+msgstr "UserSkin %s - dodatkowe skórki"
 
 msgid "Edit"
 msgstr "Edycja"
@@ -256,37 +256,37 @@ msgid "Settings"
 msgstr "Ustawienia"
 
 msgid "All skins"
-msgstr "Wszystkie skorki"
+msgstr "Wszystkie skórki"
 
 msgid "ChannelList skins"
-msgstr "Skorki Listy kanalow"
+msgstr "Skórki Listy kanałów"
 
 msgid "Infobar skins"
-msgstr "Skorki paska informacyjnego"
+msgstr "Skórki paska informacyjnego"
 
 msgid "Are you sure you want delete the screen?"
-msgstr "Na pewno skasowac te skorke?"
+msgstr "Na pewno skasować tę skorkę?"
 
 msgid "UserSkin %s - EditScreens"
-msgstr "UserSkin %s - Edycja skorek"
+msgstr "UserSkin %s - Edycja skórek"
 
 msgid "UserSkin %s - Edit %s screen"
-msgstr "UserSkin %s - Edycja skorki %s"
+msgstr "UserSkin %s - Edycja skórki %s"
 
 msgid "UserSkin %s - Edit %s screen (1/%d)"
-msgstr "UserSkin %s - Edycja skorki %s (1/%d)"
+msgstr "UserSkin %s - Edycja skórki %s (1/%d)"
 
 msgid "Switch screen"
-msgstr "Przelacz skorke"
+msgstr "Przełącz skórkę"
 
 msgid "Actions"
 msgstr "Akcje"
 
 msgid "No widgets found"
-msgstr "Nie znaleziono elementow"
+msgstr "Nie znaleziono elementów"
 
 msgid "Sample Text"
-msgstr "Przyklad"
+msgstr "Przykład"
 
 msgid "UnknownName"
 msgstr "Bez nazwy"
@@ -304,10 +304,37 @@ msgid "Save & Exit"
 msgstr "Zapisz i zamknij"
 
 msgid "Enter filename"
-msgstr "Podaj nazwe pliku"
+msgstr "Podaj nazwę pliku"
 
 msgid "No action"
 msgstr "Bez akcji"
 
 msgid "Export"
 msgstr "Eksport"
+
+msgid "Move left/right"
+msgstr "Przesuń w poziomie"
+
+msgid "Move Up/Down"
+msgstr "Przesuń w pionie"
+
+msgid "Resize left/right"
+msgstr "Zmień szerokość"
+
+msgid "Resize Up/Down"
+msgstr "Zmień wysokość"
+
+msgid "Change font size"
+msgstr "Zmień wielkość czcionki"
+
+msgid "Permanent preview 1"
+msgstr "Wyświetlaj ciągle"
+
+msgid "Permanent preview 2"
+msgstr "Wyświetlaj w tle"
+
+msgid "Save"
+msgstr "Zapisz"
+
+msgid "Save as"
+msgstr "Zapisz jako"

@@ -195,42 +195,31 @@ class UserSkinEditScreens(Screen):
                 isPreview += 1
             if isPreview >= 2:
                 break
-        if path.exists("%sUserSkinpics/elabel.png" % SkinPath):
-            printDEBUG("SkinConfig is loading %sUserSkinpics/elabel.png" % SkinPath)
-            self.elabel_png = LoadPixmap(cached=True, path="%sUserSkinpics/elabel.png" % SkinPath)
-        else:
-            self.elabel_png = LoadPixmap(cached=True, path="%spic/edit/elabel.png" % PluginPath)
-        if path.exists("%sUserSkinpics/epixmap.png" % SkinPath):
-            printDEBUG("SkinConfig is loading %sUserSkinpics/epixmap.png" % SkinPath)
-            self.epixmap_png = LoadPixmap(cached=True, path="%sUserSkinpics/epixmap.png" % SkinPath)
-        else:
-            self.epixmap_png = LoadPixmap(cached=True, path="%spic/edit/epixmap.png" % PluginPath)
-        if path.exists("%sUserSkinpics/label.png" % SkinPath):
-            printDEBUG("SkinConfig is loading %sUserSkinpics/label.png" % SkinPath)
-            self.label_png = LoadPixmap(cached=True, path="%sUserSkinpics/label.png" % SkinPath)
-        else:
-            self.label_png = LoadPixmap(cached=True, path="%spic/edit/label.png" % PluginPath)
-        if path.exists("%sUserSkinpics/pixmap.png" % SkinPath):
-            printDEBUG("SkinConfig is loading %sUserSkinpics/pixmap.png" % SkinPath)
-            self.pixmap_png = LoadPixmap(cached=True, path="%sUserSkinpics/pixmap.png" % SkinPath)
-        else:
-            self.pixmap_png = LoadPixmap(cached=True, path="%spic/edit/pixmap.png" % PluginPath)
-        if path.exists("%sUserSkinpics/widget.png" % SkinPath):
-            printDEBUG("SkinConfig is loading %sUserSkinpics/widget.png" % SkinPath)
-            self.widget_png = LoadPixmap(cached=True, path="%sUserSkinpics/widget.png" % SkinPath)
-        else:
-            self.widget_png = LoadPixmap(cached=True, path="%spic/edit/widget.png" % PluginPath)
+
+        self.elabel_png = LoadPixmap(cached=True, path= self.getPicFileNameWithPath("elabel.png"))
+        self.epixmap_png = LoadPixmap(cached=True, path= self.getPicFileNameWithPath("epixmap.png"))
+        self.label_png = LoadPixmap(cached=True, path= self.getPicFileNameWithPath("label.png"))
+        self.pixmap_png = LoadPixmap(cached=True, path= self.getPicFileNameWithPath("pixmap.png"))
+        self.widget_png = LoadPixmap(cached=True, path= self.getPicFileNameWithPath("widget.png"))
+        
         
         if not self.selectionChanged in self["menu"].onSelectionChanged:
             self["menu"].onSelectionChanged.append(self.selectionChanged)
         
         self.onLayoutFinish.append(self.LayoutFinished)
 
+    def getPicFileNameWithPath(self, filename):
+        if path.isfile("%sUserSkinpics/%s" % (SkinPath,filename) ):
+            return "%sUserSkinpics/%s" % (SkinPath,filename)
+        else:
+            return "%spic/edit/%s" % (PluginPath,filename)
+        
+        
     def LayoutFinished(self):
         # first we initiate the TV preview screen
-        if path.exists(PluginPath + 'pic/edit/tvpreview.png'):
+        if path.isfile( self.getPicFileNameWithPath('tvpreview.png') ):
             self["ScreenPixMapPictureInScale"].instance.setScale(1)
-            self["ScreenPixMapPictureInScale"].instance.setPixmapFromFile(PluginPath + 'pic/edit/tvpreview.png')
+            self["ScreenPixMapPictureInScale"].instance.setPixmapFromFile( self.getPicFileNameWithPath('tvpreview.png') )
             self["ScreenPixMapPictureInScale"].show()
         else:
             print "no preview file"
