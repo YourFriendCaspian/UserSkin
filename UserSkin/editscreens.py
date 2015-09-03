@@ -10,7 +10,7 @@ from Components.Label import Label, MultiColorLabel
 from Components.Pixmap import Pixmap
 from Components.Sources.List import List
 from Components.Sources.StaticText import StaticText
-from enigma import ePicLoad,eLabel,gFont
+from enigma import ePicLoad, eLabel, gFont, getDesktop, ePoint, eSize
 from Plugins.Plugin import PluginDescriptor
 from Screens.ChoiceBox import ChoiceBox
 from Screens.MessageBox import MessageBox
@@ -112,6 +112,10 @@ class UserSkinEditScreens(Screen):
     resizeHorizontally = 9
     resizeVertically = 10
     
+    WidgetPreviewX = 0
+    WidgetPreviewY = 0
+    WidgetPreviewScale = 0
+    
     currAction = doNothing
     
     def __init__(self, session, ScreenFile = ''):
@@ -190,27 +194,27 @@ class UserSkinEditScreens(Screen):
             printDEBUG("SkinConfig is loading %sUserSkinpics/elabel.png" % SkinPath)
             self.elabel_png = LoadPixmap(cached=True, path="%sUserSkinpics/elabel.png" % SkinPath)
         else:
-            self.elabel_png = LoadPixmap(cached=True, path=resolveFilename(SCOPE_PLUGINS, "Extensions/UserSkin/pic/edit/elabel.png"))
+            self.elabel_png = LoadPixmap(cached=True, path="%spic/edit/elabel.png" % PluginPath)
         if path.exists("%sUserSkinpics/epixmap.png" % SkinPath):
             printDEBUG("SkinConfig is loading %sUserSkinpics/epixmap.png" % SkinPath)
             self.epixmap_png = LoadPixmap(cached=True, path="%sUserSkinpics/epixmap.png" % SkinPath)
         else:
-            self.epixmap_png = LoadPixmap(cached=True, path=resolveFilename(SCOPE_PLUGINS, "Extensions/UserSkin/pic/edit/epixmap.png"))
+            self.epixmap_png = LoadPixmap(cached=True, path="%spic/edit/epixmap.png" % PluginPath)
         if path.exists("%sUserSkinpics/label.png" % SkinPath):
             printDEBUG("SkinConfig is loading %sUserSkinpics/label.png" % SkinPath)
             self.label_png = LoadPixmap(cached=True, path="%sUserSkinpics/label.png" % SkinPath)
         else:
-            self.label_png = LoadPixmap(cached=True, path=resolveFilename(SCOPE_PLUGINS, "Extensions/UserSkin/pic/edit/label.png"))
+            self.label_png = LoadPixmap(cached=True, path="%spic/edit/label.png" % PluginPath)
         if path.exists("%sUserSkinpics/pixmap.png" % SkinPath):
             printDEBUG("SkinConfig is loading %sUserSkinpics/pixmap.png" % SkinPath)
             self.pixmap_png = LoadPixmap(cached=True, path="%sUserSkinpics/pixmap.png" % SkinPath)
         else:
-            self.pixmap_png = LoadPixmap(cached=True, path=resolveFilename(SCOPE_PLUGINS, "Extensions/UserSkin/pic/edit/pixmap.png"))
+            self.pixmap_png = LoadPixmap(cached=True, path="%spic/edit/pixmap.png" % PluginPath)
         if path.exists("%sUserSkinpics/widget.png" % SkinPath):
             printDEBUG("SkinConfig is loading %sUserSkinpics/widget.png" % SkinPath)
             self.widget_png = LoadPixmap(cached=True, path="%sUserSkinpics/widget.png" % SkinPath)
         else:
-            self.widget_png = LoadPixmap(cached=True, path=resolveFilename(SCOPE_PLUGINS, "Extensions/UserSkin/pic/edit/widget.png"))
+            self.widget_png = LoadPixmap(cached=True, path="%spic/edit/widget.png" % PluginPath)
         
         if not self.selectionChanged in self["menu"].onSelectionChanged:
             self["menu"].onSelectionChanged.append(self.selectionChanged)
@@ -225,7 +229,9 @@ class UserSkinEditScreens(Screen):
             self["ScreenPixMapPictureInScale"].show()
         else:
             print "no preview file"
-        print self["ScreenPixMapPictureInScale"].instance.size().width()
+        self.WidgetPreviewX = self["ScreenPixMapPictureInScale"].instance.position().x()
+        self.WidgetPreviewY = self["ScreenPixMapPictureInScale"].instance.position().y()
+        self.WidgetPreviewScale = ( float(self["ScreenPixMapPictureInScale"].instance.size().width()) / float(getDesktop(0).size().width()) )
 
         fileName = self.ScreenFile.replace('allScreens/','allPreviews/preview_').replace('.xml','.png')
         #print self.ScreenFile
@@ -305,12 +311,45 @@ class UserSkinEditScreens(Screen):
         self["widgetDetailsTXT"].setText( ET.tostring(self.root[self.currentScreenID][myIndex]) )
         self.setPixMapPreview(myIndex)
         self.setPreviewFont(myIndex)
+        self.setWigetPixMapPictureInScale(myIndex)
 
+    def setWigetPixMapPictureInScale(self, myIndex):
+        if not 'pixmap' in self.root[self.currentScreenID][myIndex].attrib:
+            if path.exists("%sUserSkinpics/widgetmarker.png" % SkinPath):
+                pic = "%sUserSkinpics/widgetmarker.png" % SkinPath
+            else:
+                pic = "%spic/edit/widgetmarker.png" % PluginPath
+        else:
+            pic = resolveFilename(SCOPE_SKIN, self.root[self.currentScreenID][myIndex].attrib['pixmap'] )
+        #position="x,y" size="x,y"
+        WidgetPosition=self.root[self.currentScreenID][myIndex].attrib['position'].split(',')
+        WidgetSize=self.root[self.currentScreenID][myIndex].attrib['size'].split(',')
+        #.instance.move(ePoint(x,y))
+        #self.picload.setPara((self.instance.size().width(), self.instance.size().height(), 1, 1, False, 1, "#00000000"))
+        #.size().width(), self.instance.size().height()
+        if path.exists(pic):
+            print "przed"
+            print self["WigetPixMapPictureInScale"].instance.size().width()
+            self["WigetPixMapPictureInScale"].instance.resize(eSize(int(int(WidgetSize[0])*self.WidgetPreviewScale) , int(int(WidgetSize[1])*self.WidgetPreviewScale) ))
+            print "po"
+            print self["WigetPixMapPictureInScale"].instance.size().width()
+            print "powinno byc"
+            print int(int(WidgetSize[0])*self.WidgetPreviewScale)
+            self["WigetPixMapPictureInScale"].instance.setScale(1)
+            self["WigetPixMapPictureInScale"].instance.setPixmapFromFile(pic)
+            self["WigetPixMapPictureInScale"].show()
+            
+            self["WigetPixMapPictureInScale"].instance.move(ePoint(int(int(WidgetPosition[0])*self.WidgetPreviewScale) + self.WidgetPreviewX , \
+                                                                                    int(int(WidgetPosition[1])*self.WidgetPreviewScale + self.WidgetPreviewY)))
+        else:
+            print pic
+            self["WigetPixMapPictureInScale"].hide()
+            
     def setPixMapPreview(self, myIndex):
         if not 'pixmap' in self.root[self.currentScreenID][myIndex].attrib:
             self["PixMapPreview"].hide()
             return
-        pic = self.root[0][myIndex].attrib['pixmap']
+        pic = self.root[self.currentScreenID][myIndex].attrib['pixmap']
         if path.exists(resolveFilename(SCOPE_SKIN, pic)):
             self["PixMapPreview"].instance.setScale(1)
             self["PixMapPreview"].instance.setPixmapFromFile(resolveFilename(SCOPE_SKIN, pic))
