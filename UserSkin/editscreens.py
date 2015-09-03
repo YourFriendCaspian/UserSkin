@@ -77,9 +77,10 @@ class UserSkinEditScreens(Screen):
     <eLabel position="785,265" size="445,260" zPosition="-10" backgroundColor="#20606060" />
     <!-- Below graphs TV area, size has to be 16/8 -->
     <eLabel position="800,280" size="415,233" zPosition="-10" backgroundColor="#20909090" />
-    <!--  -->
-    <widget name="ScreenPixMapPictureInScale" position="800,280" zPosition="-5" size="415,233" alphatest="on" />
-    <widget name="WigetPixMapPictureInScale" position="800,280" zPosition="1" size="415,233" alphatest="on" />
+    <widget name="ScreenPixMapPictureInScale" position="800,280" zPosition="-5" size="415,233" alphatest="blend" />
+    <widget name="WigetPixMapPictureInScale" position="800,280" zPosition="1" size="415,233" alphatest="blend" />
+    <widget name="WigetPixMapPictureInScale1" position="800,280" zPosition="-1" size="1,1" alphatest="on" />
+    <widget name="WigetPixMapPictureInScale2" position="800,280" zPosition="-2" size="1,1" alphatest="on" />
     <!-- BUTTONS -->
     <eLabel position=" 55,625" size="290,55" zPosition="-10" backgroundColor="#20b81c46" />
     <eLabel position="350,625" size="290,55" zPosition="-10" backgroundColor="#20009f3c" />
@@ -111,6 +112,8 @@ class UserSkinEditScreens(Screen):
     moveVertically = 8
     resizeHorizontally = 9
     resizeVertically = 10
+    PermanentPreview1 = 11
+    PermanentPreview2 = 12
     
     WidgetPreviewX = 0
     WidgetPreviewY = 0
@@ -164,6 +167,8 @@ class UserSkinEditScreens(Screen):
         self["SkinPicture"] = Pixmap()
         self["ScreenPixMapPictureInScale"] = Pixmap()
         self["WigetPixMapPictureInScale"] = Pixmap()
+        self["WigetPixMapPictureInScale1"] = Pixmap()
+        self["WigetPixMapPictureInScale2"] = Pixmap()
         
         menu_list = []
         self["menu"] = List(menu_list)
@@ -313,37 +318,29 @@ class UserSkinEditScreens(Screen):
         self.setPreviewFont(myIndex)
         self.setWigetPixMapPictureInScale(myIndex)
 
-    def setWigetPixMapPictureInScale(self, myIndex):
+    def setWigetPixMapPictureInScale(self, myIndex, myWidget = "WigetPixMapPictureInScale", myWidgetFile = 'widgetmarker.png' ):
         if not 'pixmap' in self.root[self.currentScreenID][myIndex].attrib:
-            if path.exists("%sUserSkinpics/widgetmarker.png" % SkinPath):
-                pic = "%sUserSkinpics/widgetmarker.png" % SkinPath
+            if path.exists("%sUserSkinpics/%s" % (SkinPath, myWidgetFile) ):
+                pic = "%sUserSkinpics/%s" % (SkinPath, myWidgetFile) 
             else:
-                pic = "%spic/edit/widgetmarker.png" % PluginPath
+                pic = "%spic/edit/%s" % (PluginPath, myWidgetFile)
         else:
             pic = resolveFilename(SCOPE_SKIN, self.root[self.currentScreenID][myIndex].attrib['pixmap'] )
         #position="x,y" size="x,y"
+        printDEBUG("setWigetPixMapPictureInScale, pic=%s" % pic)
+        
         WidgetPosition=self.root[self.currentScreenID][myIndex].attrib['position'].split(',')
         WidgetSize=self.root[self.currentScreenID][myIndex].attrib['size'].split(',')
-        #.instance.move(ePoint(x,y))
-        #self.picload.setPara((self.instance.size().width(), self.instance.size().height(), 1, 1, False, 1, "#00000000"))
-        #.size().width(), self.instance.size().height()
         if path.exists(pic):
-            print "przed"
-            print self["WigetPixMapPictureInScale"].instance.size().width()
-            self["WigetPixMapPictureInScale"].instance.resize(eSize(int(int(WidgetSize[0])*self.WidgetPreviewScale) , int(int(WidgetSize[1])*self.WidgetPreviewScale) ))
-            print "po"
-            print self["WigetPixMapPictureInScale"].instance.size().width()
-            print "powinno byc"
-            print int(int(WidgetSize[0])*self.WidgetPreviewScale)
-            self["WigetPixMapPictureInScale"].instance.setScale(1)
-            self["WigetPixMapPictureInScale"].instance.setPixmapFromFile(pic)
-            self["WigetPixMapPictureInScale"].show()
+            self[myWidget].instance.resize(eSize(int(int(WidgetSize[0])*self.WidgetPreviewScale) , int(int(WidgetSize[1])*self.WidgetPreviewScale) ))
+            self[myWidget].instance.setScale(1)
+            self[myWidget].instance.setPixmapFromFile(pic)
+            self[myWidget].show()
             
-            self["WigetPixMapPictureInScale"].instance.move(ePoint(int(int(WidgetPosition[0])*self.WidgetPreviewScale) + self.WidgetPreviewX , \
+            self[myWidget].instance.move(ePoint(int(int(WidgetPosition[0])*self.WidgetPreviewScale) + self.WidgetPreviewX , \
                                                                                     int(int(WidgetPosition[1])*self.WidgetPreviewScale + self.WidgetPreviewY)))
         else:
-            print pic
-            self["WigetPixMapPictureInScale"].hide()
+            self[myWidget].hide()
             
     def setPixMapPreview(self, myIndex):
         if not 'pixmap' in self.root[self.currentScreenID][myIndex].attrib:
@@ -528,9 +525,14 @@ class UserSkinEditScreens(Screen):
                 (_("Resize left/right"), self.resizeHorizontally),
                 (_("Resize Up/Down"), self.resizeVertically),
                 (_("Change font size"), self.resizeFont),
+                ("---", self.doNothing),
                 (_("Delete"), self.doDelete),
                 (_("Export"), self.doExport),
                 (_("Import"), self.doImport),
+                ("---", self.doNothing),
+                (_("Permanent preview 1"), self.PermanentPreview1),
+                (_("Permanent preview 2"), self.PermanentPreview2),
+                ("---", self.doNothing),
                 (_("Save"), self.doSave),
                 (_("Save as"), self.doSaveAs),
             ]
@@ -552,7 +554,13 @@ class UserSkinEditScreens(Screen):
         elif self.currAction == self.doSave:
             self.keyExitRetSave()
             return
-        #manipulationf
+        elif self.currAction == self.PermanentPreview1:
+            self.setWigetPixMapPictureInScale(myIndex = self["menu"].getIndex(), myWidget = "WigetPixMapPictureInScale1", myWidgetFile = 'permanentwidget1.png' )
+            return
+        elif self.currAction == self.PermanentPreview2:
+            self.setWigetPixMapPictureInScale(myIndex = self["menu"].getIndex(), myWidget = "WigetPixMapPictureInScale2", myWidgetFile = 'permanentwidget2.png' )
+            return
+        #manipulation
         elif self.currAction == self.doDelete:
             self['key_green'].setText(_('Delete'))
         elif self.currAction == self.doExport:
