@@ -98,6 +98,7 @@ class UserSkinEditScreens(Screen):
     myScreenName = None
     currentScreenID = 0
     NumberOfScreens = 1
+    NumberOfChilds = 1
     
     blockActions = False
     
@@ -137,12 +138,20 @@ class UserSkinEditScreens(Screen):
             self.root = ET.parse(self.ScreenFile).getroot()
             self.myScreenName = self.root.find('screen').attrib['name']
             self.NumberOfScreens = len(self.root.findall('screen'))
+            self.NumberOfChilds = len(self.root.findall('*'))
         except:
             printDEBUG("%s -Is NOT proper xml file - END!!!" % self.ScreenFile)
             self.close()
             return
         printDEBUG("%s has been loaded successfully. :)" % self.ScreenFile)
-        
+        if self.NumberOfChilds != self.NumberOfScreens:
+            iindex = 0
+            for child in self.root.findall('*'):
+                if child.tag == 'screen':
+                    break
+                iindex+= 1
+            self.currentScreenID = iindex
+          
         if self.myScreenName == None:
             myTitle=_("UserSkin %s - EditScreens") %  UserSkinInfo
         else:
@@ -350,18 +359,27 @@ class UserSkinEditScreens(Screen):
         #### Now we know we have font, so we can preview it :)
         myfont = self.root[self.currentScreenID][myIndex].attrib['font']
         #print myfont
-        self["PreviewFont"].instance.setFont(gFont(myfont.split(';')[0], int(myfont.split(';')[1])))
+        try:
+            self["PreviewFont"].instance.setFont(gFont(myfont.split(';')[0], int(myfont.split(';')[1])))
+        except:
+            printDEBUG("Missing font '%s' definition in skin.xml" % self.root[self.currentScreenID][myIndex].attrib['font'])
         if 'text' in self.root[self.currentScreenID][myIndex].attrib:
             self["PreviewFont"].setText('%s' % self.root[self.currentScreenID][myIndex].attrib['text'])
         else:
             self["PreviewFont"].setText(_('Sample Text'))
         if 'foregroundColor' in self.root[self.currentScreenID][myIndex].attrib:
-            self["PreviewFont"].instance.setForegroundColor(parseColor(self.root[self.currentScreenID][myIndex].attrib['foregroundColor']))            
+            try:
+                self["PreviewFont"].instance.setForegroundColor(parseColor(self.root[self.currentScreenID][myIndex].attrib['foregroundColor']))            
+            except:
+                printDEBUG("Missing color '%s' definition in skin.xml" % self.root[self.currentScreenID][myIndex].attrib['foregroundColor'])
         else:
             self["PreviewFont"].instance.setForegroundColor(parseColor("#00ffffff"))            
         if 'backgroundColor' in self.root[self.currentScreenID][myIndex].attrib:
-            self["PreviewFont"].instance.setBackgroundColor(parseColor(self.root[self.currentScreenID][myIndex].attrib['backgroundColor']))            
-
+            try:
+                self["PreviewFont"].instance.setBackgroundColor(parseColor(self.root[self.currentScreenID][myIndex].attrib['backgroundColor']))            
+            except:
+                printDEBUG("Missing color '%s' definition in skin.xml" % self.root[self.currentScreenID][myIndex].attrib['backgroundColor'])
+  
 #### KEYS ####
 
 #CHANNEL UP
@@ -460,7 +478,9 @@ class UserSkinEditScreens(Screen):
             self.currentScreenID += 1
             if self.currentScreenID >= self.NumberOfScreens:
                 self.currentScreenID = 0
-
+            while self.root[self.currentScreenID].tag != 'screen':
+                self.currentScreenID += 1
+                
             try:
                 self.myScreenName = self.root[self.currentScreenID].attrib['name']
             except:
@@ -476,6 +496,14 @@ class UserSkinEditScreens(Screen):
         #    pass
             self.createWidgetsList()
 
+        if self.NumberOfChilds != self.NumberOfScreens:
+            iindex = 0
+            for child in self.root.findall('*'):
+                if child.tag == screen:
+                    break
+                iindex+= 1
+            self.currentScreenID = iindex
+            
 # RED, CANCEL
     def keyExit(self): 
         if self.EditedScreen == True:
