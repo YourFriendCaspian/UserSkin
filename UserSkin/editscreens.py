@@ -376,18 +376,26 @@ class UserSkinEditScreens(Screen):
             self.root[self.currentScreenID][myIndex].set('font',myfont.split(';')[0] + ';%d' % mySize)
         elif self.currAction == self.moveHorizontally and 'position' in self.root[self.currentScreenID][myIndex].attrib:
             myAttrib = self.root[self.currentScreenID][myIndex].attrib['position']
-            myX= int(myAttrib.split(',')[0]) + 1
+            try:
+                myX= int(myAttrib.split(',')[0]) + 1
+            except: #center
+                myX=getDesktop(0).size().width()/2
+                
             myY= int(myAttrib.split(',')[1])
             if myX > 1920:
                 myX = 1920
-            self.root[self.currentScreenID][myIndex].set('position','%d,%d' % (myX,myY))
+            self.root[self.currentScreenID][myIndex].set('position','%d,%s' % (myX,str(myY)))
         elif self.currAction == self.moveVertically and 'position' in self.root[self.currentScreenID][myIndex].attrib:
             myAttrib = self.root[self.currentScreenID][myIndex].attrib['position']
-            myX=int(myAttrib.split(',')[0])
-            myY=int(myAttrib.split(',')[1]) + 1
+            myX=myAttrib.split(',')[0]
+            
+            try:
+                myY=int(myAttrib.split(',')[1]) + 1
+            except: #center
+                myY=getDesktop(0).size().height()/2
             if myY > 720:
                 myY = 720
-            self.root[self.currentScreenID][myIndex].set('position','%d,%d' % (myX,myY))
+            self.root[self.currentScreenID][myIndex].set('position','%s,%d' % (str(myX),myY))
         elif self.currAction == self.resizeVertically and 'size' in self.root[self.currentScreenID][myIndex].attrib:
             myAttrib = self.root[self.currentScreenID][myIndex].attrib['size']
             myX=int(myAttrib.split(',')[0])

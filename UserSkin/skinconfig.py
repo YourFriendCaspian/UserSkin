@@ -545,7 +545,9 @@ class UserSkin_Config(Screen, ConfigListScreen):
                             SkinContent = ET.tostring(skinScreen)
                             break
                 with open("%s%s/%s" % (SkinPath, 'allScreens', ScreenFileName), "w") as f:
+                    f.write('<skin>\n')
                     f.write(SkinContent)
+                    f.write('</skin>\n')
 
         def ScreenSelected(ret):
             if ret:
