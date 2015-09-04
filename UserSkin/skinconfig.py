@@ -239,8 +239,10 @@ class UserSkin_Config(Screen, ConfigListScreen):
         self["config"].l.setList(self.list)
         if self.myUserSkin_active.value:
             self["key_yellow"].setText(_("User skins"))
+            self["key_blue"].setText(_("Extract from skin.xml"))
         else:
             self["key_yellow"].setText("")
+            self["key_blue"].setText("")
 
     def changedEntry(self):
         self.updateEntries = True
@@ -526,8 +528,41 @@ class UserSkin_Config(Screen, ConfigListScreen):
         restartbox.setTitle(_("Message"))
 
     def keyBlue(self):
-        pass
+        import xml.etree.cElementTree as ET
+        from Screens.VirtualKeyBoard import VirtualKeyBoard
+        
+        def SaveScreen(ScreenFileName = None):
+            if ScreenFileName is not None:
+                if not ScreenFileName.endswith('.xml'):
+                    ScreenFileName += '.xml'
+                if not ScreenFileName.startswith('skin_'):
+                    ScreenFileName = 'skin_' + ScreenFileName
+                printDEBUG("Writing %s%s/%s" % (SkinPath, 'allScreens',ScreenFileName))
+                
+                for skinScreen in root.findall('screen'):
+                    if 'name' in skinScreen.attrib:
+                        if skinScreen.attrib['name'] == self.ScreenSelectedToExport:
+                            SkinContent = ET.tostring(skinScreen)
+                            break
+                with open("%s%s/%s" % (SkinPath, 'allScreens', ScreenFileName), "w") as f:
+                    f.write(SkinContent)
 
+        def ScreenSelected(ret):
+            if ret:
+                self.ScreenSelectedToExport = ret[0]
+                printDEBUG('Selected: %s' % self.ScreenSelectedToExport)
+                self.session.openWithCallback(SaveScreen, VirtualKeyBoard, title=(_("Enter filename")), text = self.ScreenSelectedToExport + '_new')
+        
+        ScreensList= []
+        root = ET.parse(SkinPath + 'skin.xml').getroot()
+        for skinScreen in root.findall('screen'):
+            if 'name' in skinScreen.attrib:
+                printDEBUG('Found in skin.xml: %s' % skinScreen.attrib['name'])
+                ScreensList.append((skinScreen.attrib['name'],skinScreen.attrib['name']))
+        if len(ScreensList) > 0:
+            ScreensList.sort()
+            self.session.openWithCallback(ScreenSelected, ChoiceBox, title = _("Select skin to export:"), list = ScreensList)
+                
     def restartGUIcb(self, answer):
         if answer is True:
             self.session.open(TryQuitMainloop, 3)
