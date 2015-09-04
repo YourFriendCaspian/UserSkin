@@ -181,8 +181,8 @@ class UserSkinEditScreens(Screen):
             "green": self.keyGreen,
             "yellow": self.keyYellow,
             "blue": self.keyBlue,
-            "channelup": self.channelup,
-            "channeldown": self.channeldown,
+            "keyup": self.channelup,
+            "keydown": self.channeldown,
         }, -2)
         
         self.skin_base_dir = SkinPath

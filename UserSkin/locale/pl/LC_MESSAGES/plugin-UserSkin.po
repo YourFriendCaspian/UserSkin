@@ -338,3 +338,9 @@ msgstr "Zapisz"
 
 msgid "Save as"
 msgstr "Zapisz jako"
+
+msgid "Extract from skin.xml"
+msgstr "Skórka ze skin.xml"
+
+msgid "Selector bar style:"
+msgstr "Styl belki wyboru:"
