@@ -317,7 +317,13 @@ class UserSkinEditScreens(Screen):
         self.setWigetPixMapPictureInScale(myIndex)
 
     def setWigetPixMapPictureInScale(self, myIndex, myWidget = "WigetPixMapPictureInScale", myWidgetFile = 'widgetmarker.png' ):
-        if not 'pixmap' in self.root[self.currentScreenID][myIndex].attrib:
+        if not 'position' in self.root[self.currentScreenID][myIndex].attrib:
+            self[myWidget].hide()
+            return
+        elif not 'size' in self.root[self.currentScreenID][myIndex].attrib:
+            self[myWidget].hide()
+            return
+        elif not 'pixmap' in self.root[self.currentScreenID][myIndex].attrib:
             if path.exists("%sUserSkinpics/%s" % (SkinPath, myWidgetFile) ):
                 pic = "%sUserSkinpics/%s" % (SkinPath, myWidgetFile) 
             else:
