@@ -344,3 +344,15 @@ msgstr "Skórka ze skin.xml"
 
 msgid "Selector bar style:"
 msgstr "Styl belki wyboru:"
+
+msgid "Advanced attributes edit"
+msgstr "Zaawansowana edycja atrybutów"
+
+msgid "Select attribute to edit:"
+msgstr "Wybierz atrybut do edycji"
+
+msgid "Advanced %s attribute edit"
+msgstr "Zaawansowana edycja atrybutu %s"
+
+msgid "Are you sure you want to change: '%s' to '%s'?"
+msgstr "Na pewno zamienić '%s' na '%s'?"

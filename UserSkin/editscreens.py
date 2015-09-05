@@ -115,6 +115,7 @@ class UserSkinEditScreens(Screen):
     resizeVertically = 10
     PermanentPreview1 = 11
     PermanentPreview2 = 12
+    AdvancedAttribEdit = 13
     
     WidgetPreviewX = 0
     WidgetPreviewY = 0
@@ -556,6 +557,7 @@ class UserSkinEditScreens(Screen):
                 (_("Resize left/right"), self.resizeHorizontally),
                 (_("Resize Up/Down"), self.resizeVertically),
                 (_("Change font size"), self.resizeFont),
+                (_("Advanced attributes edit"), self.AdvancedAttribEdit),
                 ("---", self.doNothing),
                 (_("Delete"), self.doDelete),
                 (_("Export"), self.doExport),
@@ -608,6 +610,8 @@ class UserSkinEditScreens(Screen):
             self['key_green'].setText(_('Resize left/right'))
         elif self.currAction == self.resizeVertically:
             self['key_green'].setText(_('Resize Up/Down'))
+        elif self.currAction == self.AdvancedAttribEdit:
+            self['key_green'].setText(_('Advanced attributes edit'))
         return
 
 # OK
@@ -616,6 +620,7 @@ class UserSkinEditScreens(Screen):
 
 #### Green
     def keyGreen(self):
+        print 'self.keyGreen'
         myIndex=self["menu"].getIndex()
         if self.currAction == self.doNothing:
             return
@@ -625,6 +630,8 @@ class UserSkinEditScreens(Screen):
             self.doExportAction(myIndex)
         elif self.currAction == self.doImport:
             self.doImportFunc()
+        elif self.currAction == self.AdvancedAttribEdit:
+            self.doAttribEditFunc()
         self.EditedScreen = True
 
 #### Green subprocedures
@@ -683,3 +690,31 @@ class UserSkinEditScreens(Screen):
                 widgetRoot = ET.parse(self.skin_base_dir + "allWidgets/"+ret[1]).getroot()
                 self.root[self.currentScreenID].insert(self["menu"].getIndex(),widgetRoot)
             self.createWidgetsList()
+
+    def doAttribEditFunc(self):
+        attriblist = []
+        myIndex=self["menu"].getIndex()
+        for name, value in self.root[self.currentScreenID][myIndex].attrib.items():
+            attriblist.append((name,value))
+        if len(attriblist) > 0:
+            self.session.openWithCallback(self.doAttribEditFuncRet, ChoiceBox, title = _("Select attribute to edit:"), list = attriblist)
+
+    def doAttribEditFuncRet(self, ret):
+        if ret:
+            self.AttributeToEdit = ret[0]
+            self.OldAttributeValue = ret[1]
+            from Screens.VirtualKeyBoard import VirtualKeyBoard
+            self.session.openWithCallback(self.doAttribEditedFuncRet, VirtualKeyBoard, title=(_("Advanced %s attribute edit")), text = self.OldAttributeValue)
+
+    def doAttribEditedFuncRet(self, ret):
+        if ret:
+            self.NewAttributeValue = ret
+            self.session.openWithCallback(self.doAttribEditedFuncFinal, MessageBox, _("Are you sure you want to change: '%s' to '%s'?") % (self.OldAttributeValue,self.NewAttributeValue), MessageBox.TYPE_YESNO, default = False)
+            
+    def doAttribEditedFuncFinal(self, ret):
+        if ret is None or ret is False:
+            return
+        else:
+            myIndex=self["menu"].getIndex()
+            self.root[self.currentScreenID][myIndex].set(self.AttributeToEdit,self.NewAttributeValue)
+            self.selectionChanged()
