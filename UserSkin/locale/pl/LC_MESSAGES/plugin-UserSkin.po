@@ -356,3 +356,24 @@ msgstr "Zaawansowana edycja atrybutu %s"
 
 msgid "Are you sure you want to change: '%s' to '%s'?"
 msgstr "Na pewno zamienić '%s' na '%s'?"
+
+msgid "Paint a square. "
+msgstr "Tworzy prostokąt. "
+
+msgid "Display a picture. "
+msgstr "Wyświetla grafikę. "
+
+msgid "Controlled through %s. "
+msgstr "Kontrolowany przez %s. "
+
+msgid "Display %s. "
+msgstr "Wyświetla '%s'. "
+
+msgid "Controlled by script or plugin. "
+msgstr "Kontrolowany przez skrypt lub wtyczkę"
+
+msgid "ChannelList"
+msgstr "Lista kanałów"
+
+msgid "Set standard background"
+msgstr "Ustaw standardowe tło"

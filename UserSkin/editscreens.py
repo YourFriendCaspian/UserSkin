@@ -43,44 +43,43 @@ class UserSkinEditScreens(Screen):
     <eLabel position="0,0" size="1280,720" zPosition="-15" backgroundColor="#20000000" />
     <widget source="Title" render="Label" position="70,47" size="1100,43" font="Regular;35" foregroundColor="#00ffffff" backgroundColor="#004e4e4e" transparent="1" />
     <!-- List -->
-    <eLabel position=" 55,100" size="725,425" zPosition="-10" backgroundColor="#20606060" />
-    <widget source="menu" render="Listbox" position="70,115" size="700,390" scrollbarMode="showOnDemand" transparent="1">
+    <eLabel position="55,100" size="475,400" zPosition="-10" backgroundColor="#20606060" />
+    <widget source="menu" render="Listbox" position="65,110" size="455,385" scrollbarMode="showOnDemand" transparent="1">
       <convert type="TemplatedMultiContent">
                                 {"template":
                                         [
                                                 MultiContentEntryPixmapAlphaTest(pos = (2, 2), size = (54, 54), png = 3),
                                                 MultiContentEntryText(pos = (60, 2), size = (650, 24), font=0, flags = RT_HALIGN_LEFT|RT_VALIGN_CENTER, text = 1), # name
-                                                MultiContentEntryText(pos = (100, 26),size = (600, 30), font=1, flags = RT_HALIGN_LEFT|RT_VALIGN_CENTER, text = 2), # info
+                                                MultiContentEntryText(pos = (65, 26),size = (600, 30), font=1, flags = RT_HALIGN_LEFT|RT_VALIGN_CENTER, text = 2), # info
                                         ],
                                         "fonts": [gFont("Regular", 22),gFont("Regular", 14)],
                                         "itemHeight": 56
                                 }
                         </convert>
     </widget>
-    <!-- Preview -->
-    <eLabel position="925,100" size="305,160" zPosition="-10" backgroundColor="#20606060" />
-    <widget name="SkinPicture" position="930,105" size="295,150" backgroundColor="#004e4e4e" />
+    <!-- Preview on Screen -->
+    <eLabel position="535,100" size="695,400" zPosition="-10" backgroundColor="#20606060" />
+    <!-- Below graphs TV area, size has to be 16/8 -->
+    <widget name="ScreenPixMapPictureInScale" position="545,110" zPosition="-5" size="675,379" alphatest="blend" />
+    <widget name="WigetPixMapPictureInScale" position="545,110" zPosition="1" size="675,379" alphatest="blend" />
+    <widget name="WigetPixMapPictureInScale1" position="545,110" zPosition="-1" size="1,1" alphatest="on" />
+    <widget name="WigetPixMapPictureInScale2" position="545,110" zPosition="-2" size="1,1" alphatest="on" />
     
+    <!-- Preview -->
+    <eLabel position="1035,505" size="195,115" zPosition="-10" backgroundColor="#20606060" />
+    <widget name="SkinPicture" position="1040,510" size="185,105" backgroundColor="#004e4e4e" />
+
     <!-- Widget Details -->
-    <eLabel position="55,530" size="725,90" zPosition="-10" backgroundColor="#20606060" />
-    <widget name="widgetDetailsTXT" position="70,535" size="710,80" font="Regular;15" transparent="1"/>
+    <eLabel position="55,505" size="585,115" zPosition="-10" backgroundColor="#20606060" />
+    <widget name="widgetDetailsTXT" position="65,515" size="565,95" font="Regular;15" transparent="1"/>
     
     <!-- Preview text -->
-    <eLabel position="785,530" size="445,90" zPosition="-10" backgroundColor="#20606060" />
-    <widget name="PreviewFont" position="790,540" size="435,70" valign="center" font="Regular;20" transparent="1" foregroundColor="#00ffffff" />
+    <eLabel position="645,505" size="385,115" zPosition="-10" backgroundColor="#20606060" />
+    <widget name="PreviewFont" position="655,515" size="365,95" valign="center" font="Regular;20" transparent="1" foregroundColor="#00ffffff" />
     
     <!-- Preview pixmap -->
-    <eLabel position="785,100" size="135,160" zPosition="-10" backgroundColor="#20606060" />
-    <widget name="PixMapPreview" position="795,105" size="115,120" alphatest="on" />
+    <widget name="PixMapPreview" position="925,515" size="95,95" alphatest="on" />
     
-    <!-- Preview on Screen -->
-    <eLabel position="785,265" size="445,260" zPosition="-10" backgroundColor="#20606060" />
-    <!-- Below graphs TV area, size has to be 16/8 -->
-    <eLabel position="800,280" size="415,233" zPosition="-10" backgroundColor="#20909090" />
-    <widget name="ScreenPixMapPictureInScale" position="800,280" zPosition="-5" size="415,233" alphatest="blend" />
-    <widget name="WigetPixMapPictureInScale" position="800,280" zPosition="1" size="415,233" alphatest="blend" />
-    <widget name="WigetPixMapPictureInScale1" position="800,280" zPosition="-1" size="1,1" alphatest="on" />
-    <widget name="WigetPixMapPictureInScale2" position="800,280" zPosition="-2" size="1,1" alphatest="on" />
     <!-- BUTTONS -->
     <eLabel position=" 55,625" size="290,55" zPosition="-10" backgroundColor="#20b81c46" />
     <eLabel position="350,625" size="290,55" zPosition="-10" backgroundColor="#20009f3c" />
@@ -116,6 +115,7 @@ class UserSkinEditScreens(Screen):
     PermanentPreview1 = 11
     PermanentPreview2 = 12
     AdvancedAttribEdit = 13
+    Preview2Background = 14
     
     WidgetPreviewX = 0
     WidgetPreviewY = 0
@@ -227,9 +227,13 @@ class UserSkinEditScreens(Screen):
         
     def LayoutFinished(self):
         # first we initiate the TV preview screen
-        if path.isfile( self.getPicFileNameWithPath('tvpreview.png') ):
+        self["SkinPicture"].hide()
+        fileName = self.ScreenFile.replace('allScreens/','allPreviews/preview_').replace('.xml','.png')
+        if not path.exists(fileName):
+            fileName = self.getPicFileNameWithPath('tvpreview.png')
+        if path.exists(fileName):
             self["ScreenPixMapPictureInScale"].instance.setScale(1)
-            self["ScreenPixMapPictureInScale"].instance.setPixmapFromFile( self.getPicFileNameWithPath('tvpreview.png') )
+            self["ScreenPixMapPictureInScale"].instance.setPixmapFromFile(fileName)
             self["ScreenPixMapPictureInScale"].show()
         else:
             print "no preview file"
@@ -237,14 +241,6 @@ class UserSkinEditScreens(Screen):
         self.WidgetPreviewY = self["ScreenPixMapPictureInScale"].instance.position().y()
         self.WidgetPreviewScale = ( float(self["ScreenPixMapPictureInScale"].instance.size().width()) / float(getDesktop(0).size().width()) )
 
-        fileName = self.ScreenFile.replace('allScreens/','allPreviews/preview_').replace('.xml','.png')
-        #print self.ScreenFile
-        #print fileName
-        if path.exists(fileName):
-            self["SkinPicture"].instance.setScale(1)
-            self["SkinPicture"].instance.setPixmapFromFile(fileName)
-            self["SkinPicture"].show()
-        #clear fields
         self["widgetDetailsTXT"].setText('')
         self["PreviewFont"].setText('')
         self["PixMapPreview"].hide()
@@ -255,40 +251,40 @@ class UserSkinEditScreens(Screen):
         menu_list = []
         f_list = []
         for child in self.root[self.currentScreenID].findall('*'):
+            childTitle = ''
+            childDescr = ' '
             childTYPE = child.tag
             if childTYPE.lower() == 'widget':
                 pic = self.widget_png
+                if 'render' in child.attrib:
+                  childTitle = _(child.attrib['render'])
+                if 'name' in child.attrib and child.attrib['name'] == 'list':
+                    if 'serviceNameFont' in child.attrib and 'serviceNumberFont' in child.attrib:
+                        childTitle = _('ChannelList')
+                    else:
+                        childTitle = _('List')
             elif childTYPE.lower() == 'elabel':
                 pic = self.elabel_png
-            elif childTYPE.lower() == 'label':
-                pic = self.label_png
-            elif childTYPE.lower() == 'pixmap':
-                pic = self.pixmap_png
+                childDescr += _('Paint a square. ')
             elif childTYPE.lower() == 'epixmap':
                 pic = self.epixmap_png
+                childDescr += _('Display a picture. ')
+                
+            elif childTYPE.lower() == 'label':
+                pic = self.label_png
+                
+            elif childTYPE.lower() == 'pixmap':
+                pic = self.pixmap_png
+                
             else:
                 pic = None
-            childTitle = ''
-            childDescr = ''
-            childAttributes = ''
-            for key, value in child.items():
-                childAttributes += key + '=' + value + ' '
-            if 'render' in child.attrib:
-                childTitle = child.attrib['render']
+            if 'text' in child.attrib:
+                childDescr += _('Display %s. ') % child.attrib['text']
+            if 'render' in child.attrib and 'source' in child.attrib:
+                childDescr += _('Controlled through %s. ') % child.attrib['source']
             if 'name' in child.attrib:
-                childDescr += _(' Name: ') + child.attrib['name']
-            elif 'text' in child.attrib:
-                childDescr += _(' Text: ') + child.attrib['text']
-            if 'source' in child.attrib:
-                childDescr += _(' Source: ') + child.attrib['source']
-            if childDescr == '':
-                for key, value in child.items():
-                    if childDescr == '':
-                        childDescr += key + '=' + value
-                    else:
-                        childDescr += ' ' + key + '=' + value
+                childDescr += _('Controlled by script or plugin. ')
             f_list.append((child, "%s %s" % (childTYPE, childTitle), childDescr, pic))
-            #printDEBUG('found <' + childTYPE + ' ' + childAttributes + '>')
         if len(f_list) == 0:
             f_list.append(("dummy", _("No widgets found"), '', None))
             self.blockActions=True
@@ -565,6 +561,7 @@ class UserSkinEditScreens(Screen):
                 ("---", self.doNothing),
                 (_("Permanent preview 1"), self.PermanentPreview1),
                 (_("Permanent preview 2"), self.PermanentPreview2),
+                (_("Set standard background"), self.Preview2Background),
                 ("---", self.doNothing),
                 (_("Save"), self.doSave),
                 (_("Save as"), self.doSaveAs),
@@ -592,6 +589,17 @@ class UserSkinEditScreens(Screen):
             return
         elif self.currAction == self.PermanentPreview2:
             self.setWigetPixMapPictureInScale(myIndex = self["menu"].getIndex(), myWidget = "WigetPixMapPictureInScale2", myWidgetFile = 'permanentwidget2.png' )
+            return
+        elif self.currAction == self.Preview2Background:
+            fileName = self.ScreenFile.replace('allScreens/','allPreviews/preview_').replace('.xml','.png')
+            if path.exists(fileName):
+                self["SkinPicture"].instance.setScale(1)
+                self["SkinPicture"].instance.setPixmapFromFile(fileName)
+                self["SkinPicture"].show()
+            if path.isfile( self.getPicFileNameWithPath('tvpreview.png') ):
+                self["ScreenPixMapPictureInScale"].instance.setScale(1)
+                self["ScreenPixMapPictureInScale"].instance.setPixmapFromFile( self.getPicFileNameWithPath('tvpreview.png') )
+                self["ScreenPixMapPictureInScale"].show()
             return
         #manipulation
         elif self.currAction == self.doDelete:
