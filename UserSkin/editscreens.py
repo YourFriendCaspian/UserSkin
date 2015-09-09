@@ -5,37 +5,24 @@ from inits import *
 
 from Components.ActionMap import ActionMap
 from Components.config import *
-from Components.ConfigList import ConfigListScreen
-from Components.Label import Label, MultiColorLabel
+from Components.Label import Label
 from Components.Pixmap import Pixmap
 from Components.Sources.List import List
 from Components.Sources.StaticText import StaticText
 from enigma import ePicLoad, eLabel, gFont, getDesktop, ePoint, eSize
-from Plugins.Plugin import PluginDescriptor
 from Screens.ChoiceBox import ChoiceBox
 from Screens.MessageBox import MessageBox
 from Screens.Screen import Screen
 from skin import parseColor,parseFont
 from Tools.Directories import *
-from Tools.HardwareInfo import HardwareInfo 
 from Tools.LoadPixmap import LoadPixmap
 from Tools import Notifications
 #system imports
-from os import listdir, remove, rename, system, path, symlink, chdir, rmdir, mkdir
-import shutil
-import re
+from os import listdir, remove, rename, system, path, symlink, chdir, mkdir
+#import re
 import xml.etree.cElementTree as ET
 #Translations part
-from Components.Language import language
-currLang = language.getLanguage()[:2] #used for descriptions keep GUI language in 'pl|en' format
-print currLang
-try:
-    from Components.LanguageGOS import gosgettext as _
-    printDEBUG('LanguageGOS detected')
-except:
-    printDEBUG('LanguageGOS not detected, using local _')
-    import gettext
-    from translate import _
+from translate import _
 
 class UserSkinEditScreens(Screen):
     skin = """

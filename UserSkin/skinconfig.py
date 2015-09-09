@@ -31,7 +31,6 @@ from Screens.MessageBox import MessageBox
 from Screens.Screen import Screen
 from Screens.Standby import TryQuitMainloop
 from Tools.Directories import *
-from Tools.HardwareInfo import HardwareInfo 
 from Tools.LoadPixmap import LoadPixmap
 from Tools import Notifications
 #system imports
@@ -42,13 +41,7 @@ import re
 from Components.Language import language
 currLang = language.getLanguage()[:2] #used for descriptions keep GUI language in 'pl|en' format
 print currLang
-try:
-    from Components.LanguageGOS import gosgettext as _
-    printDEBUG('LanguageGOS detected')
-except:
-    printDEBUG('LanguageGOS not detected, using local _')
-    import gettext
-    from translate import _
+from translate import _
 
 #UserSkin permanent configs
 config.plugins.UserSkin = ConfigSubsection()
@@ -184,7 +177,6 @@ class UserSkin_Config(Screen, ConfigListScreen):
         current_bar = self.getCurrentBar()[0]
         myUserSkin_active = self.getmySkinState()
         self.myUserSkin_active = NoSave(ConfigYesNo(default=myUserSkin_active))
-        self.myTuner = HardwareInfo().get_device_name()
         self.myUserSkin_font = NoSave(ConfigSelection(default=current_font, choices = self.getPossibleFont()))
         self.myUserSkin_style = NoSave(ConfigSelection(default=current_color, choices = self.getPossibleColor()))
         self.myUserSkin_windowstyle = NoSave(ConfigSelection(default=current_windowstyle, choices = self.getPossibleWindowstyle()))
