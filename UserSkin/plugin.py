@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-# UserSkin, based on AtileHD concept
+# UserSkin, based on AtileHD concept by schomi & plnick
 #
 # maintainer: j00zek
 #

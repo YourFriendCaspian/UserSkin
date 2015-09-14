@@ -1,8 +1,8 @@
 # -*- coding: utf-8 -*-
 
-# UserSkin, based on AtileHD concept
+# UserSkin, based on AtileHD concept by schomi & plnick
 #
-# maintainer: <schomi@vuplus-support.org> / <plnick@vuplus-support.org>
+# maintainer: j00zek
 #
 # extension for openpli, all skins, descriptions, bar selections and other @j00zek 2014/2015
 # Uszanuj czyj¹œ pracê i NIE przyw³aszczaj sobie autorstwa!
