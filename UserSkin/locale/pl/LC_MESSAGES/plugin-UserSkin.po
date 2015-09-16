@@ -63,6 +63,9 @@ msgstr "Aktualizacja co (min):"
 msgid "Restart necessary, restart GUI now?"
 msgstr "Zrestartować teraz, aby aktywować zmiany?"
 
+msgid "Skin will NOT work properly!!!\n\n"
+msgstr "Skórka NIE będzie działać poprawnie!!!\n\n"
+
 msgid "Temperature unit:"
 msgstr "Skala temperatury:"
 

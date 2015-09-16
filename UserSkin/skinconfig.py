@@ -183,7 +183,7 @@ class UserSkin_Config(Screen, ConfigListScreen):
         self.myUserSkin_bar = NoSave(ConfigSelection(default=current_bar, choices = self.getPossibleBars()))
         
         self.myUserSkin_fake_entry = NoSave(ConfigNothing())
-        self.BrakPlikuInfo = ''
+        self.LackOfFile = ''
         
         self.list = []
         ConfigListScreen.__init__(self, self.list, session = self.session, on_change = self.changedEntry)
@@ -512,11 +512,12 @@ class UserSkin_Config(Screen, ConfigListScreen):
 
     def restartGUI(self):
         myMessage = ''
-        if self.BrakPlikuInfo != '':
-            printDEBUG("missing components: %s" % self.BrakPlikuInfo)
-            myMessage += _("Missing components found: %s\n\n") % self.BrakPlikuInfo
+        if self.LackOfFile != '':
+            printDEBUG("missing components: %s" % self.LackOfFile)
+            myMessage += _("Missing components found: %s\n\n") % self.LackOfFile
+        myMessage += _("Skin will NOT work properly!!!\n\n")
         myMessage += _("Restart necessary, restart GUI now?")
-        restartbox = self.session.openWithCallback(self.restartGUIcb,MessageBox, myMessage, MessageBox.TYPE_YESNO)
+        restartbox = self.session.openWithCallback(self.restartGUIcb,MessageBox, myMessage, MessageBox.TYPE_YESNO, default = False)
         restartbox.setTitle(_("Message"))
 
     def keyBlue(self):
@@ -592,18 +593,36 @@ class UserSkin_Config(Screen, ConfigListScreen):
                     myFile.flush()
                     myFile.close()
             #checking if all renderers are in system
-            self.checkComponent(user_skin, 'render' , '/usr/lib/enigma2/python/Components/Renderer/')
+            self.checkComponent(user_skin, 'render' , resolveFilename(SCOPE_PLUGINS, '../Components/Renderer/') )
+            self.checkComponent(user_skin, 'pixmap' , resolveFilename(SCOPE_SKIN, '') )
                
     def checkComponent(self, myContent, look4Component , myPath): #look4Component=render|
-        r=re.findall( r' %s="([a-zA-Z0-9]+)" ' % look4Component , myContent )
+        def updateLackOfFile(name, mySeparator =', '):
+            printDEBUG("Missing component found:%s\n" % name)
+            if self.LackOfFile == '':
+                self.LackOfFile = name
+            else:
+                self.LackOfFile += mySeparator + name
+            
+        r=re.findall( r' %s="([a-zA-Z0-9_/\.]+)" ' % look4Component , myContent )
+        r=list(set(r)) #remove duplicates, no need to check for the same component several times
+
+        printDEBUG("Found %s:\n" % (look4Component))
+        print r
         if r:
             for myComponent in set(r):
                 #print" [UserSkin] checks if %s exists" % myComponent
-                if not path.exists(myPath + myComponent + ".pyo") and not path.exists(myPath + myComponent + ".py"):
-                    if self.BrakPlikuInfo == '':
-                        self.BrakPlikuInfo = myComponent
+                if look4Component == 'pixmap':
+                    #printDEBUG("%s\n%s\n" % (myComponent,myPath + myComponent))
+                    if myComponent.startswith('/'):
+                        if not path.exists(myComponent):
+                            updateLackOfFile(myComponent, '\n')
                     else:
-                        self.BrakPlikuInfo += "," + myComponent
+                        if not path.exists(myPath + myComponent):
+                            updateLackOfFile(myComponent)
+                else:
+                    if not path.exists(myPath + myComponent + ".pyo") and not path.exists(myPath + myComponent + ".py"):
+                        updateLackOfFile(myComponent)
         return
     
     def readXMLfile(self, XMLfilename, XMLsection): #sections:ALLSECTIONS|fonts|
