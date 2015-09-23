@@ -36,6 +36,11 @@ if [ $? -gt 0 ]; then
   exit 0
 fi
 
+if [ ! -e /tmp/userskin.tar.gz ]; then
+  echo "_(No archive downloaded, check your curl version)"
+  exit 0
+fi
+
 echo "_(Unpacking new version)..."
 cd /tmp
 tar -zxf ./userskin.tar.gz

@@ -380,3 +380,6 @@ msgstr "Lista kanałów"
 
 msgid "Set standard background"
 msgstr "Ustaw standardowe tło"
+
+msgid "No archive downloaded, check your curl version"
+msgstr "Nie pobrano archiwum, sprawdz wersję curl"

@@ -226,6 +226,9 @@ class UserSkinEditScreens(Screen):
         
         
     def LayoutFinished(self):
+        self.currentHeight= getDesktop(0).size().height()
+        self.currentWidth = getDesktop(0).size().width()
+
         # first we initiate the TV preview screen
         self["SkinPicture"].hide()
         fileName = self.ScreenFile.replace('allScreens/','allPreviews/preview_').replace('.xml','.png')
@@ -332,6 +335,10 @@ class UserSkinEditScreens(Screen):
         
         WidgetPosition=self.root[self.currentScreenID][myIndex].attrib['position'].split(',')
         WidgetSize=self.root[self.currentScreenID][myIndex].attrib['size'].split(',')
+        if WidgetPosition[0] == 'center':
+            WidgetPosition[0] = self.currentWidth/2 - int(WidgetSize[0])/2
+        if WidgetPosition[1] == 'center':
+            WidgetPosition[1] = self.currentHeight/2 - int(WidgetSize[1])/2
         if path.exists(pic):
             self[myWidget].instance.resize(eSize(int(int(WidgetSize[0])*self.WidgetPreviewScale) , int(int(WidgetSize[1])*self.WidgetPreviewScale) ))
             self[myWidget].instance.setScale(1)
