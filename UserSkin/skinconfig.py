@@ -515,7 +515,7 @@ class UserSkin_Config(Screen, ConfigListScreen):
         if self.LackOfFile != '':
             printDEBUG("missing components: %s" % self.LackOfFile)
             myMessage += _("Missing components found: %s\n\n") % self.LackOfFile
-        myMessage += _("Skin will NOT work properly!!!\n\n")
+            myMessage += _("Skin will NOT work properly!!!\n\n")
         myMessage += _("Restart necessary, restart GUI now?")
         restartbox = self.session.openWithCallback(self.restartGUIcb,MessageBox, myMessage, MessageBox.TYPE_YESNO, default = False)
         restartbox.setTitle(_("Message"))
