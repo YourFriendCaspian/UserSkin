@@ -141,7 +141,10 @@ class UserSkin_Menu(Screen):
                 def goUpdate(ret):
                     if ret is True:
                         from translatedconsole import UserSkinconsole
-                        self.session.openWithCallback(self.refresh, UserSkinconsole, title = _("Updating skin"), cmdlist = [ '%sscripts/SkinUpdate.sh %s' % (PluginPath,SkinPath) ])
+                        runlist = []
+                        runlist.append( ('chmod 755 %sscripts/SkinUpdate.sh' % PluginPath) )
+                        runlist.append( ('%sscripts/SkinUpdate.sh %s' % (PluginPath,SkinPath)) )
+                        self.session.openWithCallback(self.refresh, UserSkinconsole, title = _("Updating skin"), cmdlist = runlist)
                     return
                 self.session.openWithCallback(goUpdate, MessageBox,_("Do you want to update skin?"),  type = MessageBox.TYPE_YESNO, timeout = 10, default = False)
                 return
@@ -149,7 +152,10 @@ class UserSkin_Menu(Screen):
                 def goUpdate(ret):
                     if ret is True:
                         from translatedconsole import UserSkinconsole
-                        self.session.openWithCallback(self.refresh, UserSkinconsole, title = _("Updating plugin"), cmdlist = [ '%sscripts/UserSkinUpdate.sh' % PluginPath ])
+                        runlist = []
+                        runlist.append( ('chmod 755 %sscripts/UserSkinUpdate.sh' % PluginPath) )
+                        runlist.append( ('%sscripts/UserSkinUpdate.sh' % PluginPath) )
+                        self.session.openWithCallback(self.refresh, UserSkinconsole, title = _("Updating plugin"), cmdlist = runlist)
                     return
                 self.session.openWithCallback(goUpdate, MessageBox,_("Do you want to update plugin?"),  type = MessageBox.TYPE_YESNO, timeout = 10, default = False)
                 return
