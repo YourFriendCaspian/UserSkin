@@ -42,18 +42,18 @@ if [ ! -e /tmp/userskin.tar.gz ]; then
 fi
 
 echo "_(Unpacking new version)..."
-cd /tmp
-tar -zxf ./userskin.tar.gz
+#cd /tmp
+tar -zxf /tmp/userskin.tar.gz -C /tmp
 if [ $? -gt 0 ]; then
   echo "_(Archive unpacked improperly)"
   exit 0
 fi
 
-if [ ! -e ./j00zek-UserSkin-* ]; then
+if [ ! -e /tmp/j00zek-UserSkin-* ]; then
   echo "_(Archive downloaded improperly)"
   exit 0
 fi
-rm -rf ./userskin.tar.gz
+rm -rf /tmp/userskin.tar.gz
 
 version=`ls /tmp/ | grep j00zek-UserSkin-`
 if [ -f /usr/lib/enigma2/python/Plugins/Extensions/UserSkin/$version ];then
@@ -64,8 +64,8 @@ fi
 echo "_(Installing new version)..."
 if [ ! -e /DuckboxDisk ]; then
   rm -rf /usr/lib/enigma2/python/Plugins/Extensions/UserSkin/j00zek-UserSkin-* 2>/dev/null
-  touch ./$version/UserSkin/$version 2>/dev/null
-  cp -a ./j00zek-UserSkin-*/UserSkin/* /usr/lib/enigma2/python/Plugins/Extensions/UserSkin/
+  touch /tmp/$version/UserSkin/$version 2>/dev/null
+  cp -a /tmp/$version/UserSkin/* /usr/lib/enigma2/python/Plugins/Extensions/UserSkin/
 else
   echo
   echo "github is always up-2-date"
