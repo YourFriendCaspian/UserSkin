@@ -154,7 +154,8 @@ class UserSkin_Menu(Screen):
                         from translatedconsole import UserSkinconsole
                         runlist = []
                         runlist.append( ('chmod 755 %sscripts/UserSkinUpdate.sh' % PluginPath) )
-                        runlist.append( ('%sscripts/UserSkinUpdate.sh' % PluginPath) )
+                        runlist.append( ('cp -a %sscripts/UserSkinUpdate.sh /tmp/UserSkinUpdate.sh' % PluginPath) )
+                        runlist.append( ('/tmp/UserSkinUpdate.sh') )
                         self.session.openWithCallback(self.refresh, UserSkinconsole, title = _("Updating plugin"), cmdlist = runlist)
                     return
                 self.session.openWithCallback(goUpdate, MessageBox,_("Do you want to update plugin?"),  type = MessageBox.TYPE_YESNO, timeout = 10, default = False)
