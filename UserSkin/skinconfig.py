@@ -169,7 +169,10 @@ class UserSkin_Config(Screen, ConfigListScreen):
             if path.exists(self.skin_base_dir + "mySkin_off"):
                 if not path.exists(self.skin_base_dir + "UserSkin_Selections"):
                     chdir(self.skin_base_dir)
-                    rename("mySkin_off", "UserSkin_Selections")
+                    try:
+                        rename("mySkin_off", "UserSkin_Selections")
+                    except:
+                        pass
 
         current_color = self.getCurrentColor()[0]
         current_windowstyle = self.getCurrentWindowstyle()[0]
@@ -447,7 +450,7 @@ class UserSkin_Config(Screen, ConfigListScreen):
             for x in self["config"].list:
                 x[1].save()
             configfile.save()
-            #Zmieniamy katalog na ten wtyczki
+            #we change current folder to active skin folder
             chdir(self.skin_base_dir)
             #FONTS
             if path.exists(self.user_font_file):
@@ -481,13 +484,20 @@ class UserSkin_Config(Screen, ConfigListScreen):
                 destFolder = self.myUserSkin_bar.value.split(".", 1)[1]
                 destPath = path.join(self.skin_base_dir , destFolder)
                 printDEBUG("[UserSkin:keyOk]cp -fr %s %s" % (sourcePath,destPath))
-                with open("/proc/sys/vm/drop_caches", "w") as f: f.write("1\n")
+                with open("/proc/sys/vm/drop_caches", "w") as f: f.write("1\n") #avoid GS with system on tuners with small RAM
                 printDEBUG("[UserSkin:keyOk]cp -fr %s/* %s/" % (sourcePath,destPath))
-                system("cp -fr %s/* %s/" %(sourcePath,destPath)) #dla bezpieczenstwa, obsluguje zgrabnie overwrite ;)
+                system("cp -fr %s/* %s/" %(sourcePath,destPath)) #for safety, nicely manage overwrite ;)
             #SCREENS
             if self.myUserSkin_active.value:
                 if not path.exists("mySkin") and path.exists("UserSkin_Selections"):
+                    try:
                         symlink("UserSkin_Selections","mySkin")
+                    except:
+                        printDEBUG("[UserSkin:keyOK]symlinking myskin exception")
+                        with open("/proc/sys/vm/drop_caches", "w") as f: f.write("1\n") #avoid GS with system on tuners with small RAM
+                        destPath = path.join(self.skin_base_dir , "mySkin")
+                        sourcePath = path.join(self.skin_base_dir , "UserSkin_Selections")
+                        system("rm -rf %s;ln -sf %s %s" % (destPath , sourcePath ,destPath) )
             else:
                 if path.exists("mySkin"):
                     if path.exists("UserSkin_Selections"):
@@ -497,6 +507,7 @@ class UserSkin_Config(Screen, ConfigListScreen):
                             shutil.rmtree("mySkin")
                     else:
                         rename("mySkin", "UserSkin_Selections")
+  
             self.update_user_skin()
             self.restartGUI()
         else:
