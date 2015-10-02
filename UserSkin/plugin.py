@@ -79,6 +79,7 @@ class UserSkin_Menu(Screen):
                 skinHistory = None
                 skinUpdate = None
                 skinAddOns = None
+                skinComponents = None
                 if pathExists("%s%s" % (SkinPath,'skin.config')):
                     with open("%s%s" % (SkinPath,'skin.config'), 'r') as cf:
                         cfg=cf.read()
@@ -88,13 +89,23 @@ class UserSkin_Menu(Screen):
                         skinUpdate = True
                     if cfg.find("addons=") > 0:
                         skinAddOns = True
+                    if cfg.find("components=") > 0:
+                        skinComponents = True
                 l = [(self.buildListEntry(_("Skin personalization"), "config.png",'config'))]
-                if skinAddOns:
-                    l.append(self.buildListEntry(_("Download addons"), "download.png",'getaddons'))
-                (self.buildListEntry(_("Delete addons"), "remove.png",'delete_addons')),
+                
                 if skinUpdate:
                     l.append(self.buildListEntry(_("Update main skin"), "download.png",'getskin')),
+                    
                 l.append(self.buildListEntry(_("Update plugin"), "download.png",'getplugin')),
+                
+                if skinAddOns:
+                    l.append(self.buildListEntry(_("Download addons"), "download.png",'getaddons'))
+                    
+                (self.buildListEntry(_("Delete addons"), "remove.png",'delete_addons')),
+
+                if skinComponents:
+                    l.append(self.buildListEntry(_("Download additional Components/plugins"), "download.png",'getcomponents'))
+                    
                 if skinHistory:
                     l.append(self.buildListEntry(_("History of changes"), "history.png",'history')),
                 l.append(self.buildListEntry(_("About"), "about.png",'about')),
@@ -102,12 +113,12 @@ class UserSkin_Menu(Screen):
 
         def buildListEntry(self, description, image, optionname):
                 try:
-                        printDEBUG("Trying to load %sUserSkinpics/%s" % (SkinPath,image))
+                        #printDEBUG("Trying to load %sUserSkinpics/%s" % (SkinPath,image))
                         pixmap = LoadPixmap("%sUserSkinpics/%s" % (SkinPath,image))
                 except:
                         pixmap = None
                 if pixmap == None:
-                        printDEBUG("%spic/%s" % (PluginPath, image))
+                        #printDEBUG("%spic/%s" % (PluginPath, image))
                         pixmap = LoadPixmap(cached=True, path="%spic/%s" % (PluginPath, image));
                 return((pixmap, description, optionname))
 
@@ -136,6 +147,10 @@ class UserSkin_Menu(Screen):
             elif selected == 'delete_addons':
                 from translatedconsole import myMenu
                 self.session.openWithCallback(self.refresh, myMenu, MenuFolder = '%sscripts' % PluginPath, MenuFile = '_Deleteaddons', MenuTitle = _("Delete addons"))
+                return
+            elif selected == 'getcomponents':
+                from translatedconsole import myMenu
+                self.session.openWithCallback(self.refresh, myMenu, MenuFolder = '%sscripts' % PluginPath, MenuFile = '_Getcomponents', MenuTitle = _("Download additional Components/plugins"))
                 return
             elif selected == 'getskin':
                 def goUpdate(ret):

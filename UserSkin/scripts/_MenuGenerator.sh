@@ -25,6 +25,8 @@ if [ -z $2 ]; then
   echo "ITEM|No addons path configured|DONOTHING|">>/tmp/_Deleteaddons
   echo "MENU|Download addons">/tmp/_Getaddons
   echo "ITEM|No addons path configured|DONOTHING|">>/tmp/_Getaddons
+  echo "MENU|Download additional Components/plugins">/tmp/_Getcomponents
+  echo "ITEM|Components path not configured|DONOTHING|">>/tmp/_Getcomponents
   exit 0
 else
   skinPath=$2
@@ -77,5 +79,25 @@ do
   addonName=`echo $addon|sed 's/\..*$//'`
   echo $addonName
   echo "ITEM|$addonName|CONSOLE|InstallAddon.sh $addon $skinPath">>/tmp/_Getaddons
+done
+##############################
+echo "MENU|Download additional Components/plugins">/tmp/_Getcomponents
+if [ ! -f $skinPath/skin.config ];then
+  echo "ITEM|Skin does not have downloadable components|DONOTHING|">>/tmp/_Getcomponents
+fi
+. $skinPath/skin.config
+if [ -z $components ];then
+  echo "ITEM|Skin does not have downloadable components|DONOTHING|">>/tmp/_Getcomponents
+fi
+
+addons="$components/"
+#echo $addons
+DownloadableAddons=`curl -s --ftp-pasv $addons -o -|awk '{print $9}'|sort`
+
+for addon in $DownloadableAddons
+do
+  addonName=`echo $addon|sed 's/\..*$//'`
+  echo $addonName
+  echo "ITEM|$addonName|CONSOLE|InstallAddon.sh $addon $skinPath">>/tmp/_Getcomponents
 done
 
