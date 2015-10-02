@@ -51,11 +51,11 @@ class UserSkin_Menu(Screen):
         <widget source="list" render="Listbox" position="0,0" size="560,360" scrollbarMode="showOnDemand">
                 <convert type="TemplatedMultiContent">
                         {"template": [
-                                MultiContentEntryPixmapAlphaTest(pos = (12, 4), size = (32, 32), png = 0),
-                                MultiContentEntryText(pos = (58, 5), size = (440, 38), font=0, flags = RT_HALIGN_LEFT|RT_VALIGN_TOP, text = 1),
+                                MultiContentEntryPixmapAlphaTest(pos = (12, 2), size = (40, 40), png = 0),
+                                MultiContentEntryText(pos = (58, 2), size = (500, 40), font=0, flags = RT_HALIGN_LEFT|RT_VALIGN_CENTER, text = 1),
                                 ],
-                                "fonts": [gFont("Regular", 22)],
-                                "itemHeight": 40
+                                "fonts": [gFont("Regular", 24)],
+                                "itemHeight": 44
                         }
                 </convert>
         </widget>
@@ -94,17 +94,17 @@ class UserSkin_Menu(Screen):
                 l = [(self.buildListEntry(_("Skin personalization"), "config.png",'config'))]
                 
                 if skinUpdate:
-                    l.append(self.buildListEntry(_("Update main skin"), "download.png",'getskin')),
+                    l.append(self.buildListEntry(_("Update main skin"), "skin.png",'getskin')),
                     
                 l.append(self.buildListEntry(_("Update plugin"), "download.png",'getplugin')),
                 
                 if skinAddOns:
-                    l.append(self.buildListEntry(_("Download addons"), "download.png",'getaddons'))
+                    l.append(self.buildListEntry(_("Download addons"), "addon.png",'getaddons'))
                     
                 (self.buildListEntry(_("Delete addons"), "remove.png",'delete_addons')),
 
                 if skinComponents:
-                    l.append(self.buildListEntry(_("Download additional Components/plugins"), "download.png",'getcomponents'))
+                    l.append(self.buildListEntry(_("Download additional Components/plugins"), "plugin.png",'getcomponents'))
                     
                 if skinHistory:
                     l.append(self.buildListEntry(_("History of changes"), "history.png",'history')),

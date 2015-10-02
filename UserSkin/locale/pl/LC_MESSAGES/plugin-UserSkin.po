@@ -383,3 +383,6 @@ msgstr "Ustaw standardowe tło"
 
 msgid "No archive downloaded, check your curl version"
 msgstr "Nie pobrano archiwum, sprawdz wersję curl"
+
+msgid "Download additional Components/plugins"
+msgstr "Pobierz dodatkowe komponenty/wtyczki"
