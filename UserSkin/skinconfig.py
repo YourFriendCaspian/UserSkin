@@ -43,15 +43,14 @@ currLang = language.getLanguage()[:2] #used for descriptions keep GUI language i
 print currLang
 from translate import _
 
-#UserSkin permanent configs
-config.plugins.UserSkin = ConfigSubsection()
-config.plugins.UserSkin.refreshInterval = ConfigNumber(default=30) #in minutes
-config.plugins.UserSkin.woeid = ConfigNumber(default=523920) #Location Warsaw (visit weather.yahoo.com)
-config.plugins.UserSkin.tempUnit = ConfigSelection(default="Celsius", choices = [
+#UserSkin permanent configs, we use AtileHD for compatibility reasons
+config.plugins.AtileHD = ConfigSubsection()
+config.plugins.AtileHD.refreshInterval = ConfigNumber(default=30) #in minutes
+config.plugins.AtileHD.woeid = ConfigNumber(default=523920) #Location Warsaw (visit weather.yahoo.com)
+config.plugins.AtileHD.tempUnit = ConfigSelection(default="Celsius", choices = [
                 ("Celsius", _("Celsius")),
                 ("Fahrenheit", _("Fahrenheit"))
                 ])
-config.plugins.UserSkin.PIG_active = ConfigYesNo(default=True)
         
 #def Plugins(**kwargs):
 #    return [PluginDescriptor(name=_("UserSkin Setup"), description=_("Personalize your Skin"), where = PluginDescriptor.WHERE_MENU, icon="plugin.png", fnc=menu)]
@@ -227,9 +226,9 @@ class UserSkin_Config(Screen, ConfigListScreen):
         self.list.append(self.set_bar)
         if not self.currentSkin.endswith('BlackHarmony'):
             self.list.append(getConfigListEntry(_("---Yahoo Weather---"), self.myUserSkin_fake_entry))
-            self.list.append(getConfigListEntry(_("Refresh interval in minutes:"), config.plugins.UserSkin.refreshInterval))
-            self.list.append(getConfigListEntry(_("Location # (http://weather.yahoo.com/):"), config.plugins.UserSkin.woeid))
-            self.list.append(getConfigListEntry(_("Temperature unit:"), config.plugins.UserSkin.tempUnit))
+            self.list.append(getConfigListEntry(_("Refresh interval in minutes:"), config.plugins.AtileHD.refreshInterval))
+            self.list.append(getConfigListEntry(_("Location # (http://weather.yahoo.com/):"), config.plugins.AtileHD.woeid))
+            self.list.append(getConfigListEntry(_("Temperature unit:"), config.plugins.AtileHD.tempUnit))
         self["config"].list = self.list
         self["config"].l.setList(self.list)
         if self.myUserSkin_active.value:
@@ -658,9 +657,6 @@ class UserSkin_Config(Screen, ConfigListScreen):
                 if sectionmarker == True:
                     filecontent = filecontent + line
             myFile.close()
-        if config.plugins.UserSkin.PIG_active.value == False:
-            if filecontent.find('render="Pig"') > 0 or filecontent.find("render='Pig'") > 0:
-                filecontent = ''
         return filecontent
 
 ##### userBARs #####        
@@ -850,9 +846,6 @@ class UserSkinScreens(Screen):
         if path.exists(self.skin_base_dir + self.allScreens_dir):
             list_dir = sorted(listdir(self.skin_base_dir + self.allScreens_dir), key=str.lower)
             for f in list_dir:
-                if config.plugins.UserSkin.PIG_active.value == False:
-                    if f.find('PIG') > 0 or f.find('PiG') > 0  or f.find('Pig') > 0 or f.lower().find('_pig') > 0:
-                        continue
                 if f.endswith('.xml') and f.startswith('skin_') and f.lower().find(self.allScreensGroup) > 0:
                     friendly_name = f.replace("skin_", "")
                     friendly_name = friendly_name.replace(".xml", "")
