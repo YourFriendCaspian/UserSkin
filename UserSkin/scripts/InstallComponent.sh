@@ -4,8 +4,9 @@
 
 . $2/skin.config
 addon=$1
+echo "Component URL: $components"
 
-echo "_(Downloading )$addon..."
+echo "_(Downloading )$addon ..."
 curl -s --ftp-pasv $components/$addon -o /tmp/$addon
 if [ $? -gt 0 ]; then
   echo "_(Archive downloaded improperly)"
