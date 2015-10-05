@@ -159,7 +159,7 @@ msgid "Downloading latest plugin version"
 msgstr "Pobieram ostatnią wersję wtyczki"
 
 msgid "Archive downloaded improperly"
-msgstr "Archiwum pobrane poprawnie"
+msgstr "Archiwum pobrane niepoprawnie"
 
 msgid "Unpacking new version"
 msgstr "Rozpakowuję nową wersję"

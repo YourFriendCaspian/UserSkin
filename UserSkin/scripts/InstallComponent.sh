@@ -3,11 +3,10 @@
 #$2 = sciezka do aktualnej skorki
 
 . $2/skin.config
-addons="$components//"
 addon=$1
 
 echo "_(Downloading )$addon..."
-curl -s --ftp-pasv $addons$addon -o /tmp/$addon
+curl -s --ftp-pasv $components/$addon -o /tmp/$addon
 if [ $? -gt 0 ]; then
   echo "_(Archive downloaded improperly)"
   exit 0

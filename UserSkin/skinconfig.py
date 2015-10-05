@@ -51,7 +51,14 @@ config.plugins.AtileHD.tempUnit = ConfigSelection(default="Celsius", choices = [
                 ("Celsius", _("Celsius")),
                 ("Fahrenheit", _("Fahrenheit"))
                 ])
-        
+config.plugins.UserSkin = ConfigSubsection()
+config.plugins.UserSkin.refreshInterval = ConfigNumber(default=30) #in minutes
+config.plugins.UserSkin.woeid = ConfigNumber(default=523920) #Location Warsaw (visit weather.yahoo.com)
+config.plugins.UserSkin.tempUnit = ConfigSelection(default="Celsius", choices = [
+                ("Celsius", _("Celsius")),
+                ("Fahrenheit", _("Fahrenheit"))
+                ])
+       
 #def Plugins(**kwargs):
 #    return [PluginDescriptor(name=_("UserSkin Setup"), description=_("Personalize your Skin"), where = PluginDescriptor.WHERE_MENU, icon="plugin.png", fnc=menu)]
 
@@ -446,6 +453,9 @@ class UserSkin_Config(Screen, ConfigListScreen):
             printDEBUG("[UserSkin:keyOk] self.myUserSkin_style.value=" + self.myUserSkin_style.value)
             printDEBUG("[UserSkin:keyOk] self.myUserSkin_windowstyle.value=" + self.myUserSkin_windowstyle.value)
             printDEBUG("[UserSkin:keyOk] self.myUserSkin_bar.value=" + self.myUserSkin_bar.value)
+            config.plugins.UserSkin.refreshInterval.value = config.plugins.AtileHD.refreshInterval.value
+            config.plugins.UserSkin.woeid.value = config.plugins.AtileHD.woeid.value
+            config.plugins.UserSkin.tempUnit.value = config.plugins.AtileHD.tempUnit.value
             for x in self["config"].list:
                 x[1].save()
             configfile.save()
