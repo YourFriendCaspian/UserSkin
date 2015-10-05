@@ -58,7 +58,7 @@ do
   echo "ITEM|$addonName|SILENT|/bin/rm -rf $skinPath/$addon">>/tmp/_Deleteaddons
 done
 
-##############################
+###########################################################################################################
 echo "MENU|Download addons">/tmp/_Getaddons
 if [ ! -f $skinPath/skin.config ];then
   echo "ITEM|Skin does not have downloadable addons|DONOTHING|">>/tmp/_Getaddons
@@ -80,7 +80,7 @@ do
   echo $addonName
   echo "ITEM|$addonName|CONSOLE|InstallAddon.sh $addon $skinPath">>/tmp/_Getaddons
 done
-##############################
+###########################################################################################################
 echo "MENU|Download additional Components/plugins">/tmp/_Getcomponents
 if [ ! -f $skinPath/skin.config ];then
   echo "ITEM|Skin does not have downloadable components|DONOTHING|">>/tmp/_Getcomponents
@@ -98,6 +98,6 @@ for addon in $DownloadableAddons
 do
   addonName=`echo $addon|sed 's/\..*$//'`
   echo $addonName
-  echo "ITEM|$addonName|CONSOLE|InstallAddon.sh $addon $skinPath">>/tmp/_Getcomponents
+  echo "ITEM|$addonName|CONSOLE|InstallComponent.sh $addon $skinPath">>/tmp/_Getcomponents
 done
 
