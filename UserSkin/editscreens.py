@@ -231,12 +231,17 @@ class UserSkinEditScreens(Screen):
 
         # first we initiate the TV preview screen
         self["SkinPicture"].hide()
-        fileName = self.ScreenFile.replace('allScreens/','allPreviews/preview_').replace('.xml','.png')
-        if not path.exists(fileName):
+        fileName = self.ScreenFile.replace('allScreens/','allPreviews/preview_')[:-4]
+        if path.exists(fileName + '.png'):
+            fileName = fileName + '.png'
+        elif path.exists(fileName + '.jpg'):
+            fileName = fileName + '.jpg'
+        else:
             fileName = self.getPicFileNameWithPath('tvpreview.png')
+            
         if path.exists(fileName):
             self["ScreenPixMapPictureInScale"].instance.setScale(1)
-            self["ScreenPixMapPictureInScale"].instance.setPixmapFromFile(fileName)
+            self["ScreenPixMapPictureInScale"].instance.setPixmap(LoadPixmap(path=fileName))
             self["ScreenPixMapPictureInScale"].show()
         else:
             print "no preview file"
@@ -605,7 +610,7 @@ class UserSkinEditScreens(Screen):
                 self["SkinPicture"].show()
             if path.isfile( self.getPicFileNameWithPath('tvpreview.png') ):
                 self["ScreenPixMapPictureInScale"].instance.setScale(1)
-                self["ScreenPixMapPictureInScale"].instance.setPixmapFromFile( self.getPicFileNameWithPath('tvpreview.png') )
+                self["ScreenPixMapPictureInScale"].instance.setPixmap(LoadPixmap(path=self.getPicFileNameWithPath('tvpreview.png')) )
                 self["ScreenPixMapPictureInScale"].show()
             return
         #manipulation

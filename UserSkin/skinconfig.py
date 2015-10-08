@@ -37,10 +37,10 @@ from Tools import Notifications
 from os import listdir, remove, rename, system, path, symlink, chdir, rmdir, mkdir
 import shutil
 import re
+
 #Translations part
 from Components.Language import language
 currLang = language.getLanguage()[:2] #used for descriptions keep GUI language in 'pl|en' format
-print currLang
 from translate import _
 
 #UserSkin permanent configs, we use AtileHD for compatibility reasons
@@ -422,21 +422,37 @@ class UserSkin_Config(Screen, ConfigListScreen):
         return (filename, friendly_name)
 
     def setPicture(self, f):
-        pic = f.replace(".xml", ".png")
-        if f.startswith("bar_"):
-            pic = f + ".png"
-        printDEBUG("[UserSkin:setPicture] pic =" + pic)
         preview = self.skin_base_dir + "allPreviews/"
         if not path.exists(preview):
             mkdir(preview)
-        preview = preview + "preview_" + pic
-        if path.exists(preview):
-            self["Picture"].instance.setScale(1)
-            self["Picture"].instance.setPixmapFromFile(preview)
-            self["Picture"].show()
+        pic = f[:-4]
+        if f.startswith("bar_"):
+            pic = f + ".png"
+        printDEBUG("[UserSkin:setPicture] pic =" + pic + '[jpg|png]')
+        previewJPG = preview + "preview_" + picJPG
+        if path.exists(preview + "preview_" + pic + '.jpg'):
+            self.UpdatePreviewPicture(preview + "preview_" + pic + '.jpg')
+        if path.exists(preview + "preview_" + pic + '.png'):
+            self.UpdatePreviewPicture(preview + "preview_" + pic + '.png')
         else:
             self["Picture"].hide()
 
+    def setPicture(self, f):
+        pic = f[:-4]
+        if path.exists(self.skin_base_dir + "allPreviews/preview_" + pic + '.png'):
+            self.UpdatePreviewPicture(self.skin_base_dir + "allPreviews/preview_" + pic + '.png')
+        elif path.exists(self.skin_base_dir + "allPreviews/preview_" + pic + '.jpg'):
+            self.UpdatePreviewPicture(self.skin_base_dir + "allPreviews/preview_" + pic + '.jpg')
+        elif path.exists(self.skin_base_dir + "allPreviews/" + pic + '.png'):
+            self.UpdatePreviewPicture(self.skin_base_dir + "allPreviews/" + pic + '.png')
+        elif path.exists(self.skin_base_dir + "allPreviews/" + pic + '.jpg'):
+            self.UpdatePreviewPicture(self.skin_base_dir + "allPreviews/" + pic + '.jpg')
+    
+    def UpdatePreviewPicture(self, PreviewFileName):
+            self["Picture"].instance.setScale(1)
+            self["Picture"].instance.setPixmap(LoadPixmap(path=PreviewFileName))
+            self["Picture"].show()
+            
     def keyYellow(self):
         if self.myUserSkin_active.value:
             if not path.exists(self.skin_base_dir + "UserSkin_Selections"):
@@ -729,7 +745,7 @@ class UserSkinScreens(Screen):
                                 }
                         </convert>
     </widget>
-    <widget name="Picture" position="808,342" size="400,225" alphatest="on" />
+    <widget name="PreviewPicture" position="808,342" size="400,225" alphatest="on" />
     <widget source="key_red" render="Label" position="70,635" size="260,25" zPosition="1" font="Regular;20" halign="left" foregroundColor="#00ffffff" backgroundColor="#20b81c46" transparent="1" />
     <widget source="key_green" render="Label" position="365,635" size="260,25" zPosition="1" font="Regular;20" halign="left" foregroundColor="#00ffffff" backgroundColor="#20009f3c" transparent="1" />
     <widget source="key_yellow" render="Label" position="650,635" size="260,25" zPosition="1" font="Regular;20" halign="left" foregroundColor="#00ffffff" transparent="1" />
@@ -761,7 +777,7 @@ class UserSkinScreens(Screen):
         self["key_yellow"] = StaticText("")
         self["key_blue"] = StaticText(_("Settings"))
         
-        self["Picture"] = Pixmap()
+        self["PreviewPicture"] = Pixmap()
         
         menu_list = []
         self["menu"] = List(menu_list)
@@ -901,19 +917,23 @@ class UserSkinScreens(Screen):
         return info
             
     def setPicture(self, f):
-        pic = f.replace(".xml", ".png")
-        #preview = self.skin_base_dir + "allPreviews/preview_" + pic
-        if path.exists(self.skin_base_dir + "allPreviews/preview_" + pic):
-            self["Picture"].instance.setScale(1)
-            self["Picture"].instance.setPixmapFromFile(self.skin_base_dir + "allPreviews/preview_" + pic)
-            self["Picture"].show()
-        elif path.exists(self.skin_base_dir + "allPreviews/" + pic):
-            self["Picture"].instance.setScale(1)
-            self["Picture"].instance.setPixmapFromFile(self.skin_base_dir + "allPreviews/" + pic)
-            self["Picture"].show()
+        pic = f[:-4]
+        if path.exists(self.skin_base_dir + "allPreviews/preview_" + pic + '.png'):
+            self.UpdatePreviewPicture(self.skin_base_dir + "allPreviews/preview_" + pic + '.png')
+        elif path.exists(self.skin_base_dir + "allPreviews/preview_" + pic + '.jpg'):
+            self.UpdatePreviewPicture(self.skin_base_dir + "allPreviews/preview_" + pic + '.jpg')
+        elif path.exists(self.skin_base_dir + "allPreviews/" + pic + '.png'):
+            self.UpdatePreviewPicture(self.skin_base_dir + "allPreviews/" + pic + '.png')
+        elif path.exists(self.skin_base_dir + "allPreviews/" + pic + '.jpg'):
+            self.UpdatePreviewPicture(self.skin_base_dir + "allPreviews/" + pic + '.jpg')
         else:
-            self["Picture"].hide()
+            self["PreviewPicture"].hide()
     
+    def UpdatePreviewPicture(self, PreviewFileName):
+            self["PreviewPicture"].instance.setScale(1)
+            self["PreviewPicture"].instance.setPixmap(LoadPixmap(path=PreviewFileName))
+            self["PreviewPicture"].show()
+
     def keyCancel(self):
         self.close()
 

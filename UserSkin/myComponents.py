@@ -114,7 +114,7 @@ class UserSkinconsole(Screen):
         self["text"].lastPage()
 
 ############################################
-class Cover2(Pixmap):
+class myCover(Pixmap):
     def __init__(self):
         Pixmap.__init__(self)
         self.picload = ePicLoad()

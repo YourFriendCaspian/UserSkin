@@ -141,21 +141,21 @@ class UserSkin_Menu(Screen):
                 self.session.openWithCallback(self.quit,UserSkin_Config)
                 return
             elif selected == 'getaddons':
-                from translatedconsole import myMenu
+                from myComponents import myMenu
                 self.session.openWithCallback(self.refresh, myMenu, MenuFolder = '%sscripts' % PluginPath, MenuFile = '_Getaddons', MenuTitle = _("Download addons"))
                 return
             elif selected == 'delete_addons':
-                from translatedconsole import myMenu
+                from myComponents import myMenu
                 self.session.openWithCallback(self.refresh, myMenu, MenuFolder = '%sscripts' % PluginPath, MenuFile = '_Deleteaddons', MenuTitle = _("Delete addons"))
                 return
             elif selected == 'getcomponents':
-                from translatedconsole import myMenu
+                from myComponents import myMenu
                 self.session.openWithCallback(self.refresh, myMenu, MenuFolder = '%sscripts' % PluginPath, MenuFile = '_Getcomponents', MenuTitle = _("Download additional Components/plugins"))
                 return
             elif selected == 'getskin':
                 def goUpdate(ret):
                     if ret is True:
-                        from translatedconsole import UserSkinconsole
+                        from myComponents import UserSkinconsole
                         runlist = []
                         runlist.append( ('chmod 755 %sscripts/SkinUpdate.sh' % PluginPath) )
                         runlist.append( ('%sscripts/SkinUpdate.sh %s' % (PluginPath,SkinPath)) )
@@ -166,7 +166,7 @@ class UserSkin_Menu(Screen):
             elif selected == 'getplugin':
                 def goUpdate(ret):
                     if ret is True:
-                        from translatedconsole import UserSkinconsole
+                        from myComponents import UserSkinconsole
                         runlist = []
                         runlist.append( ('chmod 755 %sscripts/UserSkinUpdate.sh' % PluginPath) )
                         runlist.append( ('cp -a %sscripts/UserSkinUpdate.sh /tmp/UserSkinUpdate.sh' % PluginPath) )
@@ -176,7 +176,7 @@ class UserSkin_Menu(Screen):
                 self.session.openWithCallback(goUpdate, MessageBox,_("Do you want to update plugin?"),  type = MessageBox.TYPE_YESNO, timeout = 10, default = False)
                 return
             elif selected == 'history':
-                from translatedconsole import UserSkinconsole
+                from myComponents import UserSkinconsole
                 self.session.openWithCallback(self.refresh, UserSkinconsole, title = _("History of changes"), cmdlist = [ '%sscripts/SkinHistory.sh %s' % (PluginPath,SkinPath) ])
                 return
 
