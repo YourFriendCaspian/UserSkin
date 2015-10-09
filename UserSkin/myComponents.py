@@ -185,7 +185,7 @@ class myMenu(Screen,):
         skin += """<widget name="cover" zPosition="4" position="0,340" size="420,236" transparent="1" alphatest="blend" />"""
         skin += """</screen>"""
 
-        self["cover"] = Cover2()
+        self["cover"] = myCover()
 
         self.skin = skin
         self.session = session
