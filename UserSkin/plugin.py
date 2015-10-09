@@ -47,8 +47,8 @@ def main(session, **kwargs):
 
 class UserSkin_Menu(Screen):
         skin = """
-<screen position="center,center" size="560,280">
-        <widget source="list" render="Listbox" position="0,0" size="560,360" scrollbarMode="showOnDemand">
+<screen position="center,center" size="560,320">
+        <widget source="list" render="Listbox" position="0,0" size="560,320" scrollbarMode="showOnDemand">
                 <convert type="TemplatedMultiContent">
                         {"template": [
                                 MultiContentEntryPixmapAlphaTest(pos = (12, 2), size = (40, 40), png = 0),
@@ -108,6 +108,7 @@ class UserSkin_Menu(Screen):
                     
                 if skinHistory:
                     l.append(self.buildListEntry(_("History of changes"), "history.png",'history')),
+                l.append(self.buildListEntry(_("Import foreign skin"), "import.png",'importskin')),
                 l.append(self.buildListEntry(_("About"), "about.png",'about')),
                 self["list"].list = l
 
@@ -151,6 +152,10 @@ class UserSkin_Menu(Screen):
             elif selected == 'getcomponents':
                 from myComponents import myMenu
                 self.session.openWithCallback(self.refresh, myMenu, MenuFolder = '%sscripts' % PluginPath, MenuFile = '_Getcomponents', MenuTitle = _("Download additional Components/plugins"))
+                return
+            elif selected == 'importskin':
+                from myComponents import myMenu
+                self.session.openWithCallback(self.refresh, myMenu, MenuFolder = '%sImportSkinScripts' % PluginPath, MenuFile = '_Skins2Import', MenuTitle = _("Import foreign skin"))
                 return
             elif selected == 'getskin':
                 def goUpdate(ret):
