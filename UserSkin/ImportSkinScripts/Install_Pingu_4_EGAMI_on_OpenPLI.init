@@ -1,9 +1,0 @@
-#!/bin/sh 
-# UserSkin module, @j00zek 2015 dla Graterlia
-#
-
-myPath=`dirname $0`
-
-echo $myPath
-
-echo "Wkrotce :)"
