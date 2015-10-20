@@ -19,6 +19,16 @@
 #SILENT uruchamia skrypt w tle
 #YESNO pyta sie czy uruchomic skrypt
 #
+curl --help 1>/dev/null 2>&1
+if [ -? -gt 0 ]; then
+  echo "MENU|Delete addons">/tmp/_Deleteaddons
+  echo "ITEM|Required program 'curl' is not available. Please install it first manually.|DONOTHING|">>/tmp/_Deleteaddons
+  echo "MENU|Download addons">/tmp/_Getaddons
+  echo "ITEM|Required program 'curl' is not available. Please install it first manually.|DONOTHING|">>/tmp/_Getaddons
+  echo "MENU|Download additional Components/plugins">/tmp/_Getcomponents
+  echo "ITEM|Required program 'curl' is not available. Please install it first manually.|DONOTHING|">>/tmp/_Getcomponents
+  exit 0
+fi
 
 if [ -z $2 ]; then
   echo "MENU|Delete addons">/tmp/_Deleteaddons

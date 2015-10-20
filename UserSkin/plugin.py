@@ -131,6 +131,17 @@ class UserSkin_Menu(Screen):
             else:
                 self["list"].setIndex(0)
 
+        def rebootQuestion(self):
+            def rebootQuestionAnswered(self, ret):
+                if ret:
+                    from enigma import quitMainloop
+                    quitMainloop(2)
+                    self.quit()
+                return
+          
+            self.session.openWithCallback(rebootQuestionAnswered, MessageBox,_("Do you want to restart GUI now?"),  type = MessageBox.TYPE_YESNO, timeout = 10, default = False)
+          
+          
         def openSelected(self):
             selected = str(self["list"].getCurrent()[2])
             if selected == 'about':
@@ -151,7 +162,7 @@ class UserSkin_Menu(Screen):
                 return
             elif selected == 'getcomponents':
                 from myComponents import myMenu
-                self.session.openWithCallback(self.refresh, myMenu, MenuFolder = '%sscripts' % PluginPath, MenuFile = '_Getcomponents', MenuTitle = _("Download additional Components/plugins"))
+                self.session.openWithCallback(self.rebootQuestion, myMenu, MenuFolder = '%sscripts' % PluginPath, MenuFile = '_Getcomponents', MenuTitle = _("Download additional Components/plugins"))
                 return
             elif selected == 'importskin':
                 from myComponents import myMenu
@@ -164,8 +175,9 @@ class UserSkin_Menu(Screen):
                         runlist = []
                         runlist.append( ('chmod 755 %sscripts/SkinUpdate.sh' % PluginPath) )
                         runlist.append( ('%sscripts/SkinUpdate.sh %s' % (PluginPath,SkinPath)) )
-                        self.session.openWithCallback(self.refresh, UserSkinconsole, title = _("Updating skin"), cmdlist = runlist)
+                        self.session.openWithCallback(self.rebootQuestion, UserSkinconsole, title = _("Updating skin"), cmdlist = runlist)
                     return
+                    
                 self.session.openWithCallback(goUpdate, MessageBox,_("Do you want to update skin?"),  type = MessageBox.TYPE_YESNO, timeout = 10, default = False)
                 return
             elif selected == 'getplugin':
@@ -176,7 +188,7 @@ class UserSkin_Menu(Screen):
                         runlist.append( ('chmod 755 %sscripts/UserSkinUpdate.sh' % PluginPath) )
                         runlist.append( ('cp -a %sscripts/UserSkinUpdate.sh /tmp/UserSkinUpdate.sh' % PluginPath) )
                         runlist.append( ('/tmp/UserSkinUpdate.sh') )
-                        self.session.openWithCallback(self.refresh, UserSkinconsole, title = _("Updating plugin"), cmdlist = runlist)
+                        self.session.openWithCallback(self.rebootQuestion, UserSkinconsole, title = _("Updating plugin"), cmdlist = runlist)
                     return
                 self.session.openWithCallback(goUpdate, MessageBox,_("Do you want to update plugin?"),  type = MessageBox.TYPE_YESNO, timeout = 10, default = False)
                 return
