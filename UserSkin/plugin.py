@@ -132,7 +132,7 @@ class UserSkin_Menu(Screen):
                 self["list"].setIndex(0)
 
         def rebootQuestion(self):
-            def rebootQuestionAnswered(self, ret):
+            def rebootQuestionAnswered(self, ret = None):
                 if ret:
                     from enigma import quitMainloop
                     quitMainloop(2)
