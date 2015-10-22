@@ -1,5 +1,7 @@
 #
 [ -e /tmp/userskin.tar.gz ] && rm -rf /tmp/userskin.tar.gz
+[ -e /tmp/.rebootGUI ] && rm -rf /tmp/.rebootGUI
+
 rm -rf /tmp/j00zek-UserSkin-* 2>/dev/null
 sudo rm -rf /tmp/j00zek-UserSkin-* 2>/dev/null
 curl --help 1>/dev/null 2>%1
@@ -79,4 +81,5 @@ else
   echo "_(Success: Restart system to use new plugin version)"
 fi
 
+touch /tmp/.rebootGUI
 exit 0

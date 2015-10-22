@@ -132,14 +132,14 @@ class UserSkin_Menu(Screen):
                 self["list"].setIndex(0)
 
         def rebootQuestion(self):
-            def rebootQuestionAnswered(self, ret = None):
+            def rebootQuestionAnswered(ret):
                 if ret:
                     from enigma import quitMainloop
                     quitMainloop(2)
                     self.quit()
                 return
-          
-            self.session.openWithCallback(rebootQuestionAnswered, MessageBox,_("Do you want to restart GUI now?"),  type = MessageBox.TYPE_YESNO, timeout = 10, default = False)
+            if pathExists("/tmp/.rebootGUI"):
+                self.session.openWithCallback(rebootQuestionAnswered, MessageBox,_("Do you want to restart GUI now?"),  type = MessageBox.TYPE_YESNO, timeout = 10, default = False)
           
           
         def openSelected(self):

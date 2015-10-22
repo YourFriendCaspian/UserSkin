@@ -1,5 +1,7 @@
-# @j00zek 2015 dla Graterlia
+# @j00zek 2015 dla Graterlia & BlackHarmony
 #
+[ -e /tmp/.rebootGUI ] && rm -rf /tmp/.rebootGUI
+
 skinpath=$1
 if [ ! -f $skinpath/skin.config ]; then
   echo "_(This skin is not configured for updates.)"
@@ -71,3 +73,6 @@ if [ -f /etc/opkg/vusolo2-feed.conf ]; then
     fi
   fi
 fi
+
+touch /tmp/.rebootGUI
+exit 0

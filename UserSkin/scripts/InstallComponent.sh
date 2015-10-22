@@ -1,6 +1,7 @@
 # @j00zek 2015 dla Graterlia
 #
 #$2 = sciezka do aktualnej skorki
+[ -e /tmp/.rebootGUI ] && rm -rf /tmp/.rebootGUI
 
 . $2/skin.config
 addon=$1
@@ -28,3 +29,6 @@ if [ $? -gt 0 ]; then
   exit 0
 fi
 rm -rf /tmp/$addon
+
+touch /tmp/.rebootGUI
+exit 0
