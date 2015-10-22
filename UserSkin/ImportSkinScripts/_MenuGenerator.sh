@@ -35,5 +35,5 @@ for ArchiveName in $DownloadableArchives
 do
   addonName=`echo $ArchiveName|sed 's/\..*$//'`
   echo $addonName
-  echo "ITEM|$ArchiveName|CONSOLE|UnpackArchive.sh $ArchiveName $skinPath">>/tmp/_Skins2Import
+  echo "ITEM|$addonName|CONSOLE|UnpackArchive.sh $ArchiveName $skinPath">>/tmp/_Skins2Import
 done

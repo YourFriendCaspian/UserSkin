@@ -2,11 +2,12 @@
 #
 #$2 = sciezka do aktualnej skorki
 
-. $2/skin.config
 addon=$1
+[ -e /tmp/$addon ] && rm -rf /tmp/$addon
+url="https://github.com/j00zek/Converted-Skins/raw/master/$addon"
 
 echo "_(Downloading )$addon..."
-curl -s --ftp-pasv $addons/$addon -o /tmp/$addon
+curl -kLs $url -o /tmp/$addon
 if [ $? -gt 0 ]; then
   echo "_(Archive downloaded improperly)"
   exit 0
