@@ -28,3 +28,5 @@ if [ $? -gt 0 ]; then
   exit 0
 fi
 rm -rf /tmp/$addon
+echo
+echo "_(Archive unpacked properly, you can select it in skin selector)"

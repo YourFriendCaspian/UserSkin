@@ -42,8 +42,8 @@ def __(txt):
 class UserSkinconsole(Screen):
     #TODO move this to skin.xml
     skin = """
-        <screen position="center,center" size="550,400" title="Command execution..." >
-            <widget name="text" position="0,0" size="550,400" font="Console;14" />
+        <screen position="center,center" size="550,500" title="Command execution..." >
+            <widget name="text" position="0,0" size="550,500" font="Console;14" />
         </screen>"""
         
     def __init__(self, session, title = "UserSkinconsole", cmdlist = None, finishedCallback = None, closeOnSuccess = False):
@@ -91,9 +91,9 @@ class UserSkinconsole(Screen):
                 self.runFinished(-1) # so we must call runFinished manual
         else:
             #lastpage = self["text"].isAtLastPage()
-            str = self["text"].getText()
-            str += _("\nUse up/down arrows to scroll text. OK closes window");
-            self["text"].setText(str)
+            #str = self["text"].getText()
+            #str += _("\nUse up/down arrows to scroll text. OK closes window");
+            #self["text"].setText(str)
             #if lastpage:
             self["text"].lastPage()
             if self.finishedCallback is not None:
