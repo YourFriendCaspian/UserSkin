@@ -42,8 +42,8 @@ def __(txt):
 class UserSkinconsole(Screen):
     #TODO move this to skin.xml
     skin = """
-        <screen position="center,center" size="550,500" title="Command execution..." >
-            <widget name="text" position="0,0" size="550,500" font="Console;14" />
+        <screen position="center,center" size="550,450" title="Command execution..." >
+            <widget name="text" position="0,0" size="550,450" font="Console;14" />
         </screen>"""
         
     def __init__(self, session, title = "UserSkinconsole", cmdlist = None, finishedCallback = None, closeOnSuccess = False):
@@ -180,8 +180,8 @@ class myMenu(Screen,):
                         self.list.append( NazwaOpcji )
                 myMenufile.close()
 
-        skin  = """<screen name="myMenu" position="center,center" size="300,450" title=" " >\n"""
-        skin += """<widget name="list" position="0,0" size="300,400" scrollbarMode="showOnDemand" />\n"""
+        skin  = """<screen name="myMenu" position="center,center" size="420,450" title=" " >\n"""
+        skin += """<widget name="list" position="0,0" size="420,340" scrollbarMode="showOnDemand" />\n"""
         skin += """<widget name="cover" zPosition="4" position="0,340" size="420,236" transparent="1" alphatest="blend" />"""
         skin += """</screen>"""
 
