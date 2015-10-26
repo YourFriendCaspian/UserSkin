@@ -23,7 +23,10 @@ echo "_(Unpacking )$addon..."
 cd /
 tar -zxf /tmp/$addon 2>/dev/null
 if [ $? -gt 0 ]; then
-  echo "_(Archive unpacked improperly)"
-  exit 0
+  echo "_(Archive unpacked improperly)!!!"
+else
+  echo
+  echo "_(Success: Addon ready to use.)"
 fi
 rm -rf /tmp/$addon
+exit 0

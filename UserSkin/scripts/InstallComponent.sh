@@ -26,9 +26,11 @@ cd /
 tar -zxf /tmp/$addon 2>/dev/null
 if [ $? -gt 0 ]; then
   echo "_(Archive unpacked improperly)"
-  exit 0
+else
+  echo
+  echo "_(Success: Component installed properly.)"
+  touch /tmp/.rebootGUI
 fi
 rm -rf /tmp/$addon
 
-touch /tmp/.rebootGUI
 exit 0
