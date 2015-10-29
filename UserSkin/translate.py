@@ -1,7 +1,11 @@
+from inits import PluginLanguagePath
 try:
+    from os import path
+    if path.exists(PluginLanguagePath):
+        raise ValueError('a hack :)')
     from Components.LanguageGOS import gosgettext as _
 except:
-    from inits import PluginLanguageDomain , PluginLanguagePath
+    from inits import PluginLanguageDomain
     from Components.Language import language
     import gettext
     from os import environ
