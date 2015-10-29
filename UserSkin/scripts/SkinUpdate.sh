@@ -37,7 +37,7 @@ fi
 
 echo "_(Downloading latest skin version)..."
 tarName=`echo $skinurl|sed 's;^.*/;;'`
-curl -s --ftp-pasv $skinurl -o /tmp/$tarName
+curl -kLs --ftp-pasv $skinurl -o /tmp/$tarName
 if [ $? -gt 0 ]; then
   echo "_(Archive downloaded improperly)"
   exit 0

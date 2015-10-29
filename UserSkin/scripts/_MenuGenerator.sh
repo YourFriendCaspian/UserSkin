@@ -82,7 +82,7 @@ fi
 #[ $? -gt 0 ] && addons="$addons/"
 addons="$addons/"
 #echo $addons
-DownloadableAddons=`curl -s --ftp-pasv $addons -o -|awk '{print $9}'|sort`
+DownloadableAddons=`curl -kLs --ftp-pasv $addons -o -|awk '{print $9}'|sort`
 
 for addon in $DownloadableAddons
 do
@@ -102,7 +102,7 @@ fi
 
 addons="$components/"
 #echo $addons
-DownloadableAddons=`curl -s --ftp-pasv $addons -o -|awk '{print $9}'|sort`
+DownloadableAddons=`curl -kLs --ftp-pasv $addons -o -|awk '{print $9}'|sort`
 
 for addon in $DownloadableAddons
 do

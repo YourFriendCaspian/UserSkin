@@ -8,7 +8,7 @@ addon=$1
 #echo "Component URL: $components"
 
 echo "_(Downloading )$addon ..."
-curl -s --ftp-pasv $components/$addon -o /tmp/$addon
+curl -kLs --ftp-pasv $components/$addon -o /tmp/$addon
 if [ $? -gt 0 ]; then
   echo "_(Archive downloaded improperly)"
   exit 0

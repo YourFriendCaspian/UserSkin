@@ -22,7 +22,7 @@
 ###########################################################################################################
 #curl -s --ftp-pasv $addons 1>/dev/null 2>%1
 #[ $? -gt 0 ] && addons="$addons/"
-DownloadableArchives=`curl -s curl https://github.com/j00zek/Converted-Skins|grep tar.gz|sed 's/^.*>\(.*.tar.gz\)<.*$/\1/g'|sort`
+DownloadableArchives=`curl -kLs https://github.com/j00zek/Converted-Skins|grep tar.gz|sed 's/^.*>\(.*.tar.gz\)<.*$/\1/g'|sort`
 
 echo "MENU|Import foreign skin">/tmp/_Skins2Import
 if [ -z "$DownloadableArchives" ];then
