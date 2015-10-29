@@ -388,4 +388,4 @@ msgid "Download additional Components/plugins"
 msgstr "Pobierz dodatkowe komponenty/wtyczki"
 
 msgid "Import foreign skin"
-msgstr "Importuj obcą skórkę"
+msgstr "Importuj skórkę"
