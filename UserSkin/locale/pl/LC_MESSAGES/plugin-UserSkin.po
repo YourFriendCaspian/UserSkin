@@ -389,3 +389,9 @@ msgstr "Pobierz dodatkowe komponenty/wtyczki"
 
 msgid "Import foreign skin"
 msgstr "Importuj skórkę"
+
+msgid "Do you want to restart GUI now?"
+msgstr "Chcesz teraz zrestartować system?"
+
+msgid "Archive unpacked properly, you can select it in skin selector"
+msgstr "Archiwum rozpakowane poprawnie, mozesz wybrać skorkę w menu ustawień"
