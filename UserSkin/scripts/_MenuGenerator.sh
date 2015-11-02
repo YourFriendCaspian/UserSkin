@@ -20,7 +20,7 @@
 #YESNO pyta sie czy uruchomic skrypt
 #
 curl --help 1>/dev/null 2>&1
-if [ -? -gt 0 ]; then
+if [ $? -gt 0 ]; then
   echo "MENU|Delete addons">/tmp/_Deleteaddons
   echo "ITEM|Required program 'curl' is not available. Please install it first manually.|DONOTHING|">>/tmp/_Deleteaddons
   echo "MENU|Download addons">/tmp/_Getaddons
@@ -64,7 +64,7 @@ done
 for addon in $skinParts
 do
   addonName=`echo $addon|sed 's/^.*\/\(.*\)\.xml/\1/'`
-  echo $addonName
+  #echo $addonName
   echo "ITEM|$addonName|SILENT|/bin/rm -rf $skinPath/$addon">>/tmp/_Deleteaddons
 done
 
@@ -74,15 +74,17 @@ if [ ! -f $skinPath/skin.config ];then
   echo "ITEM|Skin does not have downloadable addons|DONOTHING|">>/tmp/_Getaddons
 fi
 . $skinPath/skin.config
-if [ -z $addons ];then
+if [[ -z $addons && -z $addonsList ]];then
   echo "ITEM|Skin does not have downloadable addons|DONOTHING|">>/tmp/_Getaddons
+elif [ ! -z "$addonsList" ];then
+    # skin author made a script in skin.conf to properly download the list :)
+    #e.g. addonsList="curl -kLs --ftp-pasv ftp://blackharmony.pl:55535/FTP/addons -o -|awk '{print \$9}'|sort"
+    DownloadableAddons=`eval $addonsList`
+elif [ ! -z "$addons" ];then
+    #curl -s --ftp-pasv $addons 1>/dev/null 2>%1
+    #[ $? -gt 0 ] && addons="$addons/"
+    DownloadableAddons=`curl -kLs --ftp-pasv $addons/ -o -|awk '{print $9}'|sort`
 fi
-
-#curl -s --ftp-pasv $addons 1>/dev/null 2>%1
-#[ $? -gt 0 ] && addons="$addons/"
-addons="$addons/"
-#echo $addons
-DownloadableAddons=`curl -kLs --ftp-pasv $addons -o -|awk '{print $9}'|sort`
 
 for addon in $DownloadableAddons
 do
@@ -91,18 +93,22 @@ do
   echo "ITEM|$addonName|CONSOLE|InstallAddon.sh $addon $skinPath">>/tmp/_Getaddons
 done
 ###########################################################################################################
+DownloadableAddons=""
 echo "MENU|Download additional Components/plugins">/tmp/_Getcomponents
 if [ ! -f $skinPath/skin.config ];then
   echo "ITEM|Skin does not have downloadable components|DONOTHING|">>/tmp/_Getcomponents
 fi
 . $skinPath/skin.config
-if [ -z $components ];then
-  echo "ITEM|Skin does not have downloadable components|DONOTHING|">>/tmp/_Getcomponents
+if [[ -z $components && -z $componentsList ]];then
+    echo "ITEM|Skin does not have downloadable components|DONOTHING|">>/tmp/_Getcomponents
+elif [ ! -z "$componentsList" ];then
+    # skin author made a script in skin.conf to properly download the list :)
+    #e.g. componentsList="curl -kLs --ftp-pasv ftp://blackharmony.pl:55535/FTP/components/ -o -|awk '{print \$9}'|sort"
+    DownloadableAddons=`eval $componentsList`
+    echo $componentsList
+elif [ ! -z "$components" ];then
+  DownloadableAddons=`curl -kLs --ftp-pasv $components/ -o -|awk '{print $9}'|sort`
 fi
-
-addons="$components/"
-#echo $addons
-DownloadableAddons=`curl -kLs --ftp-pasv $addons -o -|awk '{print $9}'|sort`
 
 for addon in $DownloadableAddons
 do
@@ -110,4 +116,3 @@ do
   echo $addonName
   echo "ITEM|$addonName|CONSOLE|InstallComponent.sh $addon $skinPath">>/tmp/_Getcomponents
 done
-
